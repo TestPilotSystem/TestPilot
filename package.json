@@ -9,7 +9,9 @@
     "lint": "eslint",
     "db:migrate": "dotenv -e .env -- npx prisma migrate dev",
     "db:seed": "dotenv -e .env -- ts-node -P tsconfig-seed.json prisma/seed.ts",
-    "db:studio": "dotenv -e .env -- npx prisma studio"
+    "db:studio": "dotenv -e .env -- npx prisma studio",
+    "db:reset": "dotenv -e .env -- npx prisma migrate reset --skip-generate",
+    "db:install": "npm run db:reset && npm run db:seed"
   },
   "dependencies": {
     "@prisma/client": "^6.19.0",
