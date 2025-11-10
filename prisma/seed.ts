@@ -17,6 +17,7 @@ async function main() {
             password: hashedPassword,
             role: Role.ADMIN,
             status: Status.ACTIVE,
+            mustChangePassword: true,
             firstName: 'Super',
             lastName: 'Admin',
         },

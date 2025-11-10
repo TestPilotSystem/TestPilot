@@ -23,6 +23,8 @@ model User {
   role     Role     @default(STUDENT)
   status   Status   @default(PENDING) 
 
+  mustChangePassword Boolean @default(false)
+
   // Datos personales
   dni      String?  @unique
   firstName String

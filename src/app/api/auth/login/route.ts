@@ -59,8 +59,7 @@ export async function POST(request: Request) {
                 email: user.email,
                 role: user.role,
                 firstName: user.firstName,
-                // TODO: (Ajustar más tarde para el nuevo requisito)
-                mustChangePassword: user.id === 1
+                mustChangePassword: user.mustChangePassword
             },
         });
     } catch (error) {
