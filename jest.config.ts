@@ -6,6 +6,7 @@ const createJestConfig = nextJest({
 });
 
 // Rutas de mock para assets estáticos y CSS
+// (añadir mocks si hay problemas con imágenes o css)
 const mockFile = '<rootDir>/__mocks__/fileMock.js';
 const mockIdentity = 'identity-obj-proxy';
 
@@ -13,14 +14,8 @@ const baseConfig: Config = {
     coverageProvider: 'v8', 
     moduleDirectories: ['node_modules', '<rootDir>/'],
     
-    // **NOTA**: setupFilesAfterEnv se ha ELIMINADO de baseConfig
-    // y se ha movido al proyecto 'client' para asegurar la carga.
-    // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], 
-
     moduleNameMapper: {
-        // Alias de rutas
         '^@/(.*)$': '<rootDir>/src/$1',
-        // Mocks para CSS/Assets
         '\\.(css|less|sass|scss)$': mockIdentity, 
         '\\.(gif|ttf|eot|svg|png|jpg|jpeg)$': mockFile, 
     },
@@ -40,7 +35,6 @@ const jestConfig: Config = {
             // 1. PROJECT: Frontend (Componentes)
             displayName: 'client',
             testEnvironment: 'jsdom',
-            // **AJUSTE CRÍTICO**: Lo movemos aquí para forzar la carga en el entorno JSDOM
             setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], 
             testMatch: ['<rootDir>/src/components/**/*.((test|spec)).(ts|tsx)'],
         },
