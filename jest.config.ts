@@ -5,8 +5,6 @@ const createJestConfig = nextJest({
     dir: './',
 });
 
-// Rutas de mock para assets estáticos y CSS
-// (añadir mocks si hay problemas con imágenes o css)
 const mockFile = '<rootDir>/__mocks__/fileMock.js';
 const mockIdentity = 'identity-obj-proxy';
 
@@ -15,14 +13,15 @@ const baseConfig: Config = {
     moduleDirectories: ['node_modules', '<rootDir>/'],
     
     moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1',
-        '\\.(css|less|sass|scss)$': mockIdentity, 
-        '\\.(gif|ttf|eot|svg|png|jpg|jpeg)$': mockFile, 
+        '^@/(.*)$': '<rootDir>/src/$1', 
+        '\\.(css|less|sass|scss)$': mockIdentity,
+        '\\.(gif|ttf|eot|svg|png)$': mockFile,
     },
     
-    // Indica a Jest que use Babel para transpilar JSX/TSX
+    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+
     transform: {
-        '^.+\\.(ts|tsx|js|jsx)$': 'babel-jest',
+        '^.+\\.(ts|tsx|js|jsx)$': ['babel-jest', { configFile: './babel.config.js' }],
     },
 
     testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
@@ -32,14 +31,12 @@ const jestConfig: Config = {
     ...baseConfig,
     projects: [
         {
-            // 1. PROJECT: Frontend (Componentes)
             displayName: 'client',
             testEnvironment: 'jsdom',
             setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'], 
             testMatch: ['<rootDir>/src/components/**/*.((test|spec)).(ts|tsx)'],
         },
         {
-            // 2. PROJECT: Backend (API Routes)
             displayName: 'server',
             testEnvironment: 'node',
             testMatch: ['<rootDir>/src/app/api/**/*.test.ts'],
