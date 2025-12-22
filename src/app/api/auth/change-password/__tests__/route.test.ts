@@ -64,12 +64,29 @@ describe("POST /api/auth/change-password", () => {
   it("should return 400 if required fields are missing", async () => {
     const mockRequest = createMockRequest({
       currentPassword: VALID_PASSWORD,
+      newPassword: "",
+      confirmNewPassword: "",
     });
 
     const response = await POST(mockRequest);
     expect(response.status).toBe(400);
     const body = await response.json();
-    expect(body.message).toBe("Faltan datos obligatorios");
+    expect(body.message).toBe(
+      "La nueva contraseña debe tener al menos 8 caracteres"
+    );
+  });
+
+  it("should return 400 if passwords do not match", async () => {
+    const mockRequest = createMockRequest({
+      currentPassword: VALID_PASSWORD,
+      newPassword: NEW_PASSWORD,
+      confirmNewPassword: "differentPassword",
+    });
+
+    const response = await POST(mockRequest);
+    expect(response.status).toBe(400);
+    const body = await response.json();
+    expect(body.message).toBe("Las contraseñas no coinciden");
   });
 
   it("should return 401 if token is missing", async () => {
@@ -77,6 +94,7 @@ describe("POST /api/auth/change-password", () => {
       {
         currentPassword: VALID_PASSWORD,
         newPassword: NEW_PASSWORD,
+        confirmNewPassword: NEW_PASSWORD,
       },
       false
     );
@@ -87,13 +105,14 @@ describe("POST /api/auth/change-password", () => {
     expect(body.message).toBe("No autorizado");
   });
 
-  it("should return 401 if current password is incorrect", async () => {
+  it("should return 401 if current password is incorrect in DB", async () => {
     (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
     (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
     const mockRequest = createMockRequest({
-      currentPassword: "wrong",
+      currentPassword: "WrongPassword123",
       newPassword: NEW_PASSWORD,
+      confirmNewPassword: NEW_PASSWORD,
     });
 
     const response = await POST(mockRequest);
@@ -102,19 +121,19 @@ describe("POST /api/auth/change-password", () => {
     expect(body.message).toBe("La contraseña actual es incorrecta");
   });
 
-  it("should return 400 if new password is the same as current password", async () => {
-    (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
-    (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-
+  it("should return 400 if new password is the same as current password via Zod", async () => {
     const mockRequest = createMockRequest({
       currentPassword: VALID_PASSWORD,
       newPassword: VALID_PASSWORD,
+      confirmNewPassword: VALID_PASSWORD,
     });
 
     const response = await POST(mockRequest);
     expect(response.status).toBe(400);
     const body = await response.json();
-    expect(body.message).toBe("La nueva contraseña debe ser diferente");
+    expect(body.message).toBe(
+      "La nueva contraseña debe ser diferente a la actual"
+    );
   });
 
   it("should successfully change the password", async () => {
@@ -125,6 +144,7 @@ describe("POST /api/auth/change-password", () => {
     const mockRequest = createMockRequest({
       currentPassword: VALID_PASSWORD,
       newPassword: NEW_PASSWORD,
+      confirmNewPassword: NEW_PASSWORD,
     });
 
     const response = await POST(mockRequest);
