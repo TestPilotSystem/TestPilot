@@ -1,25 +1,36 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import LoginForm from './LoginForm'; 
+import LoginForm from './LoginForm';
+import { AuthProvider } from '@/context/AuthContext';
 
 // Mockear el router de Next.js
 jest.mock('next/navigation', () => ({
-    useRouter: () => ({
-        push: jest.fn(),
-    }),
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
 }));
 
-describe('Login Component Frontend Environment Verification', () => {
-    it('should confirm the environment is JSDOM and render the core elements', () => {
-        
-        render(<LoginForm />);
-        expect(typeof window).toBe('object');
-        expect(window).toBeDefined();
+describe('LoginForm Component', () => {
+  it('should render the login form with updated mockup elements', () => {
+    render(
+      <AuthProvider>
+        <LoginForm />
+      </AuthProvider>
+    );
 
-        const submitButton = screen.getByRole('button', { name: /Iniciar Sesión/i });
-        const emailInput = screen.getByLabelText(/Correo Electrónico/i);
+    expect(typeof window).toBe('object');
 
-        expect(submitButton).toBeInTheDocument();
-        expect(emailInput).toBeInTheDocument();
-    });
+    const title = screen.getByText(/Arranca el viaje/i);
+    const emailLabel = screen.getByText(/EMAIL/i); // Ahora es un label en uppercase
+    const passwordLabel = screen.getByText(/CONTRASEÑA/i);
+    const submitButton = screen.getByRole('button', { name: /Entrar/i });
+
+    expect(title).toBeInTheDocument();
+    expect(emailLabel).toBeInTheDocument();
+    expect(passwordLabel).toBeInTheDocument();
+    expect(submitButton).toBeInTheDocument();
+    
+    expect(screen.getByPlaceholderText(/tu@email.com/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/••••••••/i)).toBeInTheDocument();
+  });
 });
