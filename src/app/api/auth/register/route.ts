@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { Role, Status } from "@prisma/client";
+import { Role, RequestStatus } from "@prisma/client";
 import { registerSchema } from "@/lib/validations/auth";
 
 export async function POST(request: Request) {
@@ -34,18 +34,27 @@ export async function POST(request: Request) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        dni,
-        firstName,
-        lastName,
-        dateOfBirth: new Date(dateOfBirth),
-        role: Role.STUDENT,
-        status: Status.PENDING,
-        mustChangePassword: false,
-      },
+    // Transaction to create user and request atomically
+    await prisma.$transaction(async (tx) => {
+      const newUser = await tx.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          dni,
+          firstName,
+          lastName,
+          dateOfBirth: new Date(dateOfBirth),
+          role: Role.STUDENT,
+          mustChangePassword: false,
+        },
+      });
+
+      await tx.request.create({
+        data: {
+          userId: newUser.id,
+          status: RequestStatus.PENDING,
+        },
+      });
     });
 
     return NextResponse.json(

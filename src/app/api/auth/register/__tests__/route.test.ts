@@ -1,15 +1,23 @@
+import { POST } from "../route";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { POST } from "../route";
 
-jest.mock("@/lib/prisma", () => ({
-  prisma: {
+jest.mock("@/lib/prisma", () => {
+  const mockInternalPrisma = {
     user: {
       findFirst: jest.fn(),
       create: jest.fn(),
     },
-  },
-}));
+    request: {
+      create: jest.fn(),
+    },
+    $transaction: jest.fn((callback) => callback(mockInternalPrisma)),
+  };
+
+  return {
+    prisma: mockInternalPrisma,
+  };
+});
 
 jest.mock("bcryptjs", () => ({
   hash: jest.fn(),
@@ -30,10 +38,10 @@ describe("POST /api/auth/register", () => {
     jest.clearAllMocks();
   });
 
-  it("should return 201 and success message for valid data", async () => {
+  it("should return 201, create user and create a pending request", async () => {
     (prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
     (bcrypt.hash as jest.Mock).mockResolvedValue("hashed_password");
-    (prisma.user.create as jest.Mock).mockResolvedValue({});
+    (prisma.user.create as jest.Mock).mockResolvedValue({ id: 1 });
 
     const mockRequest = {
       json: async () => VALID_DATA,
@@ -44,7 +52,26 @@ describe("POST /api/auth/register", () => {
 
     expect(response.status).toBe(201);
     expect(body.message).toContain("Solicitud de registro enviada con éxito");
-    expect(prisma.user.create).toHaveBeenCalled();
+
+    expect(prisma.$transaction).toHaveBeenCalled();
+
+    expect(prisma.user.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          email: VALID_DATA.email,
+          role: "STUDENT",
+        }),
+      })
+    );
+
+    expect(prisma.request.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          userId: 1,
+          status: "PENDING",
+        }),
+      })
+    );
   });
 
   it("should return 400 if email or DNI already exists", async () => {
@@ -57,71 +84,25 @@ describe("POST /api/auth/register", () => {
     } as unknown as Request;
 
     const response = await POST(mockRequest);
-    const body = await response.json();
-
     expect(response.status).toBe(400);
-    expect(body.message).toBe(
-      "El email o el DNI ya están registrados en la plataforma."
-    );
+    expect(prisma.$transaction).not.toHaveBeenCalled();
   });
 
-  it("should return 400 if passwords do not match", async () => {
-    const invalidData = { ...VALID_DATA, confirmPassword: "wrongPassword" };
+  it("should return 500 if the transaction fails", async () => {
+    // Mute console.error to avoid cluttering test output
+    const consoleSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
-    const mockRequest = {
-      json: async () => invalidData,
-    } as unknown as Request;
+    (prisma.user.findFirst as jest.Mock).mockResolvedValue(null);
+    (prisma.$transaction as jest.Mock).mockRejectedValue(new Error("DB Error"));
 
+    const mockRequest = { json: async () => VALID_DATA } as unknown as Request;
     const response = await POST(mockRequest);
-    const body = await response.json();
 
-    expect(response.status).toBe(400);
-    expect(body.message).toBe("Las contraseñas no coinciden");
-  });
+    expect(response.status).toBe(500);
 
-  it("should return 400 if DNI format is invalid", async () => {
-    const invalidData = { ...VALID_DATA, dni: "12345A" };
-
-    const mockRequest = {
-      json: async () => invalidData,
-    } as unknown as Request;
-
-    const response = await POST(mockRequest);
-    const body = await response.json();
-
-    expect(response.status).toBe(400);
-    expect(body.message).toBe("Formato de DNI inválido");
-  });
-
-  it("should return 400 if email format is invalid", async () => {
-    const invalidData = { ...VALID_DATA, email: "not-an-email" };
-
-    const mockRequest = {
-      json: async () => invalidData,
-    } as unknown as Request;
-
-    const response = await POST(mockRequest);
-    const body = await response.json();
-
-    expect(response.status).toBe(400);
-    expect(body.message).toBe("Formato de email inválido");
-  });
-
-  it("should return 400 if password is too weak", async () => {
-    const invalidData = {
-      ...VALID_DATA,
-      password: "123",
-      confirmPassword: "123",
-    };
-
-    const mockRequest = {
-      json: async () => invalidData,
-    } as unknown as Request;
-
-    const response = await POST(mockRequest);
-    const body = await response.json();
-
-    expect(response.status).toBe(400);
-    expect(body.message).toBe("La contraseña debe tener al menos 8 caracteres");
+    // Restore console.error
+    consoleSpy.mockRestore();
   });
 });

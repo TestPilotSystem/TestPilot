@@ -1,4 +1,4 @@
-import { PrismaClient, Role, Status } from "@prisma/client";
+import { PrismaClient, Role, RequestStatus } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -11,17 +11,33 @@ async function main() {
 
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@testpilot.com" },
-    update: {},
+    update: {
+      password: hashedPassword,
+    },
     create: {
       email: "admin@testpilot.com",
       password: hashedPassword,
       role: Role.ADMIN,
-      status: Status.ACTIVE,
       mustChangePassword: true,
       firstName: "Super",
       lastName: "Admin",
     },
   });
+
+  // Approved request for the admin user
+  const existingRequest = await prisma.request.findFirst({
+    where: { userId: adminUser.id },
+  });
+
+  if (!existingRequest) {
+    await prisma.request.create({
+      data: {
+        userId: adminUser.id,
+        status: RequestStatus.APPROVED,
+        adminNotes: "Sistema: Cuenta de administrador inicial.",
+      },
+    });
+  }
 
   console.log(
     `Created admin user with id: ${adminUser.id} and password: ${ADMIN_PASSWORD}`

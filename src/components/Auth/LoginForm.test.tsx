@@ -21,7 +21,7 @@ describe('LoginForm Component', () => {
     expect(typeof window).toBe('object');
 
     const title = screen.getByText(/Arranca el viaje/i);
-    const emailLabel = screen.getByText(/EMAIL/i); // Ahora es un label en uppercase
+    const emailLabel = screen.getByText(/EMAIL/i);
     const passwordLabel = screen.getByText(/CONTRASEÑA/i);
     const submitButton = screen.getByRole('button', { name: /Entrar/i });
 

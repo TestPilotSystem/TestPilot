@@ -27,7 +27,16 @@ export async function POST(request: Request) {
     }
 
     const { email, password } = result.data;
-    const user = await prisma.user.findUnique({ where: { email } });
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: {
+        requests: {
+          orderBy: { createdAt: "desc" },
+          take: 1, // Only need the latest request
+        },
+      },
+    });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return NextResponse.json(
@@ -36,16 +45,29 @@ export async function POST(request: Request) {
       );
     }
 
-    if (user.status !== "ACTIVE") {
-      const message =
-        user.role === "ADMIN"
-          ? "Tu cuenta de administrador está desactivada"
-          : "Tu cuenta no está activa";
+    const latestRequest = user.requests[0];
 
-      return NextResponse.json(
-        { message: `${message}. Contacta con soporte.` },
-        { status: 403 }
-      );
+    // Admin always has access but students need approved requests
+    if (user.role !== "ADMIN") {
+      if (!latestRequest || latestRequest.status === "PENDING") {
+        return NextResponse.json(
+          {
+            message: "Tu solicitud de acceso aún está pendiente de aprobación.",
+          },
+          { status: 403 }
+        );
+      }
+
+      if (latestRequest.status === "REJECTED") {
+        return NextResponse.json(
+          {
+            message: `Tu solicitud ha sido rechazada. Motivo: ${
+              latestRequest.adminNotes || "No especificado"
+            }`,
+          },
+          { status: 403 }
+        );
+      }
     }
 
     const token = jwt.sign(
@@ -70,7 +92,8 @@ export async function POST(request: Request) {
       },
     });
 
-    (await cookies()).set("auth_token", token, {
+    const cookieStore = await cookies();
+    cookieStore.set("auth_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

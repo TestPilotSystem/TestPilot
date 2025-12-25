@@ -1,43 +1,54 @@
-// Configuración para MySQL
 datasource db {
   provider = "mysql"
-  url = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
-// Generador para el cliente de Prisma con TypeScript
 generator client {
   provider = "prisma-client-js"
 }
 
-// Roles
 enum Role {
   ADMIN
   STUDENT
 }
 
-// Modelo user
-model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  password String
-  role     Role     @default(STUDENT)
-  status   Status   @default(PENDING) 
-
-  mustChangePassword Boolean @default(false)
-
-  // Datos personales
-  dni      String?  @unique
-  firstName String
-  lastName  String
-  dateOfBirth DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
-// Estado de solicitud de registro
-enum Status {
-  PENDING // Solicitud enviada, pendiente de aprobación
-  ACTIVE  // Aprobado, puede iniciar sesión
-  REJECTED // Rechazado
+model User {
+  id                 Int       @id @default(autoincrement())
+  email              String    @unique
+  password           String
+  role               Role      @default(STUDENT)
+  mustChangePassword Boolean   @default(false)
+
+  // Datos personales
+  dni                String?   @unique
+  firstName          String
+  lastName           String
+  dateOfBirth        DateTime?
+
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // Un usuario puede tener varias solicitudes (ej: una rechazada y luego otra nueva)
+  requests           Request[]
+}
+
+model Request {
+  id         Int           @id @default(autoincrement())
+  status     RequestStatus @default(PENDING)
+  adminNotes String?       
+  
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  // Relación con el usuario
+  userId     Int
+  user       User          @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
