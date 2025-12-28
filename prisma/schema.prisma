@@ -33,8 +33,8 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  requests Request[]
-  tests    Test[]
+  requests  Request[]
+  userTests UserTest[]
 }
 
 model Request {
@@ -60,32 +60,58 @@ model Topic {
 model Test {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
-  
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
 
   topicId String
-  topic   Topic @relation(fields: [topicId], references: [id])
+  topic   Topic  @relation(fields: [topicId], references: [id])
 
   questions Question[]
-  score     Int?
-  completed Boolean @default(false)
+  attempts  UserTest[]
 
-  @@index([userId])
   @@index([topicId])
 }
 
 model Question {
-  id      String @id @default(cuid())
-  testId  String
-  test    Test   @relation(fields: [testId], references: [id])
-  
+  id     String @id @default(cuid())
+  testId String
+  test   Test   @relation(fields: [testId], references: [id])
+
   enunciado         String @db.Text
-  opciones          Json   
+  opciones          Json
   respuestaCorrecta String
   explicacion       String? @db.Text
-  respuestaUsuario  String?
-  esCorrecta        Boolean?
+
+  userResponses UserResponse[]
 
   @@index([testId])
+}
+
+model UserTest {
+  id          String   @id @default(cuid())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  testId      String
+  test        Test     @relation(fields: [testId], references: [id])
+  
+  score       Int?
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+
+  responses   UserResponse[]
+
+  @@index([userId])
+  @@index([testId])
+}
+
+model UserResponse {
+  id            String   @id @default(cuid())
+  userTestId    String
+  userTest      UserTest @relation(fields: [userTestId], references: [id])
+  questionId    String
+  question      Question @relation(fields: [questionId], references: [id])
+  
+  respuestaDada String
+  esCorrecta    Boolean
+
+  @@index([userTestId])
+  @@index([questionId])
 }
