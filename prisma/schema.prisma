@@ -25,30 +25,67 @@ model User {
   role               Role      @default(STUDENT)
   mustChangePassword Boolean   @default(false)
 
-  // Datos personales
-  dni                String?   @unique
-  firstName          String
-  lastName           String
-  dateOfBirth        DateTime?
+  dni         String?   @unique
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime?
 
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // Un usuario puede tener varias solicitudes (ej: una rechazada y luego otra nueva)
-  requests           Request[]
+  requests Request[]
+  tests    Test[]
 }
 
 model Request {
   id         Int           @id @default(autoincrement())
   status     RequestStatus @default(PENDING)
-  adminNotes String?       
-  
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  adminNotes String?
 
-  // Relación con el usuario
-  userId     Int
-  user       User          @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
 
   @@index([userId])
+}
+
+model Topic {
+  id    String @id @default(cuid())
+  name  String @unique
+  tests Test[]
+}
+
+model Test {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  topicId String
+  topic   Topic @relation(fields: [topicId], references: [id])
+
+  questions Question[]
+  score     Int?
+  completed Boolean @default(false)
+
+  @@index([userId])
+  @@index([topicId])
+}
+
+model Question {
+  id      String @id @default(cuid())
+  testId  String
+  test    Test   @relation(fields: [testId], references: [id])
+  
+  enunciado         String @db.Text
+  opciones          Json   
+  respuestaCorrecta String
+  explicacion       String? @db.Text
+  respuestaUsuario  String?
+  esCorrecta        Boolean?
+
+  @@index([testId])
 }
