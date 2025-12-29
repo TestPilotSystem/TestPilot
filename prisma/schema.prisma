@@ -77,7 +77,7 @@ model Question {
 
   enunciado         String @db.Text
   opciones          Json
-  respuestaCorrecta String
+  respuestaCorrecta String @db.Text
   explicacion       String? @db.Text
 
   userResponses UserResponse[]

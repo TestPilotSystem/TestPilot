@@ -1,22 +1,34 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
+import jwt from "jsonwebtoken";
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+const JWT_SECRET = process.env.JWT_SECRET || "a_clave_secreta";
 
 export async function POST(req: Request) {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get("auth-token")?.value;
+    const token = cookieStore.get("auth_token")?.value;
 
     if (!token) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+      console.log("❌ No se encontró la cookie auth_token");
+      return NextResponse.json(
+        { error: "No autorizado: sesión no encontrada" },
+        { status: 401 }
+      );
     }
 
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    let payload: any;
+    try {
+      payload = jwt.verify(token, JWT_SECRET);
+    } catch (err) {
+      console.log("❌ Token inválido o expirado");
+      return NextResponse.json(
+        { error: "Sesión expirada o inválida" },
+        { status: 401 }
+      );
+    }
 
-    // Extra security check for admin role
     if (payload.role !== "ADMIN") {
       return NextResponse.json(
         { error: "No tienes permisos de administrador" },
@@ -25,6 +37,8 @@ export async function POST(req: Request) {
     }
 
     const { topicId, topicName, numQuestions } = await req.json();
+
+    console.log(`🚀 Llamando a la IA para el tema: ${topicName}`);
 
     const response = await fetch(
       `http://127.0.0.1:8000/admin/ai/generate-full-test?topic=${encodeURIComponent(
@@ -37,7 +51,7 @@ export async function POST(req: Request) {
     );
 
     if (!response.ok) {
-      throw new Error("Error al obtener el test de la IA");
+      throw new Error("La IA de Python ha fallado o está tardando demasiado");
     }
 
     const data = await response.json();
@@ -54,17 +68,14 @@ export async function POST(req: Request) {
           })),
         },
       },
-      include: {
-        questions: true,
-      },
     });
 
     return NextResponse.json({
-      message: "Test generado con éxito en el repositorio global",
+      message: "Test generado con éxito",
       testId: newTest.id,
     });
   } catch (error: any) {
-    console.error("Error en create-test:", error);
+    console.error("🔥 Error en create-test:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

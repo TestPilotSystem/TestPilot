@@ -11,9 +11,7 @@ async function main() {
 
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@testpilot.com" },
-    update: {
-      password: hashedPassword,
-    },
+    update: { password: hashedPassword },
     create: {
       email: "admin@testpilot.com",
       password: hashedPassword,
@@ -24,7 +22,6 @@ async function main() {
     },
   });
 
-  // Approved request for the admin user
   const existingRequest = await prisma.request.findFirst({
     where: { userId: adminUser.id },
   });
@@ -39,9 +36,21 @@ async function main() {
     });
   }
 
-  console.log(
-    `Created admin user with id: ${adminUser.id} and password: ${ADMIN_PASSWORD}`
-  );
+  // Topic seeding
+  const topics = [
+    ...Array.from({ length: 17 }, (_, i) => `Tema ${i + 1}`),
+    "Anexo: Puntos",
+  ];
+
+  for (const topicName of topics) {
+    await prisma.topic.upsert({
+      where: { name: topicName },
+      update: {},
+      create: { name: topicName },
+    });
+  }
+
+  console.log(`Created admin user and ${topics.length} topics.`);
   console.log("Seeding finished.");
 }
 
