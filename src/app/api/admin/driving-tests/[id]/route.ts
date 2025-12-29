@@ -1,12 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// GET
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
 
     const test = await prisma.test.findUnique({
       where: { id },
@@ -32,19 +34,24 @@ export async function GET(
   }
 }
 
+// DELETE
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
 
     await prisma.test.delete({
       where: { id },
     });
 
-    return NextResponse.json({ message: "Test eliminado con éxito" });
+    return NextResponse.json({ message: "Test eliminado correctamente" });
   } catch (error) {
-    return NextResponse.json({ error: "Error al eliminar" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error al eliminar el test" },
+      { status: 500 }
+    );
   }
 }
