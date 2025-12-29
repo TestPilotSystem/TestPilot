@@ -73,7 +73,7 @@ model Test {
 model Question {
   id     String @id @default(cuid())
   testId String
-  test   Test   @relation(fields: [testId], references: [id])
+  test   Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
 
   enunciado         String @db.Text
   opciones          Json
@@ -90,7 +90,7 @@ model UserTest {
   userId      Int
   user        User     @relation(fields: [userId], references: [id])
   testId      String
-  test        Test     @relation(fields: [testId], references: [id])
+  test        Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
   
   score       Int?
   completed   Boolean  @default(false)
@@ -105,9 +105,9 @@ model UserTest {
 model UserResponse {
   id            String   @id @default(cuid())
   userTestId    String
-  userTest      UserTest @relation(fields: [userTestId], references: [id])
+  userTest      UserTest @relation(fields: [userTestId], references: [id], onDelete: Cascade)
   questionId    String
-  question      Question @relation(fields: [questionId], references: [id])
+  question      Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   
   respuestaDada String
   esCorrecta    Boolean
