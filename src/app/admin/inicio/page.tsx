@@ -9,19 +9,58 @@ import {
   Plus,
   Users,
   Settings,
+  Check,
+  X,
 } from "lucide-react";
+import { toast, Toaster } from "sonner";
 
 export default function AdminHomePage() {
   const [tests, setTests] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
 
   useEffect(() => {
     fetch("/api/admin/driving-tests")
       .then((res) => res.json())
       .then((data) => setTests(data.slice(0, 4)));
+
+    fetchRequests();
+
+    const interval = setInterval(fetchRequests, 30000);
+    return () => clearInterval(interval);
   }, []);
+
+  const fetchRequests = async () => {
+    try {
+      const res = await fetch("/api/admin/requests");
+      const data = await res.json();
+      setPendingRequests(data.filter((r: any) => r.status === "PENDING"));
+    } catch (error) {
+      console.error("Error al cargar solicitudes", error);
+    }
+  };
+
+  const handleRequestAction = async (requestId: number, status: string) => {
+    try {
+      const res = await fetch("/api/admin/requests", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId, status }),
+      });
+
+      if (!res.ok) throw new Error();
+
+      toast.success(
+        `Solicitud ${status === "APPROVED" ? "aceptada" : "rechazada"}`
+      );
+      fetchRequests();
+    } catch (error) {
+      toast.error("Error al procesar la solicitud");
+    }
+  };
 
   return (
     <div className="p-8 space-y-10">
+      <Toaster richColors />
       <header className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
@@ -66,7 +105,7 @@ export default function AdminHomePage() {
               <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-yellow-50 transition">
                 <FileText className="text-gray-400 group-hover:text-[#d4af37]" />
               </div>
-              <h3 className="font-bold text-gray-800 mb-1">
+              <h3 className="font-bold text-gray-800 mb-1 truncate">
                 {test.topic.name}
               </h3>
               <p className="text-xs text-gray-400 mb-4">
@@ -89,18 +128,92 @@ export default function AdminHomePage() {
         </div>
       </section>
 
-      {/* Placeholders para las otras secciones */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 min-h-[300px] flex flex-col items-center justify-center text-gray-300">
-          <Users size={48} className="mb-4 opacity-20" />
-          <p className="font-bold uppercase tracking-widest text-xs">
-            Gestión de Usuarios
-          </p>
+        {/* Gestión de Usuarios Rápida */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col space-y-6">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                <Users size={20} />
+              </div>
+              <h2 className="text-xl font-bold text-gray-800">
+                User Management
+              </h2>
+            </div>
+            {pendingRequests.length > 0 && (
+              <span className="bg-red-100 text-red-600 text-[10px] px-2 py-1 rounded-full font-bold">
+                {pendingRequests.length} PENDING
+              </span>
+            )}
+          </div>
+
+          <div className="flex-1 space-y-4">
+            {pendingRequests.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-gray-300 space-y-2 py-10">
+                <Users size={40} className="opacity-20" />
+                <p className="text-xs font-bold uppercase tracking-wider">
+                  No hay solicitudes
+                </p>
+              </div>
+            ) : (
+              pendingRequests.slice(0, 3).map((req: any) => (
+                <div
+                  key={req.id}
+                  className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-50"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                      {req.user.firstName.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-gray-800">
+                        {req.user.firstName} {req.user.lastName}
+                      </p>
+                      <p className="text-[10px] text-gray-400 font-medium">
+                        DNI: {req.user.dni || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleRequestAction(req.id, "APPROVED")}
+                      className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition"
+                    >
+                      <Check size={16} />
+                    </button>
+                    <button
+                      onClick={() => handleRequestAction(req.id, "REJECTED")}
+                      className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          <Link
+            href="/admin/users"
+            className="block text-center w-full py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition border-t border-gray-100 mt-4"
+          >
+            Ver todos los usuarios
+          </Link>
         </div>
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 min-h-[300px] flex flex-col items-center justify-center text-gray-300">
+
+        {/* Ajustes de IA (Placeholder) */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col items-center justify-center text-gray-300 relative overflow-hidden">
+          <div className="absolute top-6 left-8 flex items-center gap-3">
+            <div className="p-2 bg-gray-50 text-gray-400 rounded-xl">
+              <Settings size={20} />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">
+              AI Assistant Settings
+            </h2>
+          </div>
           <Settings size={48} className="mb-4 opacity-20" />
           <p className="font-bold uppercase tracking-widest text-xs">
-            Ajustes de IA
+            Próximamente: Configuración avanzada
           </p>
         </div>
       </div>
