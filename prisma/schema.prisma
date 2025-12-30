@@ -46,7 +46,7 @@ model Request {
   updatedAt DateTime @updatedAt
 
   userId Int
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -75,9 +75,9 @@ model Question {
   testId String
   test   Test   @relation(fields: [testId], references: [id], onDelete: Cascade)
 
-  enunciado         String @db.Text
+  enunciado         String  @db.Text
   opciones          Json
-  respuestaCorrecta String @db.Text
+  respuestaCorrecta String  @db.Text
   explicacion       String? @db.Text
 
   userResponses UserResponse[]
@@ -86,14 +86,14 @@ model Question {
 }
 
 model UserTest {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   userId      Int
-  user        User     @relation(fields: [userId], references: [id])
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   testId      String
-  test        Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  test        Test      @relation(fields: [testId], references: [id], onDelete: Cascade)
   
   score       Int?
-  completed   Boolean  @default(false)
+  completed   Boolean   @default(false)
   completedAt DateTime?
 
   responses   UserResponse[]
@@ -103,11 +103,11 @@ model UserTest {
 }
 
 model UserResponse {
-  id            String   @id @default(cuid())
+  id            String       @id @default(cuid())
   userTestId    String
-  userTest      UserTest @relation(fields: [userTestId], references: [id], onDelete: Cascade)
+  userTest      UserTest     @relation(fields: [userTestId], references: [id], onDelete: Cascade)
   questionId    String
-  question      Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  question      Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   
   respuestaDada String
   esCorrecta    Boolean
