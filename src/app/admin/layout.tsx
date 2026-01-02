@@ -1,4 +1,4 @@
-import Sidebar from "@/components/layout/Sidebar";
+import Sidebar from "@/components/layout/SidebarAdmin";
 import DashboardHeader from "@/components/layout/DashboardHeader";
 
 export default function AdminLayout({
@@ -11,9 +11,7 @@ export default function AdminLayout({
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <DashboardHeader />
-        <main className="p-8">
-          {children}
-        </main>
+        <main className="p-8">{children}</main>
       </div>
     </div>
   );

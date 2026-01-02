@@ -11,9 +11,9 @@ const Sidebar = () => {
   const menuItems = [
     { name: "Inicio", icon: Home, href: "/admin/inicio" },
     { name: "Tests", icon: FileText, href: "/admin/driving-tests" },
-    { name: "Tutor Virtual", icon: Bot, href: "/admin/tutor" },
-    { name: "Progreso", icon: BarChart2, href: "/admin/progreso" },
-    { name: "Flashcards", icon: Laptop, href: "/admin/flashcards" },
+    { name: "Temario", icon: Bot, href: "/admin/docs" },
+    { name: "Usuarios", icon: BarChart2, href: "/admin/users" },
+    { name: "Configurar IA", icon: Laptop, href: "/admin/ai/config" },
   ];
 
   return (

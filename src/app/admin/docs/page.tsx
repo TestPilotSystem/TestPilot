@@ -83,7 +83,7 @@ export default function UploadDocsPage() {
 
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-black text-gray-800 tracking-tight">
-          Admin: Gestión RAG
+          Admin: Añadir Manuales
         </h1>
         <p className="text-gray-400 font-medium">
           Sube manuales oficiales para alimentar el motor de IA.

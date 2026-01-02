@@ -84,10 +84,10 @@ export default function AdminHomePage() {
             <h2 className="text-xl font-bold text-gray-700">Tests Activos</h2>
           </div>
           <div className="flex gap-2">
-            <button className="p-2 border rounded-lg hover:bg-gray-50">
+            <button className="p-2 border border-gray-300 rounded-xl hover:bg-yellow-50 hover:border-yellow-200 text-gray-600 hover:text-yellow-700 transition-all cursor-pointer shadow-sm">
               <ChevronLeft size={20} />
             </button>
-            <button className="p-2 border rounded-lg hover:bg-gray-50">
+            <button className="p-2 border border-gray-300 rounded-xl hover:bg-yellow-50 hover:border-yellow-200 text-gray-600 hover:text-yellow-700 transition-all cursor-pointer shadow-sm">
               <ChevronRight size={20} />
             </button>
           </div>
@@ -211,7 +211,7 @@ export default function AdminHomePage() {
               AI Assistant Settings
             </h2>
           </div>
-          <Settings size={48} className="mb-4 opacity-20" />
+          <Settings size={48} className="mb-4 opacity-60" />
           <p className="font-bold uppercase tracking-widest text-xs">
             Próximamente: Configuración avanzada
           </p>
