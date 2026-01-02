@@ -9,23 +9,40 @@ export async function authGuard(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;
   const { pathname } = request.nextUrl;
 
-  if (!token) return { error: true, redirectTo: "/login" };
+  const isNotRegisteredPath = pathname === "/login" || pathname === "/register";
+  const isAdminPath = pathname.startsWith("/admin");
+  const isStudentPath = pathname.startsWith("/estudiante");
+
+  if (!token) {
+    if (isAdminPath || isStudentPath) {
+      return { error: true, redirectTo: "/login" };
+    }
+    return { error: false };
+  }
 
   try {
     const { payload } = await jwtVerify(token, secret);
     const role = payload.role as string;
 
-    if (pathname.startsWith("/admin") && role !== "ADMIN") {
+    if (isNotRegisteredPath) {
+      const dest = role === "ADMIN" ? "/admin/inicio" : "/estudiante/inicio";
+      return { error: true, redirectTo: dest };
+    }
+
+    if (isAdminPath && role !== "ADMIN") {
       return { error: true, redirectTo: "/estudiante/inicio" };
     }
 
-    if (pathname.startsWith("/estudiante") && role !== "STUDENT") {
+    if (isStudentPath && role !== "STUDENT") {
       return { error: true, redirectTo: "/admin/inicio" };
     }
 
     return { error: false, payload };
   } catch (e) {
-    return { error: true, redirectTo: "/login" };
+    if (isAdminPath || isStudentPath) {
+      return { error: true, redirectTo: "/login" };
+    }
+    return { error: false };
   }
 }
 
