@@ -3,7 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Home, FileText, Bot, BarChart2, Laptop, Settings } from "lucide-react";
+import {
+  Home,
+  FileText,
+  NotebookText,
+  Users,
+  Wrench,
+  Settings,
+} from "lucide-react";
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -11,9 +18,9 @@ const Sidebar = () => {
   const menuItems = [
     { name: "Inicio", icon: Home, href: "/admin/inicio" },
     { name: "Tests", icon: FileText, href: "/admin/driving-tests" },
-    { name: "Temario", icon: Bot, href: "/admin/docs" },
-    { name: "Usuarios", icon: BarChart2, href: "/admin/users" },
-    { name: "Configurar IA", icon: Laptop, href: "/admin/ai/config" },
+    { name: "Temario", icon: NotebookText, href: "/admin/docs" },
+    { name: "Usuarios", icon: Users, href: "/admin/users" },
+    { name: "Configurar IA", icon: Wrench, href: "/admin/ai/config" },
   ];
 
   return (
