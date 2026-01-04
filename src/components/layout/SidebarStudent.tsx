@@ -17,7 +17,7 @@ const SideBarStudent = () => {
 
   const menuItems = [
     { name: "Inicio", icon: Home, href: "/estudiante/inicio" },
-    { name: "Tests", icon: FileText, href: "/estudiante/tests" },
+    { name: "Tests", icon: FileText, href: "/estudiante/driving-tests" },
     { name: "Progreso", icon: BarChart2, href: "/estudiante/progreso" },
     { name: "Tutor Virtual", icon: MessageSquare, href: "/estudiante/tutor" },
     { name: "Flashcards", icon: Layers, href: "/estudiante/flashcards" },
