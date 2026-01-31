@@ -32,7 +32,7 @@ const Navbar = () => {
         {[
           { name: "Inicio", path: "/" },
           { name: "Sobre nosotros", path: "/about" },
-          { name: "Contacto", path: "/contacto" }
+          { name: "Contacto", path: "/contact" }
         ].map((link) => (
           <Link key={link.path} href={link.path} className="relative group hover:text-amber-700 transition-colors">
             {link.name}
