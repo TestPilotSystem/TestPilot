@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
+import { config } from "@/lib/config";
 
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
 
-    // TODO: Validate instead of directly forwarding
     const response = await fetch(
-      "http://127.0.0.1:8000/admin/ai/upload-manual",
+      `${config.ai.baseUrl}/admin/ai/upload-manual`,
       {
         method: "POST",
         body: formData,
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
 export async function DELETE() {
   try {
-    const response = await fetch("http://127.0.0.1:8000/admin/ai/reset-db", {
+    const response = await fetch(`${config.ai.baseUrl}/admin/ai/reset-db`, {
       method: "DELETE",
     });
 

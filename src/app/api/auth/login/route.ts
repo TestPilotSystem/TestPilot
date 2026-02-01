@@ -4,8 +4,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { loginSchema } from "@/lib/validations/auth";
-
-const JWT_SECRET = process.env.JWT_SECRET || "a_clave_secreta";
+import { config } from "@/lib/config";
 
 interface TokenPayload {
   id: string;
@@ -77,7 +76,7 @@ export async function POST(request: Request) {
         role: user.role,
         mustChangePassword: user.mustChangePassword,
       } as TokenPayload,
-      JWT_SECRET,
+      config.jwt.secret,
       { expiresIn: "1h" }
     );
 

@@ -1,9 +1,8 @@
 import { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
+import { config } from "@/lib/config";
 
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET || "a_clave_secreta"
-);
+const secret = new TextEncoder().encode(config.jwt.secret);
 
 export async function authGuard(request: NextRequest) {
   const token = request.cookies.get("auth_token")?.value;

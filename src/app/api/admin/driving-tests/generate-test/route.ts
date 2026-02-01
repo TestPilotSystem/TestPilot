@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-
-const JWT_SECRET = process.env.JWT_SECRET || "a_clave_secreta";
+import { config } from "@/lib/config";
 
 export async function POST(req: Request) {
   try {
@@ -20,7 +19,7 @@ export async function POST(req: Request) {
 
     let payload: any;
     try {
-      payload = jwt.verify(token, JWT_SECRET);
+      payload = jwt.verify(token, config.jwt.secret);
     } catch (err) {
       console.log("❌ Token inválido o expirado");
       return NextResponse.json(
@@ -41,7 +40,7 @@ export async function POST(req: Request) {
     console.log(`🚀 Llamando a la IA para el tema: ${topicName}`);
 
     const response = await fetch(
-      `http://127.0.0.1:8000/admin/ai/generate-full-test?topic=${encodeURIComponent(
+      `${config.ai.baseUrl}/admin/ai/generate-full-test?topic=${encodeURIComponent(
         topicName
       )}&num_questions=${numQuestions}`,
       {

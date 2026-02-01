@@ -87,11 +87,8 @@ export default function TestDetailsPage() {
     const toastId = toast.loading("La IA está redactando la pregunta...");
 
     try {
-      // Generate question service integration
       const aiRes = await fetch(
-        `http://127.0.0.1:8000/admin/ai/generate-question?topic=${encodeURIComponent(
-          test.topic.name
-        )}`
+        `/api/admin/questions/generate?topic=${encodeURIComponent(test.topic.name)}`
       );
 
       if (!aiRes.ok) throw new Error("Fallo en la generación de la IA");

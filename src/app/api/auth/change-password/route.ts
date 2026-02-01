@@ -4,8 +4,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { changePasswordSchema } from "@/lib/validations/auth";
-
-const JWT_SECRET = process.env.JWT_SECRET || "a_clave_secreta";
+import { config } from "@/lib/config";
 
 interface TokenPayload {
   id: string;
@@ -23,7 +22,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: "No autorizado" }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET) as unknown as TokenPayload;
+    const decoded = jwt.verify(token, config.jwt.secret) as unknown as TokenPayload;
     const userEmail = decoded.email;
 
     const body = await request.json();
@@ -61,9 +60,9 @@ export async function POST(request: Request) {
         id: String(user.id),
         email: user.email,
         role: user.role,
-        mustChangePassword: false, // Update the token payload
+        mustChangePassword: false,
       },
-      process.env.JWT_SECRET || "a_clave_secreta",
+      config.jwt.secret,
       { expiresIn: "1h" }
     );
 
