@@ -80,13 +80,14 @@ export async function POST(request: Request) {
       { expiresIn: "1h" }
     );
 
-    const response = NextResponse.json({
+  const response = NextResponse.json({
       message: "Login exitoso",
       user: {
         id: user.id,
         email: user.email,
         role: user.role,
         firstName: user.firstName,
+        dni: user.dni,
         mustChangePassword: user.mustChangePassword,
       },
     });

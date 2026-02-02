@@ -30,7 +30,8 @@ const LoginForm = () => {
         login({
           username: data.user.firstName,
           role: data.user.role,
-          email: data.user.email
+          email: data.user.email,
+          dni: data.user.dni,
         });
         router.push("/admin/inicio");
       } else {
