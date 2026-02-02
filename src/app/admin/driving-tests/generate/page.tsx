@@ -28,7 +28,13 @@ export default function GenerateTestPage() {
   const [fetchingTopics, setFetchingTopics] = useState(true);
 
   useEffect(() => {
-    const fetchTopics = async () => {
+    const syncAndFetchTopics = async () => {
+      try {
+        await fetch("/api/admin/topics/sync", { method: "POST" });
+      } catch (error) {
+        console.log("Sync con IA no disponible, usando topics locales");
+      }
+
       try {
         const res = await fetch("/api/topics");
         const data = await res.json();
@@ -39,7 +45,7 @@ export default function GenerateTestPage() {
         setFetchingTopics(false);
       }
     };
-    fetchTopics();
+    syncAndFetchTopics();
   }, []);
 
   const handleGenerate = async () => {

@@ -109,22 +109,8 @@ async function main() {
     });
   }
 
-  // Topic seeding
-  const topics = [
-    ...Array.from({ length: 17 }, (_, i) => `Tema ${i + 1}`),
-    "Anexo: Puntos",
-  ];
-
-  for (const topicName of topics) {
-    await prisma.topic.upsert({
-      where: { name: topicName },
-      update: {},
-      create: { name: topicName },
-    });
-  }
-
   console.log(
-    `✅ Created admin, ${studentsData.length} active students, ${pendingData.length} pending requests and ${topics.length} topics.`
+    `✅ Created admin, ${studentsData.length} active students, ${pendingData.length} pending requests.`
   );
   console.log("✨ Seeding finished.");
 }

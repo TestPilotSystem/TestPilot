@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings, Loader2, Check, MessageSquare, User } from "lucide-react";
+import { Settings, Loader2, Check, MessageSquare, User, RefreshCw, BookOpen, Info } from "lucide-react";
 import { toast, Toaster } from "sonner";
 
 const TONE_OPTIONS = [
@@ -16,6 +16,7 @@ export default function AIConfigPage() {
   const [useStudentNames, setUseStudentNames] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -54,6 +55,29 @@ export default function AIConfigPage() {
       toast.error("Error al guardar la configuración");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleSyncTopics = async () => {
+    setIsSyncing(true);
+    try {
+      const response = await fetch("/api/admin/topics/sync", { method: "POST" });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        toast.error(data.error || "No se pudo sincronizar con el servicio de IA");
+        return;
+      }
+      
+      if (data.synced > 0) {
+        toast.success(`${data.synced} nuevos topics sincronizados`);
+      } else {
+        toast.info("Topics actualizados, no hay nuevos temas");
+      }
+    } catch (error) {
+      toast.error("Error al conectar con el servicio de IA");
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -143,6 +167,39 @@ export default function AIConfigPage() {
                 }`}
               />
             </button>
+          </div>
+        </div>
+
+        <div className="pt-8 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 bg-green-50 rounded-2xl text-green-600">
+                <BookOpen size={24} />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-800">Sincronizar Topics</h2>
+                <p className="text-sm text-gray-400">
+                  Actualizar los temas disponibles desde el servicio de IA
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSyncTopics}
+              disabled={isSyncing}
+              className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-600 rounded-xl font-medium hover:bg-green-100 transition disabled:opacity-50"
+            >
+              <RefreshCw size={18} className={isSyncing ? "animate-spin" : ""} />
+              {isSyncing ? "Sincronizando..." : "Refrescar"}
+            </button>
+          </div>
+
+          <div className="bg-blue-50 p-4 rounded-xl flex items-start gap-3 text-blue-700 text-xs font-medium border border-blue-100">
+            <Info size={16} className="shrink-0 mt-0.5" />
+            <p>
+              Si existen topics en el servicio de IA que no fueron registrados a través de TestPilot,
+              no aparecerán como opción hasta sincronizar manualmente.
+            </p>
           </div>
         </div>
       </div>
