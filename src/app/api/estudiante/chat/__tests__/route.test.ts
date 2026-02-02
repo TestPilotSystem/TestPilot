@@ -1,10 +1,61 @@
-import { POST } from "../route";
+import { POST, GET, DELETE } from "../route";
+import { prisma } from "@/lib/prisma";
+
+jest.mock("@/lib/prisma", () => ({
+  prisma: {
+    chatConfig: {
+      findUnique: jest.fn(),
+    },
+    user: {
+      findUnique: jest.fn(),
+    },
+    chatMessage: {
+      create: jest.fn(),
+      findMany: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+  },
+}));
+
+jest.mock("next/headers", () => ({
+  cookies: jest.fn(() => ({
+    get: jest.fn(() => ({ value: "valid-token" })),
+  })),
+}));
+
+jest.mock("jsonwebtoken", () => ({
+  verify: jest.fn(() => ({ id: "1" })),
+}));
 
 global.fetch = jest.fn();
 
 describe("Chat Tutor Route /api/estudiante/chat", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (prisma.chatConfig.findUnique as jest.Mock).mockResolvedValue({
+      tone: "formal",
+      useStudentNames: false,
+    });
+    (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+      firstName: "Juan",
+    });
+    (prisma.chatMessage.create as jest.Mock).mockResolvedValue({});
+    (prisma.chatMessage.findMany as jest.Mock).mockResolvedValue([]);
+  });
+
+  describe("GET", () => {
+    it("should return chat history", async () => {
+      (prisma.chatMessage.findMany as jest.Mock).mockResolvedValue([
+        { role: "user", content: "Hola" },
+        { role: "assistant", content: "¡Hola!" },
+      ]);
+
+      const response = await GET();
+      const body = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(body.messages).toHaveLength(2);
+    });
   });
 
   describe("POST", () => {
@@ -23,45 +74,8 @@ describe("Chat Tutor Route /api/estudiante/chat", () => {
       const body = await response.json();
 
       expect(response.status).toBe(200);
-      expect(body).toEqual(mockResponse);
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining("/chat/"),
-        expect.objectContaining({
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ question: "¿Qué es una rotonda?" }),
-        })
-      );
-    });
-
-    it("should forward optional parameters to the AI API", async () => {
-      const mockResponse = { response: "Respuesta formal" };
-      (global.fetch as jest.Mock).mockResolvedValue({
-        ok: true,
-        json: async () => mockResponse,
-      });
-
-      const requestBody = {
-        question: "¿Qué es un ceda el paso?",
-        topic: "señales",
-        tone: "formal",
-        user_name: "Juan",
-        history: [{ role: "user", content: "Hola" }],
-      };
-
-      const mockRequest = {
-        json: async () => requestBody,
-      } as unknown as Request;
-
-      const response = await POST(mockRequest);
-
-      expect(response.status).toBe(200);
-      expect(global.fetch).toHaveBeenCalledWith(
-        expect.stringContaining("/chat/"),
-        expect.objectContaining({
-          body: JSON.stringify(requestBody),
-        })
-      );
+      expect(body.response).toBe("Esta es la respuesta del tutor");
+      expect(prisma.chatMessage.create).toHaveBeenCalledTimes(2);
     });
 
     it("should return 400 if question is missing", async () => {
@@ -105,6 +119,18 @@ describe("Chat Tutor Route /api/estudiante/chat", () => {
 
       expect(response.status).toBe(500);
       expect(body.error).toBe("Error al comunicarse con el tutor IA");
+    });
+  });
+
+  describe("DELETE", () => {
+    it("should clear chat history", async () => {
+      (prisma.chatMessage.deleteMany as jest.Mock).mockResolvedValue({ count: 5 });
+
+      const response = await DELETE();
+      const body = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(body.message).toBe("Historial borrado");
     });
   });
 });
