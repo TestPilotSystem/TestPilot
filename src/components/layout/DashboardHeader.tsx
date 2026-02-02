@@ -40,7 +40,6 @@ const DashboardHeader = () => {
 
   const handleLogout = () => {
     logout();
-    router.push("/login");
   };
 
   return (
