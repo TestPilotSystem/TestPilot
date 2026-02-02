@@ -88,6 +88,7 @@ export async function POST(request: Request) {
         role: user.role,
         firstName: user.firstName,
         dni: user.dni,
+        avatarId: user.avatarId,
         mustChangePassword: user.mustChangePassword,
       },
     });

@@ -5,6 +5,7 @@ import { Bell, LogOut, Settings, ChevronDown, User } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth();
@@ -35,6 +36,7 @@ const DashboardHeader = () => {
   const displayName = mounted ? user?.username || "Usuario" : "Usuario";
   const displayRole = mounted ? user?.role || "Invitado" : "Invitado";
   const displayDni = mounted ? user?.dni || "No disponible" : "---";
+  const displayAvatar = mounted ? user?.avatarId : null;
   const isAdmin = displayRole === "ADMIN";
   const settingsPath = isAdmin ? "/admin/ajustes" : "/estudiante/ajustes";
 
@@ -70,8 +72,20 @@ const DashboardHeader = () => {
                 {displayRole}
               </p>
             </div>
-            <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-700 font-bold border border-yellow-200">
-              {displayName.charAt(0).toUpperCase()}
+            <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden border border-yellow-200">
+              {displayAvatar ? (
+                <Image
+                  src={`/avatars/${displayAvatar}.webp`}
+                  alt="Avatar"
+                  width={40}
+                  height={40}
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-yellow-100 flex items-center justify-center text-yellow-700 font-bold">
+                  {displayName.charAt(0).toUpperCase()}
+                </div>
+              )}
             </div>
             <ChevronDown 
               size={16} 
@@ -106,8 +120,20 @@ const DashboardHeader = () => {
               >
                 <div className="p-5 bg-gradient-to-br from-yellow-50 to-orange-50 border-b border-gray-100">
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-700 font-bold text-xl border-2 border-yellow-200">
-                      {displayName.charAt(0).toUpperCase()}
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden border-2 border-yellow-200">
+                      {displayAvatar ? (
+                        <Image
+                          src={`/avatars/${displayAvatar}.webp`}
+                          alt="Avatar"
+                          width={56}
+                          height={56}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-yellow-100 flex items-center justify-center text-yellow-700 font-bold text-xl">
+                          {displayName.charAt(0).toUpperCase()}
+                        </div>
+                      )}
                     </div>
                     <div>
                       <p className="font-bold text-gray-800 text-lg">{displayName}</p>

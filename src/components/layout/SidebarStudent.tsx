@@ -58,7 +58,11 @@ const SideBarStudent = () => {
       <div className="pt-6 border-t border-gray-100">
         <Link
           href="/estudiante/ajustes"
-          className="flex items-center gap-4 px-4 py-3 text-gray-600 font-semibold hover:bg-gray-50 rounded-xl transition cursor-pointer"
+          className={`flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition cursor-pointer ${
+            pathname === "/estudiante/ajustes"
+              ? "bg-yellow-600 text-white shadow-md"
+              : "text-gray-600 hover:bg-gray-50"
+          }`}
         >
           <Settings size={22} />
           Ajustes

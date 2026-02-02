@@ -8,12 +8,14 @@ interface User {
   role: string;
   email?: string;
   dni?: string;
+  avatarId?: string;
 }
 
 interface AuthContextType {
   user: User | null;
   login: (userData: User) => void;
   logout: () => Promise<void>;
+  updateUser: (updates: Partial<User>) => void;
   loading: boolean;
 }
 
@@ -36,25 +38,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("testpilot_user", JSON.stringify(userData));
   };
 
+  const updateUser = (updates: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      localStorage.setItem("testpilot_user", JSON.stringify(updatedUser));
+    }
+  };
+
   const logout = async () => {
     try {
-      // Call to clear server-side session/cookie
       await fetch("/api/auth/logout", { method: "POST" });
     } catch (error) {
       console.error("Error al cerrar sesión en el servidor");
     } finally {
-      // Clean up client-side state
       setUser(null);
       localStorage.removeItem("testpilot_user");
-
-      // Make sure to redirect to login page
       router.push("/login");
       router.refresh();
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, updateUser, loading }}>
       {children}
     </AuthContext.Provider>
   );

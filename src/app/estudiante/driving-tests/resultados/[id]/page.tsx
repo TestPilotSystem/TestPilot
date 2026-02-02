@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import DashboardHeader from "@/components/layout/DashboardHeader";
 import { Loader2, CheckCircle2, XCircle, HelpCircle, Home } from "lucide-react";
 
 export default function ResultPage() {
@@ -39,7 +38,6 @@ export default function ResultPage() {
 
   return (
     <div className="flex-1 min-h-screen bg-[#fafafa]">
-      <DashboardHeader />
       <main className="p-8 flex flex-col items-center">
         <div className="max-w-4xl w-full bg-white p-12 rounded-[3rem] border border-gray-100 shadow-sm text-center">
           <h1 className="text-3xl font-black text-gray-800 mb-2">

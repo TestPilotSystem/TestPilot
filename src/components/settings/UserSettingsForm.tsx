@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { User, Mail, CreditCard, Loader2, Check, Save } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import Image from "next/image";
+import { useAuth } from "@/context/AuthContext";
 
 const STUDENT_AVATARS = [
   "avatar-1",
@@ -29,6 +30,7 @@ interface UserSettingsFormProps {
 }
 
 export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormProps) {
+  const { updateUser } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [email, setEmail] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState<string | null>(null);
@@ -81,6 +83,7 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
 
       setProfile(data.user);
       setHasChanges(false);
+      updateUser({ email: data.user.email, avatarId: data.user.avatarId });
       toast.success("Perfil actualizado correctamente");
     } catch (error) {
       toast.error("Error al guardar el perfil");

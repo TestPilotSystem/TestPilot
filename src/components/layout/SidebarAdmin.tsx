@@ -58,7 +58,11 @@ const Sidebar = () => {
       <div className="pt-6 border-t border-gray-100">
         <Link
           href="/admin/ajustes"
-          className="flex items-center gap-4 px-4 py-3 text-gray-600 font-semibold hover:bg-gray-50 rounded-xl transition"
+          className={`flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition ${
+            pathname === "/admin/ajustes"
+              ? "bg-yellow-600 text-white shadow-md"
+              : "text-gray-600 hover:bg-gray-50"
+          }`}
         >
           <Settings size={22} />
           Ajustes

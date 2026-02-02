@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import TestRunner from "@/components/driving-tests/TestRunner";
-import DashboardHeader from "@/components/layout/DashboardHeader";
 import { Loader2 } from "lucide-react";
 
 export default function TestExecutionPage() {
@@ -30,7 +29,6 @@ export default function TestExecutionPage() {
 
   return (
     <div className="flex-1 min-h-screen bg-[#fafafa]">
-      <DashboardHeader />
       <main className="p-8">{test && <TestRunner test={test} />}</main>
     </div>
   );

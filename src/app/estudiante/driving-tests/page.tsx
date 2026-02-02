@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import DashboardHeader from "@/components/layout/DashboardHeader";
 import { BookOpen, Search, Filter, Clock, Loader2 } from "lucide-react";
 import Link from "next/link";
 
@@ -28,8 +27,6 @@ export default function StudentTestsPage() {
 
   return (
     <div className="flex-1 min-h-screen bg-[#fafafa]">
-      <DashboardHeader />
-
       <main className="p-8 space-y-6">
         <header>
           <h1 className="text-3xl font-black text-gray-800 tracking-tight">

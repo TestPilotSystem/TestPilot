@@ -1,6 +1,5 @@
 "use client";
 
-import DashboardHeader from "@/components/layout/DashboardHeader";
 import {
   BookOpen,
   XCircle,
@@ -17,8 +16,6 @@ import {
 export default function StudentDashboard() {
   return (
     <div className="flex-1 min-h-screen bg-[#fafafa]">
-      <DashboardHeader />
-
       <main className="p-8 space-y-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Tests */}
