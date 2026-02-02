@@ -23,7 +23,7 @@ export async function POST() {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
-    const response = await fetch(`${config.ai.baseUrl}/topics/`);
+    const response = await fetch(`${config.ai.baseUrl}/admin/ai/topics/`);
     
     if (!response.ok) {
       return NextResponse.json(
