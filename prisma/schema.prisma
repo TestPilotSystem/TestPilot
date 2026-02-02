@@ -33,8 +33,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  requests  Request[]
-  userTests UserTest[]
+  requests     Request[]
+  userTests    UserTest[]
+  chatMessages ChatMessage[]
 }
 
 model Request {
@@ -114,4 +115,22 @@ model UserResponse {
 
   @@index([userTestId])
   @@index([questionId])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model ChatConfig {
+  id              String   @id @default("default")
+  tone            String   @default("formal")
+  useStudentNames Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
 }

@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Loader2, Bot, User, Sparkles } from "lucide-react";
+import { Send, Loader2, Bot, User, Sparkles, Trash2 } from "lucide-react";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 interface Message {
   role: "user" | "assistant";
@@ -13,6 +14,9 @@ export default function TutorPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [isClearModalOpen, setIsClearModalOpen] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -22,6 +26,23 @@ export default function TutorPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const response = await fetch("/api/estudiante/chat");
+        if (response.ok) {
+          const data = await response.json();
+          setMessages(data.messages || []);
+        }
+      } catch (error) {
+        console.error("Error loading chat history");
+      } finally {
+        setIsLoadingHistory(false);
+      }
+    };
+    loadHistory();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,10 +57,7 @@ export default function TutorPage() {
       const response = await fetch("/api/estudiante/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          question: userMessage.content,
-          history: messages,
-        }),
+        body: JSON.stringify({ question: userMessage.content }),
       });
 
       if (!response.ok) throw new Error("Error en la respuesta");
@@ -63,6 +81,29 @@ export default function TutorPage() {
     }
   };
 
+  const handleClearChat = async () => {
+    setIsClearing(true);
+    try {
+      const response = await fetch("/api/estudiante/chat", { method: "DELETE" });
+      if (response.ok) {
+        setMessages([]);
+        setIsClearModalOpen(false);
+      }
+    } catch (error) {
+      console.error("Error clearing chat");
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
+  if (isLoadingHistory) {
+    return (
+      <main className="min-h-screen bg-gradient-to-br from-stone-50 via-orange-50 to-yellow-50 pt-24 pb-8 px-4 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-yellow-600 animate-spin" />
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-stone-50 via-orange-50 to-yellow-50 pt-24 pb-8 px-4">
       <div className="max-w-3xl mx-auto h-[calc(100vh-8rem)] flex flex-col">
@@ -85,6 +126,18 @@ export default function TutorPage() {
         </motion.div>
 
         <div className="flex-1 bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-white/50 overflow-hidden flex flex-col">
+          {messages.length > 0 && (
+            <div className="flex justify-end p-3 border-b border-gray-100">
+              <button
+                onClick={() => setIsClearModalOpen(true)}
+                className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                Limpiar chat
+              </button>
+            </div>
+          )}
+
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {messages.length === 0 && (
               <motion.div
@@ -181,6 +234,16 @@ export default function TutorPage() {
           </form>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={isClearModalOpen}
+        onClose={() => setIsClearModalOpen(false)}
+        onConfirm={handleClearChat}
+        title="¿Limpiar conversación?"
+        description="Se borrará toda la memoria de la conversación y la IA no podrá seguir el contexto anterior."
+        confirmText="Limpiar"
+        loading={isClearing}
+      />
     </main>
   );
 }
