@@ -22,6 +22,7 @@ describe("GET /api/student/driving-tests", () => {
       topic: { name: "Tema 1" },
       _count: { questions: 5 },
       createdAt: new Date(),
+      type: "BASIC",
     },
     {
       id: "test-2",
@@ -29,6 +30,7 @@ describe("GET /api/student/driving-tests", () => {
       topic: { name: "Tema 2" },
       _count: { questions: 10 },
       createdAt: new Date(),
+      type: "BASIC",
     },
     {
       id: "test-3",
@@ -36,6 +38,7 @@ describe("GET /api/student/driving-tests", () => {
       topic: { name: "Señales" },
       _count: { questions: 8 },
       createdAt: new Date(),
+      type: "BASIC",
     },
   ];
 
@@ -83,7 +86,16 @@ describe("GET /api/student/driving-tests", () => {
         where: expect.objectContaining({
           AND: expect.arrayContaining([
             expect.objectContaining({
-              topic: { name: { contains: "tema" } },
+              OR: expect.arrayContaining([
+                // Default filters (BASIC, userId: null) + others...
+                expect.objectContaining({ type: "BASIC", userId: null }),
+              ]),
+            }),
+            expect.objectContaining({
+              OR: expect.arrayContaining([
+                expect.objectContaining({ topic: { name: { contains: "tema" } } }),
+                expect.objectContaining({ name: { contains: "tema" } }),
+              ]),
             }),
           ]),
         }),
@@ -108,7 +120,7 @@ describe("GET /api/student/driving-tests", () => {
 
   it("should return empty array when filtering by ERROR type (none exist yet)", async () => {
     (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
-    (prisma.test.findMany as jest.Mock).mockResolvedValue(mockTests);
+    (prisma.test.findMany as jest.Mock).mockResolvedValue([]);
 
     const request = new Request("http://localhost/api/student/driving-tests?types=ERROR");
     const response = await GET(request);

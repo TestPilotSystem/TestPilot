@@ -52,6 +52,9 @@ describe("GET /api/student/driving-tests", () => {
       orderBy: {
         createdAt: "desc",
       },
+      where: {
+        type: "BASIC",
+      },
     });
   });
 
