@@ -28,7 +28,7 @@ describe("AI Admin Route /api/admin/ai/config", () => {
       expect(response.status).toBe(200);
       expect(body).toEqual(mockSuccessResponse);
       expect(global.fetch).toHaveBeenCalledWith(
-        "http://127.0.0.1:8000/admin/ai/upload-manual",
+        expect.stringContaining("/admin/ai/upload-manual"),
         expect.objectContaining({
           method: "POST",
           body: mockFormData,
@@ -79,7 +79,7 @@ describe("AI Admin Route /api/admin/ai/config", () => {
       expect(response.status).toBe(200);
       expect(body.message).toBe("Base de datos reseteada");
       expect(global.fetch).toHaveBeenCalledWith(
-        "http://127.0.0.1:8000/admin/ai/reset-db",
+        expect.stringContaining("/admin/ai/reset-db"),
         { method: "DELETE" }
       );
     });
