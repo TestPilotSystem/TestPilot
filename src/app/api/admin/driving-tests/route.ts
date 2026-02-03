@@ -4,6 +4,9 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   try {
     const tests = await prisma.test.findMany({
+      where: {
+        type: "BASIC",
+      },
       include: {
         topic: true,
         _count: {

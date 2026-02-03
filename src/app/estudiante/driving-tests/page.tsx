@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { BookOpen, Search, Filter, Clock, Loader2, Check, AlertTriangle, Sparkles } from "lucide-react";
+import { BookOpen, Search, Filter, Clock, Loader2, Check, AlertTriangle, Sparkles, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type TestType = "BASIC" | "ERROR" | "CUSTOM";
 
@@ -20,8 +21,10 @@ const TYPE_CONFIG: Record<TestType, { label: string; icon: React.ReactNode; colo
 };
 
 export default function StudentTestsPage() {
+  const router = useRouter();
   const [tests, setTests] = useState<TestItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<TestType[]>(["BASIC", "ERROR", "CUSTOM"]);
@@ -39,6 +42,25 @@ export default function StudentTestsPage() {
     setTests(data);
     setLoading(false);
   }, [search, selectedTypes]);
+  
+  const regenerateErrorTests = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch("/api/student/error-tests/generate", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message);
+        fetchTests();
+      } else {
+        alert(data.message || "Error al generar tests");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error de conexión");
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   // Debounce search
   useEffect(() => {
@@ -122,6 +144,16 @@ export default function StudentTestsPage() {
               className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-yellow-500 transition shadow-sm font-medium text-gray-800 placeholder:text-gray-400"
             />
           </div>
+
+          
+          <button
+            onClick={regenerateErrorTests}
+            className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-500 hover:bg-red-100 transition shadow-sm cursor-pointer active:scale-95"
+            title="Refrescar tests de errores"
+          >
+            <RefreshCw size={24} />
+          </button>
+
           <div className="relative">
             <button
               onClick={() => setShowFilters(!showFilters)}

@@ -18,6 +18,12 @@ enum RequestStatus {
   REJECTED
 }
 
+enum TestType {
+  BASIC
+  ERROR
+  CUSTOM
+}
+
 model User {
   id                 Int       @id @default(autoincrement())
   email              String    @unique
@@ -61,15 +67,20 @@ model Topic {
 
 model Test {
   id        String   @id @default(cuid())
+  type      TestType @default(BASIC)
+  name      String?  // Optional name for ERROR/CUSTOM tests
   createdAt DateTime @default(now())
 
-  topicId String
-  topic   Topic  @relation(fields: [topicId], references: [id])
-
+  topicId   String?
+  topic     Topic?   @relation(fields: [topicId], references: [id])
+  
+  userId    Int?     // Owner for ERROR/CUSTOM tests (null for BASIC)
+  
   questions Question[]
   attempts  UserTest[]
 
   @@index([topicId])
+  @@index([userId])
 }
 
 model Question {
@@ -114,6 +125,8 @@ model UserResponse {
   
   respuestaDada String
   esCorrecta    Boolean
+  
+  isRectified   Boolean @default(false)
 
   @@index([userTestId])
   @@index([questionId])

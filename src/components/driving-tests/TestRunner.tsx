@@ -9,6 +9,7 @@ import {
   Send,
   Loader2,
   ChevronsLeft,
+  Check,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -22,9 +23,35 @@ export default function TestRunner({ test }: { test: any }) {
 
   const TOTAL_TIME = 30 * 60;
 
+  const [finishState, setFinishState] = useState<{ rectified: number; correct: number; total: number } | null>(null);
+
   const handleFinish = useCallback(async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
+
+    if (test.type === "ERROR") {
+        try {
+            const res = await fetch("/api/student/error-tests/submit", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ testId: test.id, responses }),
+            });
+            
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+
+            setFinishState({
+              rectified: data.rectifiedCount,
+              correct: data.correctCount,
+              total: data.totalQuestions
+            });
+            setIsSubmitting(false); 
+        } catch (error) {
+            toast.error("Error al procesar el test de errores");
+            setIsSubmitting(false);
+        }
+        return;
+    }
 
     const timeSpentSeconds = TOTAL_TIME - timeLeft;
 
@@ -43,7 +70,7 @@ export default function TestRunner({ test }: { test: any }) {
       toast.error("Error al guardar el test");
       setIsSubmitting(false);
     }
-  }, [isSubmitting, test.id, responses, router, timeLeft]);
+  }, [isSubmitting, test.id, test.type, responses, router, timeLeft]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -62,10 +89,35 @@ export default function TestRunner({ test }: { test: any }) {
 
   const currentQuestion = test.questions[currentIndex];
 
+  if (finishState) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 bg-white p-12 rounded-[2.5rem] border border-gray-100 shadow-sm">
+        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-4 animate-bounce">
+          <Check size={48} strokeWidth={3} />
+        </div>
+        <div>
+          <h2 className="text-3xl font-black text-gray-800 mb-2">¡Repaso Completado!</h2>
+          <p className="text-gray-500 font-medium text-lg">
+            Has eliminado <span className="text-green-600 font-bold">{finishState.rectified}</span> errores de tu historial.
+          </p>
+          <p className="text-sm text-gray-400 mt-2">
+            Aciertos: {finishState.correct}/{finishState.total}
+          </p>
+        </div>
+        <button
+          onClick={() => router.push("/estudiante/driving-tests")}
+          className="bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-black transition shadow-xl"
+        >
+          Volver al Dashboard
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-        <h2 className="text-xl font-bold text-gray-800">{test.topic.name}</h2>
+        <h2 className="text-xl font-bold text-gray-800">{test.topic?.name || test.name}</h2>
         <div
           className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-black ${
             timeLeft < 300
@@ -123,7 +175,7 @@ export default function TestRunner({ test }: { test: any }) {
                   ? "bg-yellow-600 text-white shadow-lg"
                   : responses[q.id]
                   ? "bg-green-100 text-green-600"
-                  : "bg-gray-50 text-gray-400"
+                  : "bg-gray-50 text-gray-800"
               }`}
             >
               {i + 1}
@@ -134,13 +186,13 @@ export default function TestRunner({ test }: { test: any }) {
         <div className="flex gap-2">
           <button
             onClick={() => setCurrentIndex(0)}
-            className="p-4 border border-gray-100 rounded-2xl hover:bg-gray-50 cursor-pointer transition"
+            className="p-4 border border-gray-200 rounded-2xl hover:bg-gray-100 text-gray-800 cursor-pointer transition"
           >
             <ChevronsLeft size={20} />
           </button>
           <button
             onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
-            className="p-4 border border-gray-100 rounded-2xl hover:bg-gray-50 cursor-pointer transition"
+            className="p-4 border border-gray-200 rounded-2xl hover:bg-gray-100 text-gray-800 cursor-pointer transition"
           >
             <ChevronLeft size={20} />
           </button>
@@ -150,13 +202,13 @@ export default function TestRunner({ test }: { test: any }) {
                 Math.min(test.questions.length - 1, currentIndex + 1)
               )
             }
-            className="p-4 border border-gray-100 rounded-2xl hover:bg-gray-50 cursor-pointer transition"
+            className="p-4 border border-gray-200 rounded-2xl hover:bg-gray-100 text-gray-800 cursor-pointer transition"
           >
             <ChevronRight size={20} />
           </button>
           <button
             onClick={() => setCurrentIndex(test.questions.length - 1)}
-            className="p-4 border border-gray-100 rounded-2xl hover:bg-gray-50 cursor-pointer transition"
+            className="p-4 border border-gray-200 rounded-2xl hover:bg-gray-100 text-gray-800 cursor-pointer transition"
           >
             <ChevronsRight size={20} />
           </button>

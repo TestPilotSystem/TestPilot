@@ -1,38 +1,49 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { authGuard } from "@/lib/middleware/guards";
+import { TestType } from "@prisma/client";
 
 export async function GET(request: Request) {
   const auth = await authGuard(request as any);
-  if (auth.error) {
+  if (auth.error || !auth.payload) {
     return NextResponse.json({ message: "No autorizado" }, { status: 401 });
   }
 
   try {
+    const userId = Number(auth.payload.id);
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search")?.toLowerCase() || "";
     const typesParam = searchParams.get("types") || "";
     
-    // Parse types filter (comma-separated: "BASIC,ERROR,CUSTOM")
     const typesFilter = typesParam
       ? typesParam.split(",").filter((t) => ["BASIC", "ERROR", "CUSTOM"].includes(t))
       : [];
 
+    const typeConditions = [];
+    
+    if (typesFilter.length === 0 || typesFilter.includes("BASIC")) {
+      typeConditions.push({ type: "BASIC" as TestType, userId: null });
+    }
+    
+    if (typesFilter.length === 0 || typesFilter.includes("ERROR")) {
+      typeConditions.push({ type: "ERROR" as TestType, userId });
+    }
+    if (typesFilter.length === 0 || typesFilter.includes("CUSTOM")) {
+      typeConditions.push({ type: "CUSTOM" as TestType, userId });
+    }
+
     const tests = await prisma.test.findMany({
       where: {
         AND: [
-          // Search by topic name
+          { OR: typeConditions },
           search
             ? {
-                topic: {
-                  name: {
-                    contains: search,
-                  },
-                },
+                OR: [
+                  { topic: { name: { contains: search } } },
+                  { name: { contains: search } },
+                ],
               }
             : {},
-          // Filter by type (when schema is updated, for now return all)
-          // typesFilter.length > 0 ? { type: { in: typesFilter } } : {},
         ],
       },
       include: {
@@ -48,19 +59,14 @@ export async function GET(request: Request) {
       },
     });
 
-    // Add virtual type field for now (all are BASIC until schema is updated)
-    const testsWithType = tests.map((test) => ({
+    const formattedTests = tests.map(test => ({
       ...test,
-      type: "BASIC" as const,
+      topic: test.topic || { name: test.name || "Test Personalizado" } 
     }));
 
-    // Apply client-side type filter until schema is updated
-    const filteredTests = typesFilter.length > 0
-      ? testsWithType.filter((t) => typesFilter.includes(t.type))
-      : testsWithType;
-
-    return NextResponse.json(filteredTests);
+    return NextResponse.json(formattedTests);
   } catch (error) {
+    console.error("Error fetching tests:", error);
     return NextResponse.json(
       { message: "Error al obtener los tests" },
       { status: 500 }

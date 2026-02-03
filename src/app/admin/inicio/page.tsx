@@ -133,7 +133,7 @@ export default function AdminHomePage() {
                   <FileText className="text-gray-400 group-hover:text-[#d4af37]" />
                 </div>
                 <h3 className="font-bold text-gray-800 mb-1 truncate">
-                  {test.topic.name}
+                  {test.topic?.name || test.name || "Test Personalizado"}
                 </h3>
                 <p className="text-xs text-gray-400 mb-4">
                   Actualizado: {new Date(test.createdAt).toLocaleDateString()}
