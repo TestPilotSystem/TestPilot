@@ -18,8 +18,23 @@ describe("GET /api/student/driving-tests", () => {
   const mockTests = [
     {
       id: "test-1",
-      topic: { name: "Seguridad Vial" },
-      _count: { questions: 30 },
+      topicId: "topic-1",
+      topic: { name: "Tema 1" },
+      _count: { questions: 5 },
+      createdAt: new Date(),
+    },
+    {
+      id: "test-2",
+      topicId: "topic-2",
+      topic: { name: "Tema 2" },
+      _count: { questions: 10 },
+      createdAt: new Date(),
+    },
+    {
+      id: "test-3",
+      topicId: "topic-3",
+      topic: { name: "Señales" },
+      _count: { questions: 8 },
       createdAt: new Date(),
     },
   ];
@@ -31,7 +46,7 @@ describe("GET /api/student/driving-tests", () => {
   it("should return 401 if authGuard fails", async () => {
     (authGuard as jest.Mock).mockResolvedValue({ error: "No autorizado" });
 
-    const request = {} as Request;
+    const request = new Request("http://localhost/api/student/driving-tests");
     const response = await GET(request);
     const body = await response.json();
 
@@ -40,33 +55,98 @@ describe("GET /api/student/driving-tests", () => {
     expect(prisma.test.findMany).not.toHaveBeenCalled();
   });
 
-  it("should return 200 and the tests if authorized", async () => {
+  it("should return 200 and all tests with type field when no filters", async () => {
     (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
     (prisma.test.findMany as jest.Mock).mockResolvedValue(mockTests);
 
-    const request = {} as Request;
+    const request = new Request("http://localhost/api/student/driving-tests");
+    const response = await GET(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toHaveLength(3);
+    expect(body[0]).toHaveProperty("type", "BASIC");
+    expect(body[0].topic.name).toBe("Tema 1");
+  });
+
+  it("should filter tests by search term (topic name)", async () => {
+    (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
+    (prisma.test.findMany as jest.Mock).mockResolvedValue([mockTests[0]]);
+
+    const request = new Request("http://localhost/api/student/driving-tests?search=tema");
+    const response = await GET(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(prisma.test.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          AND: expect.arrayContaining([
+            expect.objectContaining({
+              topic: { name: { contains: "tema" } },
+            }),
+          ]),
+        }),
+      })
+    );
+  });
+
+  it("should filter tests by type=BASIC", async () => {
+    (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
+    (prisma.test.findMany as jest.Mock).mockResolvedValue(mockTests);
+
+    const request = new Request("http://localhost/api/student/driving-tests?types=BASIC");
+    const response = await GET(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toHaveLength(3);
+    body.forEach((test: any) => {
+      expect(test.type).toBe("BASIC");
+    });
+  });
+
+  it("should return empty array when filtering by ERROR type (none exist yet)", async () => {
+    (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
+    (prisma.test.findMany as jest.Mock).mockResolvedValue(mockTests);
+
+    const request = new Request("http://localhost/api/student/driving-tests?types=ERROR");
+    const response = await GET(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toHaveLength(0);
+  });
+
+  it("should handle combined search and type filters", async () => {
+    (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
+    (prisma.test.findMany as jest.Mock).mockResolvedValue([mockTests[0]]);
+
+    const request = new Request("http://localhost/api/student/driving-tests?search=tema&types=BASIC");
     const response = await GET(request);
     const body = await response.json();
 
     expect(response.status).toBe(200);
     expect(body).toHaveLength(1);
-    expect(body[0].topic.name).toBe("Seguridad Vial");
-    expect(prisma.test.findMany).toHaveBeenCalledWith({
-      include: {
-        topic: { select: { name: true } },
-        _count: { select: { questions: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+  });
+
+  it("should ignore invalid type values", async () => {
+    (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
+    (prisma.test.findMany as jest.Mock).mockResolvedValue(mockTests);
+
+    const request = new Request("http://localhost/api/student/driving-tests?types=INVALID,BASIC");
+    const response = await GET(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body).toHaveLength(3);
   });
 
   it("should return 500 if prisma fails", async () => {
     (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
-    (prisma.test.findMany as jest.Mock).mockRejectedValue(
-      new Error("DB error")
-    );
+    (prisma.test.findMany as jest.Mock).mockRejectedValue(new Error("DB error"));
 
-    const request = {} as Request;
+    const request = new Request("http://localhost/api/student/driving-tests");
     const response = await GET(request);
     const body = await response.json();
 
