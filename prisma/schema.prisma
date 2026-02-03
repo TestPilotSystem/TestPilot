@@ -94,9 +94,10 @@ model UserTest {
   testId      String
   test        Test      @relation(fields: [testId], references: [id], onDelete: Cascade)
   
-  score       Int?
-  completed   Boolean   @default(false)
-  completedAt DateTime?
+  score            Int?
+  timeSpentSeconds Int?
+  completed        Boolean   @default(false)
+  completedAt      DateTime?
 
   responses   UserResponse[]
 

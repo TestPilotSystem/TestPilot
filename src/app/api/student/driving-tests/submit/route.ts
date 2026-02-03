@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { testId, responses } = await request.json();
+    const { testId, responses, timeSpentSeconds } = await request.json();
     const test = await prisma.test.findUnique({
       where: { id: testId },
       include: { questions: true },
@@ -43,6 +43,7 @@ export async function POST(request: Request) {
         userId,
         testId: test.id,
         score,
+        timeSpentSeconds: timeSpentSeconds ?? null,
         completed: true,
         completedAt: new Date(),
         responses: {

@@ -20,15 +20,19 @@ export default function TestRunner({ test }: { test: any }) {
   const [timeLeft, setTimeLeft] = useState(30 * 60);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const TOTAL_TIME = 30 * 60;
+
   const handleFinish = useCallback(async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
+
+    const timeSpentSeconds = TOTAL_TIME - timeLeft;
 
     try {
       const res = await fetch("/api/student/driving-tests/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ testId: test.id, responses }),
+        body: JSON.stringify({ testId: test.id, responses, timeSpentSeconds }),
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
@@ -39,7 +43,7 @@ export default function TestRunner({ test }: { test: any }) {
       toast.error("Error al guardar el test");
       setIsSubmitting(false);
     }
-  }, [isSubmitting, test.id, responses, router]);
+  }, [isSubmitting, test.id, responses, router, timeLeft]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
