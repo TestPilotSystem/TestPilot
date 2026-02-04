@@ -340,17 +340,17 @@ export default function ProgresoPage() {
 
           {/* Visual comparison bar */}
           <div className="mt-8 relative">
-            <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-6 bg-gray-100 rounded-full overflow-hidden w-full">
               <div
-                className="h-full bg-gray-300 absolute"
+                className="h-6 bg-gray-300 absolute rounded-full opacity-60"
                 style={{ width: `${stats.classAverageScore}%` }}
               />
               <div
-                className="h-full bg-yellow-500 absolute rounded-full"
+                className="h-6 bg-yellow-500 absolute rounded-full shadow-sm z-10"
                 style={{ width: `${stats.averageScore}%` }}
               />
             </div>
-            <div className="flex justify-between mt-2 text-xs text-gray-400 font-medium">
+            <div className="flex justify-between mt-4 text-xs text-gray-400 font-medium">
               <span>0%</span>
               <span>50%</span>
               <span>100%</span>
