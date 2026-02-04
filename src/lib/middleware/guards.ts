@@ -11,9 +11,12 @@ export async function authGuard(request: NextRequest) {
   const isNotRegisteredPath = pathname === "/login" || pathname === "/register";
   const isAdminPath = pathname.startsWith("/admin");
   const isStudentPath = pathname.startsWith("/estudiante");
+  const isChangePasswordPath = pathname === "/cambiar-contrasena";
+  
+  const isProtectedPath = isAdminPath || isStudentPath || isChangePasswordPath;
 
   if (!token) {
-    if (isAdminPath || isStudentPath) {
+    if (isProtectedPath) {
       return { error: true, redirectTo: "/login" };
     }
     return { error: false };
@@ -38,7 +41,7 @@ export async function authGuard(request: NextRequest) {
 
     return { error: false, payload };
   } catch (e) {
-    if (isAdminPath || isStudentPath) {
+    if (isProtectedPath) {
       return { error: true, redirectTo: "/login" };
     }
     return { error: false };
@@ -46,10 +49,7 @@ export async function authGuard(request: NextRequest) {
 }
 
 export function passwordChangeGuard(payload: any, pathname: string) {
-  const changePasswordPath =
-    payload.role === "ADMIN"
-      ? "/admin/cambiar-contrasena"
-      : "/estudiante/cambiar-contrasena";
+  const changePasswordPath = "/cambiar-contrasena";
 
   if (payload.mustChangePassword && pathname !== changePasswordPath) {
     return { error: true, redirectTo: changePasswordPath };

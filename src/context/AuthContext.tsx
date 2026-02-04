@@ -9,6 +9,7 @@ interface User {
   email?: string;
   dni?: string;
   avatarId?: string;
+  mustChangePassword?: boolean;
 }
 
 interface AuthContextType {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User, Mail, CreditCard, Loader2, Check, Save } from "lucide-react";
+import { User, Mail, CreditCard, Loader2, Check, Save, Lock } from "lucide-react";
+import Link from 'next/link';
 import { toast, Toaster } from "sonner";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
@@ -217,6 +218,23 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="pt-8 border-t border-gray-100 space-y-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-red-50 rounded-2xl text-red-600">
+              <Lock size={24} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-gray-800">Seguridad</h2>
+              <p className="text-sm text-gray-400">Gestiona tu contraseña de acceso</p>
+            </div>
+          </div>
+          <Link href="/cambiar-contrasena" className="inline-block">
+             <div className="px-6 py-3 bg-white border border-red-200 text-red-600 rounded-xl font-bold hover:bg-red-50 transition cursor-pointer">
+                 Cambiar Contraseña
+             </div>
+          </Link>
         </div>
       </div>
 

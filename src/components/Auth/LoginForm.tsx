@@ -33,6 +33,7 @@ const LoginForm = () => {
           email: data.user.email,
           dni: data.user.dni,
           avatarId: data.user.avatarId,
+          mustChangePassword: data.user.mustChangePassword,
         });
         router.push("/admin/inicio");
       } else {
