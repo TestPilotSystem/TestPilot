@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import { Car } from "lucide-react";
+import { Car, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const { login } = useAuth();
   const router = useRouter();
@@ -73,14 +74,36 @@ const LoginForm = () => {
 
         <div>
           <label className="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1 tracking-wider">Contraseña</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-yellow-500 outline-none transition text-gray-700"
-            placeholder="••••••••"
-            required
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-yellow-500 outline-none transition text-gray-700 pr-12"
+              placeholder="••••••••"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition p-1"
+            >
+              <div className="relative w-5 h-5">
+                <EyeOff 
+                  size={20} 
+                  className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
+                    showPassword ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-50'
+                  }`} 
+                />
+                <Eye 
+                  size={20} 
+                  className={`absolute top-0 left-0 transition-all duration-300 ease-in-out ${
+                    showPassword ? 'opacity-0 rotate-90 scale-50' : 'opacity-100 rotate-0 scale-100'
+                  }`} 
+                />
+              </div>
+            </button>
+          </div>
         </div>
 
         {error && <p className="text-red-500 text-xs mt-2 ml-1 font-medium">{error}</p>}
