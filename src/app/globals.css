@@ -12,11 +12,13 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+
+
+
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 body {
@@ -26,7 +28,9 @@ body {
 }
 
 @layer base {
-  input::placeholder, textarea::placeholder {
+
+  input::placeholder,
+  textarea::placeholder {
     @apply text-gray-400 opacity-100;
   }
 }
