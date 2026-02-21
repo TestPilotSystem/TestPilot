@@ -1,6 +1,7 @@
 "use client";
 
-import { X, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
+import { ReactNode } from "react";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -10,6 +11,11 @@ interface ConfirmModalProps {
   description: string;
   confirmText: string;
   loading?: boolean;
+  loadingText?: string;
+  icon?: ReactNode;
+  iconBgClass?: string;
+  iconTextClass?: string;
+  confirmButtonClass?: string;
 }
 
 const ConfirmModal = ({
@@ -20,6 +26,11 @@ const ConfirmModal = ({
   description,
   confirmText,
   loading = false,
+  loadingText,
+  icon,
+  iconBgClass = "bg-red-50",
+  iconTextClass = "text-red-500",
+  confirmButtonClass = "bg-red-500 hover:bg-red-600",
 }: ConfirmModalProps) => {
   if (!isOpen) return null;
 
@@ -27,8 +38,8 @@ const ConfirmModal = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div className="bg-white w-full max-w-sm rounded-3xl p-8 shadow-2xl animate-in zoom-in duration-200">
         <div className="flex justify-center mb-6">
-          <div className="bg-red-50 p-4 rounded-2xl text-red-500">
-            <AlertTriangle size={32} />
+          <div className={`${iconBgClass} p-4 rounded-2xl ${iconTextClass}`}>
+            {icon || <AlertTriangle size={32} />}
           </div>
         </div>
 
@@ -41,9 +52,9 @@ const ConfirmModal = ({
           <button
             onClick={onConfirm}
             disabled={loading}
-            className="w-full py-4 rounded-2xl font-bold text-white bg-red-500 hover:bg-red-600 transition-colors disabled:opacity-50"
+            className={`w-full py-4 rounded-2xl font-bold text-white ${confirmButtonClass} transition-colors disabled:opacity-50`}
           >
-            {loading ? "Eliminando..." : confirmText}
+            {loading ? (loadingText || "Procesando...") : confirmText}
           </button>
           <button
             onClick={onClose}

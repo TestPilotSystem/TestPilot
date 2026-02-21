@@ -53,6 +53,23 @@ export default function TestRunner({ test }: { test: any }) {
         return;
     }
 
+    if (test.type === "CUSTOM") {
+        let correctCount = 0;
+        for (const q of test.questions) {
+          const given = String(responses[q.id] || "").trim();
+          const correct = String(q.respuestaCorrecta).trim();
+          if (given.toLowerCase() === correct.toLowerCase()) correctCount++;
+        }
+
+        setFinishState({
+          rectified: 0,
+          correct: correctCount,
+          total: test.questions.length,
+        });
+        setIsSubmitting(false);
+        return;
+    }
+
     const timeSpentSeconds = TOTAL_TIME - timeLeft;
 
     try {
@@ -70,7 +87,7 @@ export default function TestRunner({ test }: { test: any }) {
       toast.error("Error al guardar el test");
       setIsSubmitting(false);
     }
-  }, [isSubmitting, test.id, test.type, responses, router, timeLeft]);
+  }, [isSubmitting, test.id, test.type, test.questions, responses, router, timeLeft]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -90,19 +107,40 @@ export default function TestRunner({ test }: { test: any }) {
   const currentQuestion = test.questions[currentIndex];
 
   if (finishState) {
+    const isCustom = test.type === "CUSTOM";
+    const score = Math.round((finishState.correct / finishState.total) * 100);
+
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 bg-white p-12 rounded-[2.5rem] border border-gray-100 shadow-sm">
-        <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-4 animate-bounce">
+        <div className={`w-24 h-24 ${isCustom ? "bg-purple-100" : "bg-green-100"} rounded-full flex items-center justify-center ${isCustom ? "text-purple-600" : "text-green-600"} mb-4 animate-bounce`}>
           <Check size={48} strokeWidth={3} />
         </div>
         <div>
-          <h2 className="text-3xl font-black text-gray-800 mb-2">¡Repaso Completado!</h2>
-          <p className="text-gray-500 font-medium text-lg">
-            Has eliminado <span className="text-green-600 font-bold">{finishState.rectified}</span> errores de tu historial.
-          </p>
-          <p className="text-sm text-gray-400 mt-2">
-            Aciertos: {finishState.correct}/{finishState.total}
-          </p>
+          <h2 className="text-3xl font-black text-gray-800 mb-2">
+            {isCustom ? "¡Test Personalizado Completado!" : "¡Repaso Completado!"}
+          </h2>
+          {isCustom ? (
+            <>
+              <p className="text-gray-500 font-medium text-lg">
+                Has obtenido un <span className="text-purple-600 font-bold">{score}%</span> de aciertos.
+              </p>
+              <p className="text-sm text-gray-400 mt-2">
+                Aciertos: {finishState.correct}/{finishState.total}
+              </p>
+              <p className="text-xs text-gray-300 mt-1">
+                Este test no afecta a tus estadísticas.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-gray-500 font-medium text-lg">
+                Has eliminado <span className="text-green-600 font-bold">{finishState.rectified}</span> errores de tu historial.
+              </p>
+              <p className="text-sm text-gray-400 mt-2">
+                Aciertos: {finishState.correct}/{finishState.total}
+              </p>
+            </>
+          )}
         </div>
         <button
           onClick={() => router.push("/estudiante/driving-tests")}

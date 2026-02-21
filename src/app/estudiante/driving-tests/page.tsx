@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { BookOpen, Search, Filter, Clock, Loader2, Check, AlertTriangle, Sparkles, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 
 type TestType = "BASIC" | "ERROR" | "CUSTOM";
 
@@ -59,6 +60,29 @@ export default function StudentTestsPage() {
       alert("Error de conexión");
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  const [generatingCustom, setGeneratingCustom] = useState(false);
+  const [showCustomModal, setShowCustomModal] = useState(false);
+
+  const generateCustomTest = async () => {
+    setGeneratingCustom(true);
+    try {
+      const res = await fetch("/api/student/custom-tests/generate", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setShowCustomModal(false);
+        alert(data.message);
+        fetchTests();
+      } else {
+        alert(data.message || "Error al generar test personalizado");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error de conexión con el servicio de IA");
+    } finally {
+      setGeneratingCustom(false);
     }
   };
 
@@ -153,6 +177,30 @@ export default function StudentTestsPage() {
           >
             <RefreshCw size={24} />
           </button>
+
+          <button
+            onClick={() => setShowCustomModal(true)}
+            disabled={generatingCustom}
+            className="p-4 bg-purple-50 border border-purple-100 rounded-2xl text-purple-500 hover:bg-purple-100 transition shadow-sm cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            title="Generar test personalizado con IA"
+          >
+            {generatingCustom ? <Loader2 size={24} className="animate-spin" /> : <Sparkles size={24} />}
+          </button>
+
+          <ConfirmModal
+            isOpen={showCustomModal}
+            onClose={() => setShowCustomModal(false)}
+            onConfirm={generateCustomTest}
+            title="Generar Test con IA"
+            description="Los tests personalizados son generados por inteligencia artificial y pueden contener errores. En caso de dudas, contacta con soporte."
+            confirmText="Generar Test"
+            loading={generatingCustom}
+            loadingText="Generando..."
+            icon={<Sparkles size={32} />}
+            iconBgClass="bg-purple-50"
+            iconTextClass="text-purple-500"
+            confirmButtonClass="bg-purple-500 hover:bg-purple-600"
+          />
 
           <div className="relative">
             <button
