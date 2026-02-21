@@ -5,6 +5,7 @@ import { BookOpen, Search, Filter, Clock, Loader2, Check, AlertTriangle, Sparkle
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "@/components/ui/ConfirmModal";
+import { toast, Toaster } from "sonner";
 
 type TestType = "BASIC" | "ERROR" | "CUSTOM";
 
@@ -50,14 +51,14 @@ export default function StudentTestsPage() {
       const res = await fetch("/api/student/error-tests/generate", { method: "POST" });
       const data = await res.json();
       if (res.ok) {
-        alert(data.message);
+        toast.success(data.message);
         fetchTests();
       } else {
-        alert(data.message || "Error al generar tests");
+        toast.error(data.message || "Error al generar tests");
       }
     } catch (error) {
       console.error(error);
-      alert("Error de conexión");
+      toast.error("Error de conexión");
     } finally {
       setRefreshing(false);
     }
@@ -73,14 +74,16 @@ export default function StudentTestsPage() {
       const data = await res.json();
       if (res.ok) {
         setShowCustomModal(false);
-        alert(data.message);
+        toast.success(data.message);
         fetchTests();
+      } else if (res.status === 429) {
+        toast.error("Has excedido el límite de generación. Inténtalo de nuevo más tarde.");
       } else {
-        alert(data.message || "Error al generar test personalizado");
+        toast.error(data.message || "Error al generar test personalizado");
       }
     } catch (error) {
       console.error(error);
-      alert("Error de conexión con el servicio de IA");
+      toast.error("Error de conexión con el servicio de IA");
     } finally {
       setGeneratingCustom(false);
     }
@@ -144,6 +147,7 @@ export default function StudentTestsPage() {
 
   return (
     <div className="flex-1 min-h-screen bg-[#fafafa]">
+      <Toaster richColors position="top-center" />
       <main className="p-8 space-y-6">
         <header>
           <h1 className="text-3xl font-black text-gray-800 tracking-tight">

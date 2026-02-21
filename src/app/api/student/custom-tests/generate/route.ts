@@ -104,6 +104,12 @@ export async function POST(request: Request) {
     );
 
     if (!generateResponse.ok) {
+      if (generateResponse.status === 429) {
+        return NextResponse.json(
+          { message: "Has excedido el límite de generación. Inténtalo de nuevo más tarde." },
+          { status: 429 }
+        );
+      }
       const errorData = await generateResponse.json().catch(() => null);
       throw new Error(
         errorData?.detail || "Error al generar test personalizado desde el servicio de IA"
@@ -121,10 +127,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Map AI format → DB format
     const letters = ["a", "b", "c", "d", "e", "f"];
     const dbQuestions = preguntas.map((p: any) => {
-      // Convert opciones array ["texto1", "texto2", ...] → { a: "texto1", b: "texto2", ... }
       const opciones: Record<string, string> = {};
       (p.opciones as string[]).forEach((opt: string, i: number) => {
         opciones[letters[i]] = opt;
