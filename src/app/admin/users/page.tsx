@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, MessageSquare, UserMinus, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Search, MessageSquare, UserMinus, Loader2, BarChart2 } from "lucide-react";
 import { PendingAlert } from "@/components/admin/user-management/PendingAlert";
 import { toast, Toaster } from "sonner";
 
 export default function AdminUsersPage() {
+  const router = useRouter();
   const [students, setStudents] = useState([]);
   const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -150,6 +152,13 @@ export default function AdminUsersPage() {
                       }
                     >
                       <MessageSquare size={20} />
+                    </button>
+                    <button
+                      onClick={() => router.push(`/admin/users/${student.id}/stats`)}
+                      className="p-3 text-violet-500 hover:bg-violet-50 rounded-xl transition"
+                      title="Ver estadísticas"
+                    >
+                      <BarChart2 size={20} />
                     </button>
                     <button
                       onClick={() => handleDeleteUser(student.id)}

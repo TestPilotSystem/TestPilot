@@ -8,6 +8,7 @@ import {
   FileText,
   NotebookText,
   Users,
+  Activity,
   Wrench,
   Settings,
 } from "lucide-react";
@@ -20,6 +21,7 @@ const Sidebar = () => {
     { name: "Tests", icon: FileText, href: "/admin/driving-tests" },
     { name: "Temario", icon: NotebookText, href: "/admin/docs" },
     { name: "Usuarios", icon: Users, href: "/admin/users" },
+    { name: "Seguimiento", icon: Activity, href: "/admin/seguimiento" },
     { name: "Configurar IA", icon: Wrench, href: "/admin/ai/config" },
   ];
 
