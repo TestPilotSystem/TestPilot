@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Bell, LogOut, Settings, ChevronDown, User } from "lucide-react";
+import { Bell, LogOut, Settings, ChevronDown, User, Wrench } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { useNotifications } from "@/hooks/useNotifications";
+import { Toaster } from "sonner";
+import ContactSupportModal from "@/components/notifications/ContactSupportModal";
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth();
@@ -13,6 +16,8 @@ const DashboardHeader = () => {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const { unreadCount, inboxPath } = useNotifications();
+  const [supportOpen, setSupportOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -45,6 +50,8 @@ const DashboardHeader = () => {
   };
 
   return (
+    <>
+    <Toaster richColors position="top-right" />
     <header className="h-20 border-b border-slate-700/50 flex items-center justify-between px-8 bg-[#1E293B]">
       <div>
         <h1 className="text-xl font-bold text-slate-50">
@@ -54,9 +61,16 @@ const DashboardHeader = () => {
       </div>
 
       <div className="flex items-center gap-6">
-        <button className="relative text-slate-400 hover:text-slate-200 cursor-pointer transition">
+        <button
+          onClick={() => router.push(inboxPath)}
+          className="relative text-slate-400 hover:text-slate-200 cursor-pointer transition"
+        >
           <Bell size={22} />
-          <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-[#1E293B]"></span>
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 rounded-full border-2 border-[#1E293B] flex items-center justify-center text-[10px] font-bold text-white px-1">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
         </button>
 
         <div className="flex items-center gap-3 pl-6 border-l border-slate-700/50 relative" ref={menuRef}>
@@ -162,6 +176,19 @@ const DashboardHeader = () => {
                     Ajustes de cuenta
                   </button>
 
+                  {!isAdmin && (
+                    <button
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setSupportOpen(true);
+                      }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 rounded-xl transition font-medium"
+                    >
+                      <Wrench size={18} className="text-slate-500" />
+                      Contactar soporte
+                    </button>
+                  )}
+
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition font-medium"
@@ -176,6 +203,8 @@ const DashboardHeader = () => {
         </div>
       </div>
     </header>
+    <ContactSupportModal isOpen={supportOpen} onClose={() => setSupportOpen(false)} />
+    </>
   );
 };
 

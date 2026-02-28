@@ -10,6 +10,7 @@ import {
   Users,
   Activity,
   Wrench,
+  Bell,
   Settings,
 } from "lucide-react";
 
@@ -23,6 +24,7 @@ const Sidebar = () => {
     { name: "Usuarios", icon: Users, href: "/admin/users" },
     { name: "Seguimiento", icon: Activity, href: "/admin/seguimiento" },
     { name: "Configurar IA", icon: Wrench, href: "/admin/ai/config" },
+    { name: "Notificaciones", icon: Bell, href: "/admin/notificaciones" },
   ];
 
   return (

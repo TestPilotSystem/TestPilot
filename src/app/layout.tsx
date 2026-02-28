@@ -1,4 +1,5 @@
 import { AuthProvider } from "@/context/AuthContext";
+import { NotificationProvider } from "@/hooks/useNotifications";
 import "./globals.css";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -6,7 +7,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <body className="antialiased bg-[#0F172A] text-slate-50">
         <AuthProvider>
-          {children}
+          <NotificationProvider>
+            {children}
+          </NotificationProvider>
         </AuthProvider>
       </body>
     </html>

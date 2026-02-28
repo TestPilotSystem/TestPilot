@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { RequestStatus } from "@prisma/client";
+import { createNotification } from "@/lib/notifications";
 
 export async function GET() {
   try {
@@ -46,7 +47,18 @@ export async function PATCH(request: Request) {
         status,
         adminNotes: adminNotes || null,
       },
+      include: { user: { select: { id: true } } },
     });
+
+    const userId = updatedRequest.user.id;
+
+    if (status === RequestStatus.APPROVED) {
+      createNotification(userId, "ACCOUNT_APPROVED", {}).catch(console.error);
+    } else if (status === RequestStatus.REJECTED) {
+      createNotification(userId, "ACCOUNT_REJECTED", {
+        reason: adminNotes || "No especificado",
+      }).catch(console.error);
+    }
 
     return NextResponse.json({
       message: `Solicitud ${status.toLowerCase()} con éxito`,

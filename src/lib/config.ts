@@ -17,5 +17,11 @@ export const config = {
   ai: {
     baseUrl: getEnvVar("AI_API_BASE_URL", "http://localhost:8000"),
   },
+  resend: {
+    apiKey: getEnvVar("RESEND_API_KEY", ""),
+  },
+  app: {
+    url: getEnvVar("APP_URL", "http://localhost:3000"),
+  },
   isProduction: process.env.NODE_ENV === "production",
 } as const;

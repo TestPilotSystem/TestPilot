@@ -9,6 +9,7 @@ import {
   BarChart2,
   MessageSquare,
   Layers,
+  Bell,
   Settings,
 } from "lucide-react";
 
@@ -21,6 +22,7 @@ const SideBarStudent = () => {
     { name: "Progreso", icon: BarChart2, href: "/estudiante/progreso" },
     { name: "Tutor Virtual", icon: MessageSquare, href: "/estudiante/tutor" },
     { name: "Flashcards", icon: Layers, href: "/estudiante/flashcards" },
+    { name: "Notificaciones", icon: Bell, href: "/estudiante/notificaciones" },
   ];
 
   return (

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { authGuard } from "@/lib/middleware/guards";
 import { config } from "@/lib/config";
 import { getAiToken } from "@/lib/aiTokenCache";
+import { createNotification } from "@/lib/notifications";
 
 export async function POST(request: Request) {
   const auth = await authGuard(request as any);
@@ -105,6 +106,19 @@ export async function POST(request: Request) {
 
     if (!generateResponse.ok) {
       if (generateResponse.status === 429) {
+        const studentName = `${user.firstName} ${user.lastName}`;
+        prisma.user.findMany({
+          where: { role: "ADMIN" },
+          select: { id: true },
+        }).then((admins) => {
+          admins.forEach((admin) =>
+            createNotification(admin.id, "ADMIN_MESSAGE", {
+              messageTitle: "⚠️ Límite de tests personalizados alcanzado",
+              messageBody: `El alumno ${studentName} ha superado el límite de generación de tests personalizados por hora.`,
+            }).catch(console.error)
+          );
+        });
+
         return NextResponse.json(
           { message: "Has excedido el límite de generación. Inténtalo de nuevo más tarde." },
           { status: 429 }

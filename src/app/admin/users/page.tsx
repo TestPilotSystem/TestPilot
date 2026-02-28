@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, MessageSquare, UserMinus, Loader2, BarChart2 } from "lucide-react";
 import { PendingAlert } from "@/components/admin/user-management/PendingAlert";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
+import SendNotificationModal from "@/components/notifications/SendNotificationModal";
 
 export default function AdminUsersPage() {
   const router = useRouter();
   const [students, setStudents] = useState([]);
   const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalRecipients, setModalRecipients] = useState<{ id: number; name: string }[]>([]);
 
   const fetchPendingCount = async () => {
     try {
@@ -75,7 +78,11 @@ export default function AdminUsersPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-8 space-y-8">
-      <Toaster richColors />
+      <SendNotificationModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        recipients={modalRecipients}
+      />
 
       {pendingCount > 0 && <PendingAlert count={pendingCount} />}
 
@@ -141,11 +148,14 @@ export default function AdminUsersPage() {
                   <div className="flex justify-end gap-2">
                     <button
                       className="p-3 text-accent-light hover:bg-accent/10 rounded-xl transition"
-                      onClick={() =>
-                        toast.info(
-                          "El módulo de notificaciones estará listo pronto"
-                        )
-                      }
+                      title="Enviar mensaje"
+                      onClick={() => {
+                        setModalRecipients([{
+                          id: student.id,
+                          name: `${student.firstName} ${student.lastName}`,
+                        }]);
+                        setModalOpen(true);
+                      }}
                     >
                       <MessageSquare size={20} />
                     </button>
