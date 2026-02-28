@@ -46,11 +46,7 @@ export default function AdminUsersPage() {
     };
 
     fetchData();
-
-    // Polling every 30 seconds to update pending requests count
     const interval = setInterval(fetchPendingCount, 30000);
-
-    // Cleanup interval on unmount
     return () => clearInterval(interval);
   }, []);
 
@@ -72,8 +68,8 @@ export default function AdminUsersPage() {
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <Loader2 className="animate-spin text-yellow-500" size={40} />
-        <p className="text-gray-400 font-bold">Cargando alumnos...</p>
+        <Loader2 className="animate-spin text-accent" size={40} />
+        <p className="text-slate-400 font-bold">Cargando alumnos...</p>
       </div>
     );
 
@@ -85,66 +81,66 @@ export default function AdminUsersPage() {
 
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-black text-gray-800 tracking-tight">
+          <h1 className="text-4xl font-black text-slate-50 tracking-tight">
             Alumnos
           </h1>
-          <p className="text-gray-400 font-medium">
+          <p className="text-slate-400 font-medium">
             Gestiona los alumnos matriculados en el curso
           </p>
         </div>
 
         <div className="relative">
           <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
             size={18}
           />
           <input
             type="text"
             placeholder="Buscar alumno..."
-            className="pl-12 pr-6 py-3 bg-white border border-gray-100 rounded-2xl focus:ring-2 focus:ring-yellow-500 outline-none w-64 shadow-sm"
+            className="pl-12 pr-6 py-3 bg-surface border border-slate-700/50 rounded-2xl focus:ring-2 focus:ring-accent outline-none w-64 text-slate-200 placeholder:text-slate-500"
           />
         </div>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-surface rounded-[2.5rem] border border-slate-700/50 overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-gray-50/50 border-b border-gray-100">
-              <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+            <tr className="bg-slate-800/50 border-b border-slate-700/50">
+              <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
                 Alumno
               </th>
-              <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+              <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
                 DNI
               </th>
-              <th className="p-6 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">
+              <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">
                 Acciones
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y divide-slate-700/30">
             {students.map((student: any) => (
-              <tr key={student.id} className="hover:bg-gray-50/30 transition">
+              <tr key={student.id} className="hover:bg-slate-800/30 transition">
                 <td className="p-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center font-bold text-gray-500 uppercase">
+                    <div className="w-12 h-12 rounded-2xl bg-brand/20 flex items-center justify-center font-bold text-brand-light uppercase">
                       {student.firstName.charAt(0)}
                       {student.lastName.charAt(0)}
                     </div>
                     <div>
-                      <p className="font-bold text-gray-800">
+                      <p className="font-bold text-slate-100">
                         {student.firstName} {student.lastName}
                       </p>
-                      <p className="text-xs text-gray-400">{student.email}</p>
+                      <p className="text-xs text-slate-500">{student.email}</p>
                     </div>
                   </div>
                 </td>
-                <td className="p-6 text-sm text-gray-500 font-medium">
+                <td className="p-6 text-sm text-slate-400 font-medium">
                   {student.dni || "No aportado"}
                 </td>
                 <td className="p-6 text-right">
                   <div className="flex justify-end gap-2">
                     <button
-                      className="p-3 text-blue-500 hover:bg-blue-50 rounded-xl transition"
+                      className="p-3 text-accent-light hover:bg-accent/10 rounded-xl transition"
                       onClick={() =>
                         toast.info(
                           "El módulo de notificaciones estará listo pronto"
@@ -155,14 +151,14 @@ export default function AdminUsersPage() {
                     </button>
                     <button
                       onClick={() => router.push(`/admin/users/${student.id}/stats`)}
-                      className="p-3 text-violet-500 hover:bg-violet-50 rounded-xl transition"
+                      className="p-3 text-brand-light hover:bg-brand/10 rounded-xl transition"
                       title="Ver estadísticas"
                     >
                       <BarChart2 size={20} />
                     </button>
                     <button
                       onClick={() => handleDeleteUser(student.id)}
-                      className="p-3 text-red-500 hover:bg-red-50 rounded-xl transition"
+                      className="p-3 text-red-400 hover:bg-red-500/10 rounded-xl transition"
                     >
                       <UserMinus size={20} />
                     </button>

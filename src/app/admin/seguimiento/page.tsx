@@ -64,6 +64,13 @@ function formatTime(seconds: number): string {
   return `${minutes}m`;
 }
 
+const darkTooltipStyle = {
+  borderRadius: "12px",
+  border: "1px solid #334155",
+  backgroundColor: "#1E293B",
+  color: "#E2E8F0",
+};
+
 export default function SeguimientoPage() {
   const [data, setData] = useState<SeguimientoData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -81,8 +88,8 @@ export default function SeguimientoPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <Loader2 className="animate-spin text-yellow-500" size={40} />
-        <p className="text-gray-400 font-bold">
+        <Loader2 className="animate-spin text-accent" size={40} />
+        <p className="text-slate-400 font-bold">
           Cargando datos de seguimiento...
         </p>
       </div>
@@ -91,7 +98,7 @@ export default function SeguimientoPage() {
 
   if (!data) {
     return (
-      <div className="text-center py-20 text-gray-500">
+      <div className="text-center py-20 text-slate-500">
         No se pudieron cargar los datos de seguimiento
       </div>
     );
@@ -99,84 +106,82 @@ export default function SeguimientoPage() {
 
   const pieData = [
     { name: "Activos", value: data.activeStudents, fill: "#22c55e" },
-    { name: "Inactivos", value: data.inactiveStudents, fill: "#d1d5db" },
+    { name: "Inactivos", value: data.inactiveStudents, fill: "#475569" },
   ];
 
   const improvementTotal = data.improvement.total;
 
   return (
     <div className="max-w-7xl mx-auto p-8 space-y-8">
-      {/* Header */}
       <header>
-        <h1 className="text-4xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-          <Activity className="text-yellow-600" />
+        <h1 className="text-4xl font-black text-slate-50 tracking-tight flex items-center gap-3">
+          <Activity className="text-accent" />
           Seguimiento
         </h1>
-        <p className="text-gray-400 font-medium mt-1">
+        <p className="text-slate-400 font-medium mt-1">
           Vista general del rendimiento de todos los alumnos
         </p>
       </header>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="bg-surface p-5 rounded-3xl border border-slate-700/50">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-50 rounded-2xl">
-              <Users className="text-blue-600" size={22} />
+            <div className="p-3 bg-accent/10 rounded-2xl">
+              <Users className="text-accent" size={22} />
             </div>
             <div>
-              <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
                 Total Alumnos
               </p>
-              <p className="text-2xl font-black text-gray-800">
+              <p className="text-2xl font-black text-slate-50">
                 {data.totalStudents}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="bg-surface p-5 rounded-3xl border border-slate-700/50">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-green-50 rounded-2xl">
-              <Activity className="text-green-600" size={22} />
+            <div className="p-3 bg-green-500/10 rounded-2xl">
+              <Activity className="text-green-400" size={22} />
             </div>
             <div>
-              <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
                 Activos (30d)
               </p>
-              <p className="text-2xl font-black text-green-600">
+              <p className="text-2xl font-black text-green-400">
                 {data.activeStudents}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="bg-surface p-5 rounded-3xl border border-slate-700/50">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-yellow-50 rounded-2xl">
-              <Trophy className="text-yellow-600" size={22} />
+            <div className="p-3 bg-highlight/10 rounded-2xl">
+              <Trophy className="text-highlight" size={22} />
             </div>
             <div>
-              <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
                 Tests Totales
               </p>
-              <p className="text-2xl font-black text-gray-800">
+              <p className="text-2xl font-black text-slate-50">
                 {data.totalTestsCompleted}
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="bg-surface p-5 rounded-3xl border border-slate-700/50">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-violet-50 rounded-2xl">
-              <Target className="text-violet-600" size={22} />
+            <div className="p-3 bg-brand/20 rounded-2xl">
+              <Target className="text-brand-light" size={22} />
             </div>
             <div>
-              <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+              <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
                 Media Global
               </p>
-              <p className="text-2xl font-black text-gray-800">
+              <p className="text-2xl font-black text-slate-50">
                 {data.globalAverageScore}%
               </p>
             </div>
@@ -184,20 +189,18 @@ export default function SeguimientoPage() {
         </div>
       </div>
 
-      {/* Row: Active/Inactive Pie + Monthly Tests */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Pie Chart Active vs Inactive */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
-            <Users size={18} className="text-yellow-500" />
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
+          <h3 className="font-bold text-slate-100 mb-1 flex items-center gap-2">
+            <Users size={18} className="text-accent" />
             Distribución de Alumnos
           </h3>
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-slate-500 mb-4">
             Activos vs inactivos (últimos 30 días)
           </p>
           <div className="h-64 flex items-center justify-center">
             {data.totalStudents === 0 ? (
-              <p className="text-gray-400 text-sm">No hay alumnos registrados</p>
+              <p className="text-slate-500 text-sm">No hay alumnos registrados</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -220,10 +223,9 @@ export default function SeguimientoPage() {
                       `${value} alumnos`,
                       name,
                     ]}
-                    contentStyle={{
-                      borderRadius: "12px",
-                      border: "1px solid #e5e7eb",
-                    }}
+                    contentStyle={darkTooltipStyle}
+                    itemStyle={{ color: '#E2E8F0' }}
+                    labelStyle={{ color: '#94a3b8' }}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -232,48 +234,46 @@ export default function SeguimientoPage() {
           <div className="flex justify-center gap-6 mt-2">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-green-500" />
-              <span className="text-sm text-gray-600 font-medium">
+              <span className="text-sm text-slate-300 font-medium">
                 Activos ({data.activeStudents})
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-gray-300" />
-              <span className="text-sm text-gray-600 font-medium">
+              <div className="w-3 h-3 rounded-full bg-slate-600" />
+              <span className="text-sm text-slate-300 font-medium">
                 Inactivos ({data.inactiveStudents})
               </span>
             </div>
           </div>
         </div>
 
-        {/* Monthly Tests Area Chart */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
-            <BarChart2 size={18} className="text-yellow-500" />
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
+          <h3 className="font-bold text-slate-100 mb-1 flex items-center gap-2">
+            <BarChart2 size={18} className="text-accent" />
             Tests Completados por Mes
           </h3>
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-slate-500 mb-4">
             Evolución de la actividad en los últimos 6 meses
           </p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data.monthlyTests}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                 <XAxis
                   dataKey="month"
-                  tick={{ fontSize: 11, fill: "#9ca3af" }}
+                  tick={{ fontSize: 11, fill: "#64748B" }}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#9ca3af" }}
+                  tick={{ fontSize: 11, fill: "#64748B" }}
                   tickLine={false}
                   allowDecimals={false}
                 />
                 <Tooltip
                   formatter={(value: number) => [value, "Tests"]}
-                  contentStyle={{
-                    borderRadius: "12px",
-                    border: "1px solid #e5e7eb",
-                  }}
+                  contentStyle={darkTooltipStyle}
+                  itemStyle={{ color: '#E2E8F0' }}
+                  labelStyle={{ color: '#94a3b8' }}
                 />
                 <defs>
                   <linearGradient
@@ -285,12 +285,12 @@ export default function SeguimientoPage() {
                   >
                     <stop
                       offset="5%"
-                      stopColor="#eab308"
+                      stopColor="#2563EB"
                       stopOpacity={0.3}
                     />
                     <stop
                       offset="95%"
-                      stopColor="#eab308"
+                      stopColor="#2563EB"
                       stopOpacity={0}
                     />
                   </linearGradient>
@@ -298,7 +298,7 @@ export default function SeguimientoPage() {
                 <Area
                   type="monotone"
                   dataKey="count"
-                  stroke="#eab308"
+                  stroke="#2563EB"
                   strokeWidth={2.5}
                   fill="url(#monthlyColor)"
                 />
@@ -308,79 +308,75 @@ export default function SeguimientoPage() {
         </div>
       </div>
 
-      {/* Active Students Metrics */}
-      <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-3xl border border-green-100">
-        <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-          <Activity size={18} className="text-green-600" />
+      <div className="bg-green-500/10 p-6 rounded-3xl border border-green-500/20">
+        <h3 className="font-bold text-slate-100 mb-4 flex items-center gap-2">
+          <Activity size={18} className="text-green-400" />
           Métricas de Alumnos Activos
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl">
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+          <div className="bg-slate-800/60 backdrop-blur-sm p-4 rounded-2xl">
+            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
               Alumnos Activos
             </p>
-            <p className="text-2xl font-black text-green-600 mt-1">
+            <p className="text-2xl font-black text-green-400 mt-1">
               {data.activeMetrics.count}
             </p>
           </div>
-          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl">
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+          <div className="bg-slate-800/60 backdrop-blur-sm p-4 rounded-2xl">
+            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
               Media Puntuación
             </p>
-            <p className="text-2xl font-black text-gray-800 mt-1">
+            <p className="text-2xl font-black text-slate-100 mt-1">
               {data.activeMetrics.averageScore}%
             </p>
           </div>
-          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl">
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+          <div className="bg-slate-800/60 backdrop-blur-sm p-4 rounded-2xl">
+            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
               Tests por Alumno
             </p>
-            <p className="text-2xl font-black text-gray-800 mt-1">
+            <p className="text-2xl font-black text-slate-100 mt-1">
               {data.activeMetrics.testsPerStudent}
             </p>
           </div>
-          <div className="bg-white/80 backdrop-blur-sm p-4 rounded-2xl">
-            <p className="text-xs text-gray-400 font-semibold uppercase tracking-wider">
+          <div className="bg-slate-800/60 backdrop-blur-sm p-4 rounded-2xl">
+            <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">
               Tiempo Medio
             </p>
-            <p className="text-2xl font-black text-gray-800 mt-1">
+            <p className="text-2xl font-black text-slate-100 mt-1">
               {formatTime(data.activeMetrics.avgTimePerStudent)}
             </p>
           </div>
         </div>
       </div>
 
-      {/* Row: Score Distribution + Student Levels */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Score Distribution */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
-            <Target size={18} className="text-yellow-500" />
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
+          <h3 className="font-bold text-slate-100 mb-1 flex items-center gap-2">
+            <Target size={18} className="text-accent" />
             Distribución de Notas
           </h3>
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-slate-500 mb-4">
             Todos los tests completados
           </p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.scoreDistribution}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                 <XAxis
                   dataKey="range"
-                  tick={{ fontSize: 11, fill: "#9ca3af" }}
+                  tick={{ fontSize: 11, fill: "#64748B" }}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#9ca3af" }}
+                  tick={{ fontSize: 11, fill: "#64748B" }}
                   tickLine={false}
                   allowDecimals={false}
                 />
                 <Tooltip
                   formatter={(value: number) => [value, "Tests"]}
-                  contentStyle={{
-                    borderRadius: "12px",
-                    border: "1px solid #e5e7eb",
-                  }}
+                  contentStyle={darkTooltipStyle}
+                  itemStyle={{ color: '#E2E8F0' }}
+                  labelStyle={{ color: '#94a3b8' }}
                 />
                 <Bar dataKey="count" name="Tests" radius={[8, 8, 0, 0]}>
                   {data.scoreDistribution.map((entry, index) => (
@@ -392,35 +388,33 @@ export default function SeguimientoPage() {
           </div>
         </div>
 
-        {/* Student Level Distribution */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
-            <Users size={18} className="text-yellow-500" />
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
+          <h3 className="font-bold text-slate-100 mb-1 flex items-center gap-2">
+            <Users size={18} className="text-accent" />
             Distribución de Alumnos por Nivel
           </h3>
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-slate-500 mb-4">
             Según la media de cada alumno
           </p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.studentLevels}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                 <XAxis
                   dataKey="level"
-                  tick={{ fontSize: 9, fill: "#9ca3af" }}
+                  tick={{ fontSize: 9, fill: "#64748B" }}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#9ca3af" }}
+                  tick={{ fontSize: 11, fill: "#64748B" }}
                   tickLine={false}
                   allowDecimals={false}
                 />
                 <Tooltip
                   formatter={(value: number) => [value, "Alumnos"]}
-                  contentStyle={{
-                    borderRadius: "12px",
-                    border: "1px solid #e5e7eb",
-                  }}
+                  contentStyle={darkTooltipStyle}
+                  itemStyle={{ color: '#E2E8F0' }}
+                  labelStyle={{ color: '#94a3b8' }}
                 />
                 <Bar dataKey="count" name="Alumnos" radius={[8, 8, 0, 0]}>
                   {data.studentLevels.map((entry, index) => (
@@ -433,14 +427,13 @@ export default function SeguimientoPage() {
         </div>
       </div>
 
-      {/* Topic Ranking */}
       {data.topicRanking.length > 0 && (
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
-            <Trophy size={18} className="text-yellow-500" />
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
+          <h3 className="font-bold text-slate-100 mb-1 flex items-center gap-2">
+            <Trophy size={18} className="text-accent" />
             Rendimiento por Tema
           </h3>
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-slate-500 mb-4">
             Media de puntuación global por área temática (ordenado por rendimiento)
           </p>
           <div
@@ -451,27 +444,26 @@ export default function SeguimientoPage() {
           >
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.topicRanking} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                 <XAxis
                   type="number"
                   domain={[0, 100]}
-                  tick={{ fontSize: 11, fill: "#9ca3af" }}
+                  tick={{ fontSize: 11, fill: "#64748B" }}
                 />
                 <YAxis
                   type="category"
                   dataKey="topicName"
                   width={160}
-                  tick={{ fontSize: 12, fill: "#6b7280" }}
+                  tick={{ fontSize: 12, fill: "#94a3b8" }}
                 />
                 <Tooltip
                   formatter={(value: number, name: string) => {
                     if (name === "avgScore") return [`${value}%`, "Puntuación Media"];
                     return [value, "Tests"];
                   }}
-                  contentStyle={{
-                    borderRadius: "12px",
-                    border: "1px solid #e5e7eb",
-                  }}
+                  contentStyle={darkTooltipStyle}
+                  itemStyle={{ color: '#E2E8F0' }}
+                  labelStyle={{ color: '#94a3b8' }}
                 />
                 <Bar
                   dataKey="avgScore"
@@ -497,27 +489,26 @@ export default function SeguimientoPage() {
         </div>
       )}
 
-      {/* Improvement Metrics */}
       {improvementTotal > 0 && (
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-1 flex items-center gap-2">
-            <TrendingUp size={18} className="text-yellow-500" />
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
+          <h3 className="font-bold text-slate-100 mb-1 flex items-center gap-2">
+            <TrendingUp size={18} className="text-accent" />
             Tasa de Mejora
           </h3>
-          <p className="text-xs text-gray-400 mb-6">
+          <p className="text-xs text-slate-500 mb-6">
             Comparación del rendimiento inicial vs actual (alumnos con 4+ tests)
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-5 rounded-2xl border border-green-100 text-center">
-              <TrendingUp className="text-green-600 mx-auto mb-2" size={28} />
-              <p className="text-3xl font-black text-green-600">
+            <div className="bg-green-500/10 p-5 rounded-2xl border border-green-500/20 text-center">
+              <TrendingUp className="text-green-400 mx-auto mb-2" size={28} />
+              <p className="text-3xl font-black text-green-400">
                 {data.improvement.improved}
               </p>
-              <p className="text-sm text-gray-600 font-semibold mt-1">
+              <p className="text-sm text-slate-300 font-semibold mt-1">
                 Han mejorado
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 {improvementTotal > 0
                   ? Math.round(
                       (data.improvement.improved / improvementTotal) * 100
@@ -527,15 +518,15 @@ export default function SeguimientoPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-50 to-slate-50 p-5 rounded-2xl border border-gray-200 text-center">
-              <Minus className="text-gray-500 mx-auto mb-2" size={28} />
-              <p className="text-3xl font-black text-gray-600">
+            <div className="bg-slate-700/30 p-5 rounded-2xl border border-slate-600/50 text-center">
+              <Minus className="text-slate-400 mx-auto mb-2" size={28} />
+              <p className="text-3xl font-black text-slate-300">
                 {data.improvement.stable}
               </p>
-              <p className="text-sm text-gray-600 font-semibold mt-1">
+              <p className="text-sm text-slate-300 font-semibold mt-1">
                 Se mantienen
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 {improvementTotal > 0
                   ? Math.round(
                       (data.improvement.stable / improvementTotal) * 100
@@ -545,15 +536,15 @@ export default function SeguimientoPage() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-red-50 to-orange-50 p-5 rounded-2xl border border-red-100 text-center">
-              <TrendingDown className="text-red-600 mx-auto mb-2" size={28} />
-              <p className="text-3xl font-black text-red-600">
+            <div className="bg-red-500/10 p-5 rounded-2xl border border-red-500/20 text-center">
+              <TrendingDown className="text-red-400 mx-auto mb-2" size={28} />
+              <p className="text-3xl font-black text-red-400">
                 {data.improvement.declined}
               </p>
-              <p className="text-sm text-gray-600 font-semibold mt-1">
+              <p className="text-sm text-slate-300 font-semibold mt-1">
                 Han empeorado
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-slate-500 mt-1">
                 {improvementTotal > 0
                   ? Math.round(
                       (data.improvement.declined / improvementTotal) * 100

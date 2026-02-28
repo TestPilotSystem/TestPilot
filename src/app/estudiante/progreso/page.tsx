@@ -53,6 +53,13 @@ function formatTime(seconds: number): string {
   return `${minutes}m`;
 }
 
+const darkTooltipStyle = {
+  borderRadius: "12px",
+  border: "1px solid #334155",
+  backgroundColor: "#1E293B",
+  color: "#E2E8F0",
+};
+
 export default function ProgresoPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -72,46 +79,45 @@ export default function ProgresoPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-10 h-10 text-yellow-600 animate-spin" />
+        <Loader2 className="w-10 h-10 text-accent animate-spin" />
       </div>
     );
   }
 
   if (!stats) {
     return (
-      <div className="text-center py-20 text-gray-500">
+      <div className="text-center py-20 text-slate-500">
         No se pudieron cargar las estadísticas
       </div>
     );
   }
 
-  // Show empty state if no tests completed
   if (stats.totalTests === 0) {
     return (
       <div className="space-y-8">
         <header>
-          <h1 className="text-3xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-            <BarChart2 className="text-yellow-600" />
+          <h1 className="text-3xl font-black text-slate-50 tracking-tight flex items-center gap-3">
+            <BarChart2 className="text-accent" />
             Tu Progreso 📊
           </h1>
-          <p className="text-gray-500 font-medium mt-1">
+          <p className="text-slate-400 font-medium mt-1">
             Estadísticas detalladas de tu rendimiento
           </p>
         </header>
 
-        <div className="text-center py-20 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-3xl border border-yellow-100">
+        <div className="text-center py-20 bg-brand/10 rounded-3xl border border-brand/20">
           <div className="mb-6">
-            <BookOpen className="w-16 h-16 text-yellow-500 mx-auto opacity-50" />
+            <BookOpen className="w-16 h-16 text-brand-light mx-auto opacity-50" />
           </div>
-          <h2 className="text-2xl font-black text-gray-800 mb-2">
+          <h2 className="text-2xl font-black text-slate-100 mb-2">
             ¡Aún no tienes estadísticas!
           </h2>
-          <p className="text-gray-500 font-medium mb-6 max-w-md mx-auto">
+          <p className="text-slate-400 font-medium mb-6 max-w-md mx-auto">
             Completa tu primer test para empezar a ver tu progreso y compararte con el resto de la clase.
           </p>
           <Link
             href="/estudiante/driving-tests"
-            className="inline-flex items-center gap-2 bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-4 rounded-2xl font-bold transition shadow-lg shadow-yellow-100"
+            className="inline-flex items-center gap-2 bg-accent hover:bg-accent-light text-white px-8 py-4 rounded-2xl font-bold transition shadow-lg shadow-accent/20"
           >
             <BookOpen size={20} />
             Ir a Tests
@@ -127,133 +133,129 @@ export default function ProgresoPage() {
   return (
     <div className="space-y-8">
       <header>
-        <h1 className="text-3xl font-black text-gray-800 tracking-tight flex items-center gap-3">
-          <BarChart2 className="text-yellow-600" />
+        <h1 className="text-3xl font-black text-slate-50 tracking-tight flex items-center gap-3">
+          <BarChart2 className="text-accent" />
           Tu Progreso 📊
         </h1>
-        <p className="text-gray-500 font-medium mt-1">
+        <p className="text-slate-400 font-medium mt-1">
           Estadísticas detalladas de tu rendimiento
         </p>
       </header>
 
-      {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Total Tests */}
         <div
-          className={`bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition ${
-            stats.testsByTopic.length > 0 ? "cursor-pointer hover:shadow-md" : ""
+          className={`bg-surface p-6 rounded-3xl border border-slate-700/50 transition ${
+            stats.testsByTopic.length > 0 ? "cursor-pointer hover:border-slate-600" : ""
           }`}
           onClick={() => stats.testsByTopic.length > 0 && setShowTopicDetails(!showTopicDetails)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-50 rounded-2xl">
-                <Trophy className="text-blue-600" size={24} />
+              <div className="p-3 bg-accent/10 rounded-2xl">
+                <Trophy className="text-accent" size={24} />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Tests Totales</p>
-                <p className="text-3xl font-black text-gray-800">{stats.totalTests}</p>
+                <p className="text-sm text-slate-400 font-medium">Tests Totales</p>
+                <p className="text-3xl font-black text-slate-50">{stats.totalTests}</p>
               </div>
             </div>
             {stats.testsByTopic.length > 0 && (
               showTopicDetails ? (
-                <ChevronUp className="text-gray-400" />
+                <ChevronUp className="text-slate-500" />
               ) : (
-                <ChevronDown className="text-gray-400" />
+                <ChevronDown className="text-slate-500" />
               )
             )}
           </div>
         </div>
 
-        {/* Total Time */}
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-orange-50 rounded-2xl">
-              <Clock className="text-orange-600" size={24} />
+            <div className="p-3 bg-highlight/10 rounded-2xl">
+              <Clock className="text-highlight" size={24} />
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium">Tiempo Total</p>
-              <p className="text-3xl font-black text-gray-800">
+              <p className="text-sm text-slate-400 font-medium">Tiempo Total</p>
+              <p className="text-3xl font-black text-slate-50">
                 {formatTime(stats.totalTimeSeconds)}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Average Score */}
         <div
-          className={`bg-white p-6 rounded-3xl border border-gray-100 shadow-sm transition ${
-            stats.scoreByTopic.length > 0 ? "cursor-pointer hover:shadow-md" : ""
+          className={`bg-surface p-6 rounded-3xl border border-slate-700/50 transition ${
+            stats.scoreByTopic.length > 0 ? "cursor-pointer hover:border-slate-600" : ""
           }`}
           onClick={() => stats.scoreByTopic.length > 0 && setShowScoreDetails(!showScoreDetails)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-green-50 rounded-2xl">
-                <Target className="text-green-600" size={24} />
+              <div className="p-3 bg-green-500/10 rounded-2xl">
+                <Target className="text-green-400" size={24} />
               </div>
               <div>
-                <p className="text-sm text-gray-500 font-medium">Promedio</p>
-                <p className="text-3xl font-black text-gray-800">{stats.averageScore}%</p>
+                <p className="text-sm text-slate-400 font-medium">Promedio</p>
+                <p className="text-3xl font-black text-slate-50">{stats.averageScore}%</p>
               </div>
             </div>
             {stats.scoreByTopic.length > 0 && (
               showScoreDetails ? (
-                <ChevronUp className="text-gray-400" />
+                <ChevronUp className="text-slate-500" />
               ) : (
-                <ChevronDown className="text-gray-400" />
+                <ChevronDown className="text-slate-500" />
               )
             )}
           </div>
         </div>
       </div>
 
-      {/* Tests by Topic (Expandable) */}
       {showTopicDetails && stats.testsByTopic.length > 0 && (
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-4">Tests por Tema</h3>
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
+          <h3 className="font-bold text-slate-100 mb-4">Tests por Tema</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.testsByTopic} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis type="number" tick={{ fill: "#64748B" }} />
                 <YAxis
                   type="category"
                   dataKey="topicName"
                   width={150}
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 12, fill: "#94a3b8" }}
                 />
-                <Tooltip 
+                <Tooltip
                   formatter={(value) => [value, "Tests"]}
-                  labelStyle={{ color: "#374151", fontWeight: "bold" }}
-                  contentStyle={{ borderRadius: "12px", border: "1px solid #e5e7eb" }}
+                  contentStyle={darkTooltipStyle}
+                  itemStyle={{ color: '#E2E8F0' }}
+                  labelStyle={{ color: '#94a3b8' }}
                 />
-                <Bar dataKey="count" name="Tests" fill="#eab308" radius={[0, 8, 8, 0]} />
+                <Bar dataKey="count" name="Tests" fill="#2563EB" radius={[0, 8, 8, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
       )}
 
-      {/* Score by Topic (Expandable) */}
       {showScoreDetails && stats.scoreByTopic.length > 0 && (
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-4">Puntuación por Tema</h3>
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
+          <h3 className="font-bold text-slate-100 mb-4">Puntuación por Tema</h3>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.scoreByTopic} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" domain={[0, 100]} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis type="number" domain={[0, 100]} tick={{ fill: "#64748B" }} />
                 <YAxis
                   type="category"
                   dataKey="topicName"
                   width={150}
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 12, fill: "#94a3b8" }}
                 />
-                <Tooltip 
+                <Tooltip
                   formatter={(value) => [`${value}%`, "Promedio"]}
-                  labelStyle={{ color: "#374151", fontWeight: "bold" }}
-                  contentStyle={{ borderRadius: "12px", border: "1px solid #e5e7eb" }}
+                  contentStyle={darkTooltipStyle}
+                  itemStyle={{ color: '#E2E8F0' }}
+                  labelStyle={{ color: '#94a3b8' }}
                 />
                 <Bar dataKey="avgScore" name="Promedio" radius={[0, 8, 8, 0]}>
                   {stats.scoreByTopic.map((entry, index) => (
@@ -275,34 +277,33 @@ export default function ProgresoPage() {
         </div>
       )}
 
-      {/* Best and Worst Topic */}
       {(stats.bestTopic || stats.worstTopic) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {stats.bestTopic && (
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-3xl border border-green-100">
+            <div className="bg-green-500/10 p-6 rounded-3xl border border-green-500/20">
               <div className="flex items-center gap-3 mb-2">
-                <TrendingUp className="text-green-600" size={24} />
-                <span className="text-sm font-bold text-green-700 uppercase tracking-wide">
+                <TrendingUp className="text-green-400" size={24} />
+                <span className="text-sm font-bold text-green-400 uppercase tracking-wide">
                   Mejor Tema
                 </span>
               </div>
-              <p className="text-xl font-black text-gray-800">{stats.bestTopic.topicName}</p>
-              <p className="text-3xl font-black text-green-600 mt-1">
+              <p className="text-xl font-black text-slate-100">{stats.bestTopic.topicName}</p>
+              <p className="text-3xl font-black text-green-400 mt-1">
                 {stats.bestTopic.avgScore}%
               </p>
             </div>
           )}
 
           {stats.worstTopic && stats.worstTopic.topicId !== stats.bestTopic?.topicId && (
-            <div className="bg-gradient-to-br from-red-50 to-orange-50 p-6 rounded-3xl border border-red-100">
+            <div className="bg-red-500/10 p-6 rounded-3xl border border-red-500/20">
               <div className="flex items-center gap-3 mb-2">
-                <TrendingDown className="text-red-600" size={24} />
-                <span className="text-sm font-bold text-red-700 uppercase tracking-wide">
+                <TrendingDown className="text-red-400" size={24} />
+                <span className="text-sm font-bold text-red-400 uppercase tracking-wide">
                   Área de Mejora
                 </span>
               </div>
-              <p className="text-xl font-black text-gray-800">{stats.worstTopic.topicName}</p>
-              <p className="text-3xl font-black text-red-600 mt-1">
+              <p className="text-xl font-black text-slate-100">{stats.worstTopic.topicName}</p>
+              <p className="text-3xl font-black text-red-400 mt-1">
                 {stats.worstTopic.avgScore}%
               </p>
             </div>
@@ -310,21 +311,20 @@ export default function ProgresoPage() {
         </div>
       )}
 
-      {/* Class Comparison - only show if there's data */}
       {hasScoreData && (
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-6">Comparación con la Clase</h3>
+        <div className="bg-surface p-6 rounded-3xl border border-slate-700/50">
+          <h3 className="font-bold text-slate-100 mb-6">Comparación con la Clase</h3>
           <div className="flex items-center justify-center gap-12">
             <div className="text-center">
-              <p className="text-sm text-gray-500 font-medium mb-1">Tu Promedio</p>
-              <p className="text-4xl font-black text-yellow-600">{stats.averageScore}%</p>
+              <p className="text-sm text-slate-400 font-medium mb-1">Tu Promedio</p>
+              <p className="text-4xl font-black text-accent">{stats.averageScore}%</p>
             </div>
 
-            <div className="text-center px-6 py-3 rounded-2xl bg-gray-50">
-              <p className="text-sm text-gray-500 font-medium mb-1">Diferencia</p>
+            <div className="text-center px-6 py-3 rounded-2xl bg-slate-800">
+              <p className="text-sm text-slate-400 font-medium mb-1">Diferencia</p>
               <p
                 className={`text-2xl font-black ${
-                  scoreComparison >= 0 ? "text-green-600" : "text-red-600"
+                  scoreComparison >= 0 ? "text-green-400" : "text-red-400"
                 }`}
               >
                 {scoreComparison >= 0 ? "+" : ""}
@@ -333,24 +333,23 @@ export default function ProgresoPage() {
             </div>
 
             <div className="text-center">
-              <p className="text-sm text-gray-500 font-medium mb-1">Media Clase</p>
-              <p className="text-4xl font-black text-gray-400">{stats.classAverageScore}%</p>
+              <p className="text-sm text-slate-400 font-medium mb-1">Media Clase</p>
+              <p className="text-4xl font-black text-slate-500">{stats.classAverageScore}%</p>
             </div>
           </div>
 
-          {/* Visual comparison bar */}
           <div className="mt-8 relative">
-            <div className="h-6 bg-gray-100 rounded-full overflow-hidden w-full">
+            <div className="h-6 bg-slate-800 rounded-full overflow-hidden w-full">
               <div
-                className="h-6 bg-gray-300 absolute rounded-full opacity-60"
+                className="h-6 bg-slate-600 absolute rounded-full opacity-60"
                 style={{ width: `${stats.classAverageScore}%` }}
               />
               <div
-                className="h-6 bg-yellow-500 absolute rounded-full shadow-sm z-10"
+                className="h-6 bg-accent absolute rounded-full shadow-sm z-10"
                 style={{ width: `${stats.averageScore}%` }}
               />
             </div>
-            <div className="flex justify-between mt-4 text-xs text-gray-400 font-medium">
+            <div className="flex justify-between mt-4 text-xs text-slate-500 font-medium">
               <span>0%</span>
               <span>50%</span>
               <span>100%</span>

@@ -22,13 +22,13 @@ export default function TestExecutionPage() {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center min-h-screen">
-        <Loader2 className="animate-spin text-yellow-600" size={40} />
+        <Loader2 className="animate-spin text-accent" size={40} />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 min-h-screen bg-[#fafafa]">
+    <div className="flex-1 min-h-screen">
       <main className="p-8">{test && <TestRunner test={test} />}</main>
     </div>
   );

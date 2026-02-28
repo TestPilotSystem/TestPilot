@@ -82,17 +82,17 @@ export default function UploadDocsPage() {
       <Toaster richColors />
 
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-black text-gray-800 tracking-tight">
+        <h1 className="text-3xl font-black text-slate-50 tracking-tight">
           Admin: Añadir Manuales
         </h1>
-        <p className="text-gray-400 font-medium">
+        <p className="text-slate-400 font-medium">
           Sube manuales oficiales para alimentar el motor de IA.
         </p>
       </div>
 
-      <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-8 relative overflow-hidden">
+      <div className="bg-surface p-10 rounded-[2.5rem] border border-slate-700/50 space-y-8 relative overflow-hidden">
         <div className="space-y-4">
-          <label className="text-sm font-black text-gray-700 uppercase tracking-wider ml-2">
+          <label className="text-sm font-black text-slate-300 uppercase tracking-wider ml-2">
             Tema / Etiqueta del Manual
           </label>
           <input
@@ -100,19 +100,19 @@ export default function UploadDocsPage() {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="Ej. Normativa de Velocidad"
-            className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-yellow-500 transition placeholder:text-gray-400 text-gray-800"
+            className="w-full p-4 bg-slate-800 border border-slate-600 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition placeholder:text-slate-500 text-slate-200"
           />
         </div>
 
         <div className="space-y-4">
-          <label className="text-sm font-black text-gray-700 uppercase tracking-wider ml-2">
+          <label className="text-sm font-black text-slate-300 uppercase tracking-wider ml-2">
             Archivo PDF
           </label>
           <div
             className={`relative border-2 border-dashed rounded-[2rem] p-12 transition-all flex flex-col items-center justify-center gap-4 ${
               file
-                ? "border-green-200 bg-green-50/30"
-                : "border-gray-200 bg-gray-50/50"
+                ? "border-green-500/50 bg-green-500/10"
+                : "border-slate-600 bg-slate-800/50"
             }`}
           >
             <input
@@ -123,23 +123,23 @@ export default function UploadDocsPage() {
             />
             <div
               className={`p-4 rounded-2xl ${
-                file ? "bg-green-100 text-green-600" : "bg-white text-gray-400"
-              } shadow-sm`}
+                file ? "bg-green-500/20 text-green-400" : "bg-slate-700 text-slate-500"
+              }`}
             >
               {file ? <FileText size={32} /> : <Upload size={32} />}
             </div>
             <div className="text-center">
-              <p className="font-bold text-gray-800">
+              <p className="font-bold text-slate-200">
                 {file ? file.name : "Seleccionar PDF"}
               </p>
-              <p className="text-xs text-gray-400 font-medium tracking-tight">
+              <p className="text-xs text-slate-500 font-medium tracking-tight">
                 El manual se troceará e indexará automáticamente
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-2xl flex items-start gap-3 text-blue-700 text-xs font-medium border border-blue-100">
+        <div className="bg-accent/10 p-4 rounded-2xl flex items-start gap-3 text-accent-light text-xs font-medium border border-accent/20">
           <Info size={18} className="shrink-0 mt-0.5" />
           <p>
             La etiqueta del tema ayuda al RAG a recuperar información más
@@ -150,7 +150,7 @@ export default function UploadDocsPage() {
         <button
           onClick={handleUpload}
           disabled={isUploading}
-          className="w-full bg-[#d4af37] text-white p-5 rounded-2xl font-black text-lg hover:bg-[#b8962e] transition shadow-lg shadow-yellow-100 disabled:cursor-not-allowed cursor-pointer disabled:opacity-50 flex items-center justify-center gap-3"
+          className="w-full bg-accent text-white p-5 rounded-2xl font-black text-lg hover:bg-accent-light transition shadow-lg shadow-accent/20 disabled:cursor-not-allowed cursor-pointer disabled:opacity-50 flex items-center justify-center gap-3"
         >
           {isUploading ? (
             <Loader2 className="animate-spin" />
@@ -161,22 +161,21 @@ export default function UploadDocsPage() {
         </button>
       </div>
 
-      <div className="pt-10 border-t border-gray-100 text-center space-y-6">
-        <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
+      <div className="pt-10 border-t border-slate-700/50 text-center space-y-6">
+        <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">
           Zona de Peligro
         </p>
         <button
           onClick={() => setIsResetModalOpen(true)}
-          className="bg-red-50 text-red-600 px-8 py-4 rounded-2xl font-bold hover:bg-red-100 transition flex items-center gap-2 mx-auto disabled:cursor-not-allowed cursor-pointer"
+          className="bg-red-500/10 text-red-400 px-8 py-4 rounded-2xl font-bold hover:bg-red-500/20 transition flex items-center gap-2 mx-auto disabled:cursor-not-allowed cursor-pointer"
         >
           <AlertTriangle size={18} /> Reiniciar Base de Datos Vectorial
         </button>
       </div>
 
-      {/* Modal de Reseteo */}
       {isResetModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-[2.5rem] p-8 space-y-6 shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-surface w-full max-w-md rounded-[2.5rem] p-8 space-y-6 shadow-2xl border border-slate-700/50 animate-in zoom-in-95 duration-200">
             <div className="flex justify-center">
               <Image
                 src="/warning.png"
@@ -188,17 +187,17 @@ export default function UploadDocsPage() {
             </div>
 
             <div className="text-center space-y-2">
-              <h2 className="text-2xl font-black text-gray-800">
+              <h2 className="text-2xl font-black text-slate-50">
                 ¿Borrar todos los datos?
               </h2>
-              <p className="text-sm text-gray-400 font-medium leading-relaxed">
+              <p className="text-sm text-slate-400 font-medium leading-relaxed">
                 Esta acción es irreversible. La IA perderá todo el conocimiento
                 de los manuales subidos hasta ahora.
               </p>
             </div>
 
             <div className="space-y-4">
-              <p className="text-[10px] font-black text-center text-red-500 uppercase tracking-widest">
+              <p className="text-[10px] font-black text-center text-red-400 uppercase tracking-widest">
                 Escribe CONFIRMAR para proceder
               </p>
               <input
@@ -206,7 +205,7 @@ export default function UploadDocsPage() {
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
                 placeholder="CONFIRMAR"
-                className="w-full p-4 bg-red-50 border border-red-100 rounded-2xl outline-none text-center font-black text-red-600 placeholder:text-red-200 focus:ring-2 focus:ring-red-500 transition"
+                className="w-full p-4 bg-red-500/10 border border-red-500/20 rounded-2xl outline-none text-center font-black text-red-400 placeholder:text-red-900/30 focus:ring-2 focus:ring-red-500 transition"
               />
             </div>
 
@@ -216,14 +215,14 @@ export default function UploadDocsPage() {
                   setIsResetModalOpen(false);
                   setConfirmText("");
                 }}
-                className="flex-1 p-4 rounded-2xl font-bold text-gray-400 hover:bg-gray-50 transition"
+                className="flex-1 p-4 rounded-2xl font-bold text-slate-400 hover:bg-slate-700/50 transition"
               >
                 Cancelar
               </button>
               <button
                 disabled={confirmText !== "CONFIRMAR" || isResetting}
                 onClick={handleReset}
-                className="flex-1 bg-red-600 text-white p-4 rounded-2xl font-bold hover:bg-red-700 disabled:opacity-30 disabled:grayscale transition flex items-center justify-center gap-2 shadow-lg shadow-red-100"
+                className="flex-1 bg-red-600 text-white p-4 rounded-2xl font-bold hover:bg-red-700 disabled:opacity-30 disabled:grayscale transition flex items-center justify-center gap-2 shadow-lg shadow-red-500/20"
               >
                 {isResetting && <Loader2 size={18} className="animate-spin" />}
                 Confirmar Borrado

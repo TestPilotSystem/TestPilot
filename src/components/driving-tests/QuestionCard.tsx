@@ -32,20 +32,20 @@ export default function QuestionCard({ q, index, onUpdate, onDelete }: any) {
 
   return (
     <div
-      className={`bg-white rounded-[2.5rem] p-10 border shadow-sm transition-all space-y-8 ${
+      className={`bg-surface rounded-[2.5rem] p-10 border shadow-sm transition-all space-y-8 ${
         isEditing
-          ? "border-yellow-400 ring-4 ring-yellow-50"
-          : "border-gray-100 hover:border-yellow-100"
+          ? "border-accent ring-4 ring-accent/10"
+          : "border-slate-700/50 hover:border-slate-600"
       }`}
     >
       <div className="flex justify-between items-start gap-4">
         <div className="flex items-start gap-5 flex-1">
-          <span className="bg-yellow-50 text-yellow-600 text-sm font-black w-10 h-10 flex items-center justify-center rounded-2xl shrink-0 shadow-sm">
+          <span className="bg-accent/10 text-accent text-sm font-black w-10 h-10 flex items-center justify-center rounded-2xl shrink-0">
             {index + 1}
           </span>
           {isEditing ? (
             <textarea
-              className="w-full text-xl font-bold text-gray-800 leading-snug bg-gray-50 p-4 rounded-xl border-none focus:ring-2 focus:ring-yellow-500 outline-none resize-none"
+              className="w-full text-xl font-bold text-slate-100 leading-snug bg-slate-800 p-4 rounded-xl border-none focus:ring-2 focus:ring-accent outline-none resize-none"
               value={editForm.enunciado}
               onChange={(e) =>
                 setEditForm({ ...editForm, enunciado: e.target.value })
@@ -53,7 +53,7 @@ export default function QuestionCard({ q, index, onUpdate, onDelete }: any) {
               rows={2}
             />
           ) : (
-            <h3 className="text-xl font-bold text-gray-800 leading-snug">
+            <h3 className="text-xl font-bold text-slate-100 leading-snug">
               {q.enunciado}
             </h3>
           )}
@@ -69,7 +69,7 @@ export default function QuestionCard({ q, index, onUpdate, onDelete }: any) {
               </button>
               <button
                 onClick={() => setIsEditing(false)}
-                className="p-2 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition"
+                className="p-2 bg-slate-700 text-slate-300 rounded-xl hover:bg-slate-600 transition"
               >
                 <X size={20} />
               </button>
@@ -78,13 +78,13 @@ export default function QuestionCard({ q, index, onUpdate, onDelete }: any) {
             <>
               <button
                 onClick={() => setIsEditing(true)}
-                className="p-2 text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 rounded-xl transition"
+                className="p-2 text-slate-500 hover:text-accent hover:bg-accent/10 rounded-xl transition"
               >
                 <Pencil size={20} />
               </button>
               <button
                 onClick={() => onDelete(q.id)}
-                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition"
+                className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition"
               >
                 <Trash2 size={20} />
               </button>
@@ -110,13 +110,13 @@ export default function QuestionCard({ q, index, onUpdate, onDelete }: any) {
                   isEditing ? "cursor-pointer" : ""
                 } ${
                   isCorrect
-                    ? "bg-green-50 border-green-200 text-green-800 font-bold"
-                    : "bg-gray-50/30 border-gray-50 text-gray-400"
+                    ? "bg-green-500/10 border-green-500/30 text-green-400 font-bold"
+                    : "bg-slate-800/30 border-slate-700/30 text-slate-400"
                 }`}
               >
                 {isEditing ? (
                   <input
-                    className="bg-transparent border-none focus:ring-0 w-full font-bold text-green-800 p-0"
+                    className="bg-transparent border-none focus:ring-0 w-full font-bold text-green-400 p-0"
                     value={opcion}
                     onChange={(e) => handleOptionChange(idx, e.target.value)}
                   />
@@ -124,7 +124,7 @@ export default function QuestionCard({ q, index, onUpdate, onDelete }: any) {
                   <span className="text-base">{opcion}</span>
                 )}
                 {isCorrect && (
-                  <CheckCircle2 size={24} className="text-green-500" />
+                  <CheckCircle2 size={24} className="text-green-400" />
                 )}
               </div>
             );
@@ -133,17 +133,17 @@ export default function QuestionCard({ q, index, onUpdate, onDelete }: any) {
       </div>
 
       {(isEditing || q.explicacion) && (
-        <div className="bg-[#fbfaf7] p-6 rounded-[1.5rem] flex gap-5 border border-gray-100">
-          <div className="p-3 bg-white rounded-2xl shadow-sm h-fit text-yellow-500">
+        <div className="bg-slate-800/50 p-6 rounded-[1.5rem] flex gap-5 border border-slate-700/50">
+          <div className="p-3 bg-slate-700 rounded-2xl h-fit text-accent">
             <Info size={22} />
           </div>
           <div className="space-y-1 w-full">
-            <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">
+            <p className="text-[11px] font-black text-slate-500 uppercase tracking-[0.2em]">
               Explicación
             </p>
             {isEditing ? (
               <textarea
-                className="w-full bg-transparent border-none focus:ring-0 text-gray-600 leading-relaxed italic text-[15px] p-0 outline-none resize-none"
+                className="w-full bg-transparent border-none focus:ring-0 text-slate-300 leading-relaxed italic text-[15px] p-0 outline-none resize-none"
                 value={editForm.explicacion || ""}
                 onChange={(e) =>
                   setEditForm({ ...editForm, explicacion: e.target.value })
@@ -151,7 +151,7 @@ export default function QuestionCard({ q, index, onUpdate, onDelete }: any) {
                 rows={3}
               />
             ) : (
-              <p className="text-gray-600 leading-relaxed italic text-[15px]">
+              <p className="text-slate-300 leading-relaxed italic text-[15px]">
                 {q.explicacion}
               </p>
             )}

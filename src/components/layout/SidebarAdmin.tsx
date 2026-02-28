@@ -26,7 +26,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-72 h-screen border-r border-gray-100 flex flex-col p-6 sticky top-0">
+    <aside className="w-72 shrink-0 h-screen bg-[#0F172A] border-r border-slate-700/50 flex flex-col p-6 overflow-y-auto">
       <div className="mb-12 flex justify-center">
         <Image
           src="/logo.png"
@@ -37,7 +37,7 @@ const Sidebar = () => {
         />
       </div>
 
-      <nav className="flex-1 space-y-3">
+      <nav className="flex-1 space-y-2">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -46,8 +46,8 @@ const Sidebar = () => {
               href={item.href}
               className={`flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition ${
                 isActive
-                  ? "bg-yellow-600 text-white shadow-md"
-                  : "text-gray-600 hover:bg-gray-50"
+                  ? "bg-brand text-white shadow-lg shadow-brand/20"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
               }`}
             >
               <item.icon size={22} />
@@ -57,13 +57,13 @@ const Sidebar = () => {
         })}
       </nav>
 
-      <div className="pt-6 border-t border-gray-100">
+      <div className="pt-6 border-t border-slate-700/50">
         <Link
           href="/admin/ajustes"
           className={`flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition ${
             pathname === "/admin/ajustes"
-              ? "bg-yellow-600 text-white shadow-md"
-              : "text-gray-600 hover:bg-gray-50"
+              ? "bg-brand text-white shadow-lg shadow-brand/20"
+              : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
           }`}
         >
           <Settings size={22} />

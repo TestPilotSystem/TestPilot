@@ -45,34 +45,34 @@ const DashboardHeader = () => {
   };
 
   return (
-    <header className="h-20 border-b border-gray-100 flex items-center justify-between px-8 bg-white">
+    <header className="h-20 border-b border-slate-700/50 flex items-center justify-between px-8 bg-[#1E293B]">
       <div>
-        <h1 className="text-xl font-bold text-gray-800">
+        <h1 className="text-xl font-bold text-slate-50">
           Bienvenido de nuevo,{" "}
-          <span className="text-yellow-700">{displayName}</span>
+          <span className="text-accent-light">{displayName}</span>
         </h1>
       </div>
 
       <div className="flex items-center gap-6">
-        <button className="relative text-gray-400 hover:text-gray-600 cursor-pointer">
+        <button className="relative text-slate-400 hover:text-slate-200 cursor-pointer transition">
           <Bell size={22} />
-          <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+          <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-[#1E293B]"></span>
         </button>
 
-        <div className="flex items-center gap-3 pl-6 border-l border-gray-100 relative" ref={menuRef}>
+        <div className="flex items-center gap-3 pl-6 border-l border-slate-700/50 relative" ref={menuRef}>
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition"
           >
             <div className="text-right">
-              <p className="text-sm font-bold text-gray-800 leading-none">
+              <p className="text-sm font-bold text-slate-50 leading-none">
                 {displayName}
               </p>
-              <p className="text-xs text-gray-500 mt-1 uppercase tracking-tighter font-semibold">
+              <p className="text-xs text-slate-500 mt-1 uppercase tracking-tighter font-semibold">
                 {displayRole}
               </p>
             </div>
-            <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden border border-yellow-200">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden border border-brand-light/50">
               {displayAvatar ? (
                 <Image
                   src={`/avatars/${displayAvatar}.webp`}
@@ -82,14 +82,14 @@ const DashboardHeader = () => {
                   className="object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-yellow-100 flex items-center justify-center text-yellow-700 font-bold">
+                <div className="w-full h-full bg-brand flex items-center justify-center text-white font-bold">
                   {displayName.charAt(0).toUpperCase()}
                 </div>
               )}
             </div>
-            <ChevronDown 
-              size={16} 
-              className={`text-gray-400 transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`} 
+            <ChevronDown
+              size={16}
+              className={`text-slate-500 transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`}
             />
           </button>
 
@@ -101,7 +101,7 @@ const DashboardHeader = () => {
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.15 }}
                 onClick={handleLogout}
-                className="ml-2 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                className="ml-2 p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition cursor-pointer"
                 title="Cerrar sesión"
               >
                 <LogOut size={20} />
@@ -116,11 +116,11 @@ const DashboardHeader = () => {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50"
+                className="absolute right-0 top-full mt-2 w-72 bg-[#1E293B] rounded-2xl shadow-xl border border-slate-700/50 overflow-hidden z-50"
               >
-                <div className="p-5 bg-gradient-to-br from-yellow-50 to-orange-50 border-b border-gray-100">
+                <div className="p-5 bg-brand/20 border-b border-slate-700/50">
                   <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden border-2 border-yellow-200">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden border-2 border-brand-light/50">
                       {displayAvatar ? (
                         <Image
                           src={`/avatars/${displayAvatar}.webp`}
@@ -130,23 +130,23 @@ const DashboardHeader = () => {
                           className="object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full bg-yellow-100 flex items-center justify-center text-yellow-700 font-bold text-xl">
+                        <div className="w-full h-full bg-brand flex items-center justify-center text-white font-bold text-xl">
                           {displayName.charAt(0).toUpperCase()}
                         </div>
                       )}
                     </div>
                     <div>
-                      <p className="font-bold text-gray-800 text-lg">{displayName}</p>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide font-semibold">
+                      <p className="font-bold text-slate-50 text-lg">{displayName}</p>
+                      <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold">
                         {displayRole === "ADMIN" ? "Administrador" : "Estudiante"}
                       </p>
                     </div>
                   </div>
-                  
-                  <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
-                    <User size={14} className="text-gray-400" />
+
+                  <div className="mt-4 flex items-center gap-2 text-sm text-slate-400">
+                    <User size={14} className="text-slate-500" />
                     <span className="font-medium">DNI:</span>
-                    <span className="text-gray-800">{displayDni}</span>
+                    <span className="text-slate-200">{displayDni}</span>
                   </div>
                 </div>
 
@@ -156,15 +156,15 @@ const DashboardHeader = () => {
                       setIsMenuOpen(false);
                       router.push(settingsPath);
                     }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl transition font-medium"
+                    className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 rounded-xl transition font-medium"
                   >
-                    <Settings size={18} className="text-gray-400" />
+                    <Settings size={18} className="text-slate-500" />
                     Ajustes de cuenta
                   </button>
 
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition font-medium"
+                    className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition font-medium"
                   >
                     <LogOut size={18} />
                     Cerrar sesión

@@ -96,13 +96,13 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-yellow-600 animate-spin" />
+        <Loader2 className="w-8 h-8 text-accent animate-spin" />
       </div>
     );
   }
 
-  const availableAvatars = isAdmin 
-    ? [...STUDENT_AVATARS, "avatar-admin"] 
+  const availableAvatars = isAdmin
+    ? [...STUDENT_AVATARS, "avatar-admin"]
     : STUDENT_AVATARS;
 
   return (
@@ -110,64 +110,64 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
       <Toaster richColors />
 
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-black text-gray-800 tracking-tight">
+        <h1 className="text-3xl font-black text-slate-50 tracking-tight">
           Ajustes de Cuenta
         </h1>
-        <p className="text-gray-400 font-medium">
+        <p className="text-slate-400 font-medium">
           Personaliza tu perfil y preferencias.
         </p>
       </div>
 
-      <div className="bg-white p-10 rounded-[2.5rem] border border-gray-100 shadow-sm space-y-10">
+      <div className="bg-surface p-10 rounded-[2.5rem] border border-slate-700/50 space-y-10">
         <div className="space-y-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-yellow-50 rounded-2xl text-yellow-600">
+            <div className="p-3 bg-accent/10 rounded-2xl text-accent">
               <User size={24} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-800">Información Personal</h2>
-              <p className="text-sm text-gray-400">Datos de tu cuenta</p>
+              <h2 className="text-lg font-bold text-slate-100">Información Personal</h2>
+              <p className="text-sm text-slate-500">Datos de tu cuenta</p>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-wider">
                 Nombre
               </label>
-              <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-700 font-medium">
+              <div className="px-4 py-3 bg-slate-800 rounded-xl text-slate-300 font-medium">
                 {profile?.firstName || "-"}
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">
+              <label className="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-wider">
                 Apellidos
               </label>
-              <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-700 font-medium">
+              <div className="px-4 py-3 bg-slate-800 rounded-xl text-slate-300 font-medium">
                 {profile?.lastName || "-"}
               </div>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-wider">
+            <label className="block text-xs font-bold text-slate-500 uppercase mb-2 tracking-wider">
               <CreditCard size={12} className="inline mr-1" />
               DNI
             </label>
-            <div className="px-4 py-3 bg-gray-50 rounded-xl text-gray-700 font-medium">
+            <div className="px-4 py-3 bg-slate-800 rounded-xl text-slate-300 font-medium">
               {profile?.dni || "No disponible"}
             </div>
           </div>
         </div>
 
-        <div className="pt-8 border-t border-gray-100 space-y-6">
+        <div className="pt-8 border-t border-slate-700/50 space-y-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-blue-50 rounded-2xl text-blue-600">
+            <div className="p-3 bg-accent/10 rounded-2xl text-accent">
               <Mail size={24} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-800">Email</h2>
-              <p className="text-sm text-gray-400">Tu dirección de correo electrónico</p>
+              <h2 className="text-lg font-bold text-slate-100">Email</h2>
+              <p className="text-sm text-slate-500">Tu dirección de correo electrónico</p>
             </div>
           </div>
 
@@ -175,19 +175,19 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 outline-none transition text-gray-700"
+            className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-xl focus:ring-2 focus:ring-accent outline-none transition text-slate-200 placeholder:text-slate-500"
             placeholder="tu@email.com"
           />
         </div>
 
-        <div className="pt-8 border-t border-gray-100 space-y-6">
+        <div className="pt-8 border-t border-slate-700/50 space-y-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-purple-50 rounded-2xl text-purple-600">
+            <div className="p-3 bg-brand/20 rounded-2xl text-brand-light">
               <User size={24} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-800">Avatar</h2>
-              <p className="text-sm text-gray-400">Elige tu imagen de perfil</p>
+              <h2 className="text-lg font-bold text-slate-100">Avatar</h2>
+              <p className="text-sm text-slate-500">Elige tu imagen de perfil</p>
             </div>
           </div>
 
@@ -198,8 +198,8 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
                 onClick={() => setSelectedAvatar(avatarId)}
                 className={`relative aspect-square rounded-2xl overflow-hidden border-4 transition-all hover:scale-105 ${
                   selectedAvatar === avatarId
-                    ? "border-yellow-500 shadow-lg shadow-yellow-100"
-                    : "border-transparent hover:border-gray-200"
+                    ? "border-accent shadow-lg shadow-accent/20"
+                    : "border-transparent hover:border-slate-600"
                 }`}
               >
                 <Image
@@ -209,8 +209,8 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
                   className="object-cover"
                 />
                 {selectedAvatar === avatarId && (
-                  <div className="absolute inset-0 bg-yellow-500/20 flex items-center justify-center">
-                    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                  <div className="absolute inset-0 bg-accent/20 flex items-center justify-center">
+                    <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
                       <Check size={18} className="text-white" />
                     </div>
                   </div>
@@ -220,18 +220,18 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
           </div>
         </div>
 
-        <div className="pt-8 border-t border-gray-100 space-y-6">
+        <div className="pt-8 border-t border-slate-700/50 space-y-6">
           <div className="flex items-center gap-3 mb-6">
-            <div className="p-3 bg-red-50 rounded-2xl text-red-600">
+            <div className="p-3 bg-red-500/10 rounded-2xl text-red-400">
               <Lock size={24} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-800">Seguridad</h2>
-              <p className="text-sm text-gray-400">Gestiona tu contraseña de acceso</p>
+              <h2 className="text-lg font-bold text-slate-100">Seguridad</h2>
+              <p className="text-sm text-slate-500">Gestiona tu contraseña de acceso</p>
             </div>
           </div>
           <Link href="/cambiar-contrasena" className="inline-block">
-             <div className="px-6 py-3 bg-white border border-red-200 text-red-600 rounded-xl font-bold hover:bg-red-50 transition cursor-pointer">
+             <div className="px-6 py-3 bg-surface border border-red-500/20 text-red-400 rounded-xl font-bold hover:bg-red-500/10 transition cursor-pointer">
                  Cambiar Contraseña
              </div>
           </Link>
@@ -241,7 +241,7 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
       <button
         onClick={handleSave}
         disabled={isSaving || !hasChanges}
-        className="w-full bg-[#d4af37] text-white p-5 rounded-2xl font-black text-lg hover:bg-[#b8962e] transition shadow-lg shadow-yellow-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+        className="w-full bg-accent text-white p-5 rounded-2xl font-black text-lg hover:bg-accent-light transition shadow-lg shadow-accent/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
       >
         {isSaving ? (
           <Loader2 className="animate-spin" size={20} />

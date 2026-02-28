@@ -98,14 +98,14 @@ export default function TutorPage() {
 
   if (isLoadingHistory) {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-stone-50 via-orange-50 to-yellow-50 pt-24 pb-8 px-4 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-yellow-600 animate-spin" />
+      <main className="min-h-screen bg-[#0F172A] pt-24 pb-8 px-4 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-accent animate-spin" />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-stone-50 via-orange-50 to-yellow-50 pt-24 pb-8 px-4">
+    <main className="min-h-screen bg-[#0F172A] pt-24 pb-8 px-4">
       <div className="max-w-3xl mx-auto h-[calc(100vh-8rem)] flex flex-col">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -113,24 +113,24 @@ export default function TutorPage() {
           transition={{ duration: 0.6 }}
           className="text-center mb-6 relative"
         >
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-yellow-200/30 rounded-full blur-[80px] -z-10" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-brand/20 rounded-full blur-[80px] -z-10" />
           <div className="flex items-center justify-center gap-3 mb-2">
-            <Sparkles className="w-8 h-8 text-yellow-500" />
-            <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-amber-700 tracking-tight">
+            <Sparkles className="w-8 h-8 text-accent" />
+            <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-accent to-accent-light tracking-tight">
               Tutor IA
             </h1>
           </div>
-          <p className="text-gray-500">
+          <p className="text-slate-400">
             Pregunta cualquier duda sobre educación vial
           </p>
         </motion.div>
 
-        <div className="flex-1 bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-white/50 overflow-hidden flex flex-col">
+        <div className="flex-1 bg-surface/80 backdrop-blur-md rounded-3xl shadow-xl border border-slate-700/50 overflow-hidden flex flex-col">
           {messages.length > 0 && (
-            <div className="flex justify-end p-3 border-b border-gray-100">
+            <div className="flex justify-end p-3 border-b border-slate-700/50">
               <button
                 onClick={() => setIsClearModalOpen(true)}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
                 Limpiar chat
@@ -143,10 +143,10 @@ export default function TutorPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="h-full flex flex-col items-center justify-center text-center text-gray-400"
+                className="h-full flex flex-col items-center justify-center text-center text-slate-500"
               >
-                <Bot className="w-16 h-16 mb-4 text-yellow-400/50" />
-                <p className="text-lg font-medium">¡Hola! Soy tu tutor de autoescuela.</p>
+                <Bot className="w-16 h-16 mb-4 text-brand/40" />
+                <p className="text-lg font-medium text-slate-300">¡Hola! Soy tu tutor de autoescuela.</p>
                 <p className="text-sm mt-1">Escribe tu pregunta para comenzar.</p>
               </motion.div>
             )}
@@ -164,15 +164,15 @@ export default function TutorPage() {
                   }`}
                 >
                   {message.role === "assistant" && (
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-md">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand to-brand-light flex items-center justify-center shadow-md">
                       <Bot className="w-5 h-5 text-white" />
                     </div>
                   )}
                   <div
                     className={`max-w-[75%] px-4 py-3 rounded-2xl ${
                       message.role === "user"
-                        ? "bg-gradient-to-r from-yellow-500 to-amber-600 text-white shadow-md"
-                        : "bg-gray-100 text-gray-800"
+                        ? "bg-accent text-white shadow-md"
+                        : "bg-slate-800 text-slate-200"
                     }`}
                   >
                     <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -180,8 +180,8 @@ export default function TutorPage() {
                     </p>
                   </div>
                   {message.role === "user" && (
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
-                      <User className="w-5 h-5 text-gray-600" />
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
+                      <User className="w-5 h-5 text-slate-300" />
                     </div>
                   )}
                 </motion.div>
@@ -194,11 +194,11 @@ export default function TutorPage() {
                 animate={{ opacity: 1 }}
                 className="flex gap-3 justify-start"
               >
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center shadow-md">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-brand to-brand-light flex items-center justify-center shadow-md">
                   <Bot className="w-5 h-5 text-white" />
                 </div>
-                <div className="bg-gray-100 px-4 py-3 rounded-2xl">
-                  <Loader2 className="w-5 h-5 text-yellow-600 animate-spin" />
+                <div className="bg-slate-800 px-4 py-3 rounded-2xl">
+                  <Loader2 className="w-5 h-5 text-accent animate-spin" />
                 </div>
               </motion.div>
             )}
@@ -208,7 +208,7 @@ export default function TutorPage() {
 
           <form
             onSubmit={handleSubmit}
-            className="p-4 border-t border-gray-100 bg-white/50"
+            className="p-4 border-t border-slate-700/50 bg-surface/50"
           >
             <div className="flex gap-3">
               <input
@@ -217,12 +217,12 @@ export default function TutorPage() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Escribe tu pregunta..."
                 disabled={isLoading}
-                className="flex-1 px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3 rounded-xl border border-slate-600 bg-slate-800 text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="px-5 py-3 bg-gradient-to-r from-yellow-500 to-amber-600 text-white rounded-xl font-medium hover:from-yellow-600 hover:to-amber-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md"
+                className="px-5 py-3 bg-accent text-white rounded-xl font-medium hover:bg-accent-light transition-all shadow-md shadow-accent/20 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-md"
               >
                 {isLoading ? (
                   <Loader2 className="w-5 h-5 animate-spin" />

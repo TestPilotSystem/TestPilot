@@ -44,7 +44,7 @@ export default function StudentTestsPage() {
     setTests(data);
     setLoading(false);
   }, [search, selectedTypes]);
-  
+
   const regenerateErrorTests = async () => {
     setRefreshing(true);
     try {
@@ -89,7 +89,6 @@ export default function StudentTestsPage() {
     }
   };
 
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchTests();
@@ -106,9 +105,9 @@ export default function StudentTestsPage() {
   const getTypeIcon = (type: TestType) => {
     switch (type) {
       case "ERROR":
-        return <AlertTriangle size={28} className="text-red-500" />;
+        return <AlertTriangle size={28} className="text-red-400" />;
       case "CUSTOM":
-        return <Sparkles size={28} className="text-purple-500" />;
+        return <Sparkles size={28} className="text-brand-light" />;
       default:
         return <BookOpen size={28} />;
     }
@@ -118,42 +117,42 @@ export default function StudentTestsPage() {
     switch (type) {
       case "ERROR":
         return {
-          icon: "bg-red-50 text-red-600",
-          badge: "bg-red-50 text-red-500 border-red-100",
-          button: "bg-red-500 hover:bg-red-600 shadow-red-100",
+          icon: "bg-red-500/10 text-red-400",
+          badge: "bg-red-500/10 text-red-400 border-red-500/20",
+          button: "bg-red-500 hover:bg-red-600 shadow-red-500/20",
         };
       case "CUSTOM":
         return {
-          icon: "bg-purple-50 text-purple-600",
-          badge: "bg-purple-50 text-purple-500 border-purple-100",
-          button: "bg-purple-500 hover:bg-purple-600 shadow-purple-100",
+          icon: "bg-brand/20 text-brand-light",
+          badge: "bg-brand/10 text-brand-light border-brand/20",
+          button: "bg-brand hover:bg-brand-light shadow-brand/20",
         };
       default:
         return {
-          icon: "bg-yellow-50 text-yellow-600",
-          badge: "bg-gray-50 text-gray-400 border-gray-100",
-          button: "bg-yellow-500 hover:bg-yellow-600 shadow-yellow-100",
+          icon: "bg-accent/10 text-accent",
+          badge: "bg-slate-700/50 text-slate-400 border-slate-600/50",
+          button: "bg-accent hover:bg-accent-light shadow-accent/20",
         };
     }
   };
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center min-h-screen bg-[#fafafa]">
-        <Loader2 className="animate-spin text-yellow-600" size={40} />
+      <div className="flex-1 flex items-center justify-center min-h-screen">
+        <Loader2 className="animate-spin text-accent" size={40} />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 min-h-screen bg-[#fafafa]">
+    <div className="flex-1 min-h-screen">
       <Toaster richColors position="top-center" />
       <main className="p-8 space-y-6">
         <header>
-          <h1 className="text-3xl font-black text-gray-800 tracking-tight">
+          <h1 className="text-3xl font-black text-slate-50 tracking-tight">
             Tests Disponibles 🚗
           </h1>
-          <p className="text-gray-500 font-medium">
+          <p className="text-slate-400 font-medium">
             Selecciona una categoría y demuestra lo que sabes.
           </p>
         </header>
@@ -161,7 +160,7 @@ export default function StudentTestsPage() {
         <div className="flex gap-4">
           <div className="flex-1 relative">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
               size={20}
             />
             <input
@@ -169,14 +168,13 @@ export default function StudentTestsPage() {
               placeholder="Buscar por tema..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-2xl outline-none focus:ring-2 focus:ring-yellow-500 transition shadow-sm font-medium text-gray-800 placeholder:text-gray-400"
+              className="w-full pl-12 pr-4 py-4 bg-surface border border-slate-700/50 rounded-2xl outline-none focus:ring-2 focus:ring-accent transition font-medium text-slate-200 placeholder:text-slate-500"
             />
           </div>
 
-          
           <button
             onClick={regenerateErrorTests}
-            className="p-4 bg-red-50 border border-red-100 rounded-2xl text-red-500 hover:bg-red-100 transition shadow-sm cursor-pointer active:scale-95"
+            className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 hover:bg-red-500/20 transition cursor-pointer active:scale-95"
             title="Refrescar tests de errores"
           >
             <RefreshCw size={24} />
@@ -185,7 +183,7 @@ export default function StudentTestsPage() {
           <button
             onClick={() => setShowCustomModal(true)}
             disabled={generatingCustom}
-            className="p-4 bg-purple-50 border border-purple-100 rounded-2xl text-purple-500 hover:bg-purple-100 transition shadow-sm cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-4 bg-brand/10 border border-brand/20 rounded-2xl text-brand-light hover:bg-brand/20 transition cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Generar test personalizado con IA"
           >
             {generatingCustom ? <Loader2 size={24} className="animate-spin" /> : <Sparkles size={24} />}
@@ -201,44 +199,40 @@ export default function StudentTestsPage() {
             loading={generatingCustom}
             loadingText="Generando..."
             icon={<Sparkles size={32} />}
-            iconBgClass="bg-purple-50"
-            iconTextClass="text-purple-500"
-            confirmButtonClass="bg-purple-500 hover:bg-purple-600"
+            iconBgClass="bg-brand/20"
+            iconTextClass="text-brand-light"
+            confirmButtonClass="bg-brand hover:bg-brand-light"
           />
 
           <div className="relative">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`p-4 bg-white border rounded-2xl transition shadow-sm cursor-pointer ${
-                showFilters ? "border-yellow-500 text-yellow-600" : "border-gray-100 text-gray-400 hover:text-yellow-600"
+              className={`p-4 bg-surface border rounded-2xl transition cursor-pointer ${
+                showFilters ? "border-accent text-accent" : "border-slate-700/50 text-slate-500 hover:text-accent"
               }`}
             >
               <Filter size={24} />
             </button>
 
             {showFilters && (
-              <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl border border-gray-100 shadow-xl z-50 p-4 space-y-3">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide">
+              <div className="absolute right-0 top-full mt-2 w-64 bg-surface rounded-2xl border border-slate-700/50 shadow-xl z-50 p-4 space-y-3">
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">
                   Tipos de Test
                 </p>
                 {(Object.keys(TYPE_CONFIG) as TestType[]).map((type) => (
                   <label
                     key={type}
-                    className="flex items-center gap-3 cursor-pointer p-2 rounded-xl hover:bg-gray-50 transition"
+                    className="flex items-center gap-3 cursor-pointer p-2 rounded-xl hover:bg-slate-800 transition"
                   >
                     <div
-                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition ${
-                        selectedTypes.includes(type)
-                          ? `bg-${TYPE_CONFIG[type].color}-500 border-${TYPE_CONFIG[type].color}-500`
-                          : "border-gray-300"
-                      }`}
+                      className="w-5 h-5 rounded-md border-2 flex items-center justify-center transition"
                       style={{
                         backgroundColor: selectedTypes.includes(type)
-                          ? type === "BASIC" ? "#eab308" : type === "ERROR" ? "#ef4444" : "#a855f7"
+                          ? type === "BASIC" ? "#2563EB" : type === "ERROR" ? "#ef4444" : "#5A2A82"
                           : "transparent",
                         borderColor: selectedTypes.includes(type)
-                          ? type === "BASIC" ? "#eab308" : type === "ERROR" ? "#ef4444" : "#a855f7"
-                          : "#d1d5db",
+                          ? type === "BASIC" ? "#2563EB" : type === "ERROR" ? "#ef4444" : "#5A2A82"
+                          : "#475569",
                       }}
                     >
                       {selectedTypes.includes(type) && (
@@ -251,7 +245,7 @@ export default function StudentTestsPage() {
                       onChange={() => toggleType(type)}
                       className="hidden"
                     />
-                    <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <span className="flex items-center gap-2 text-sm font-medium text-slate-300">
                       {TYPE_CONFIG[type].icon}
                       {TYPE_CONFIG[type].label}
                     </span>
@@ -263,9 +257,9 @@ export default function StudentTestsPage() {
         </div>
 
         {tests.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl border border-gray-100">
-            <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 font-medium">
+          <div className="text-center py-20 bg-surface rounded-3xl border border-slate-700/50">
+            <Search className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+            <p className="text-slate-400 font-medium">
               No se encontraron tests con los filtros seleccionados
             </p>
           </div>
@@ -276,7 +270,7 @@ export default function StudentTestsPage() {
               return (
                 <div
                   key={test.id}
-                  className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group relative overflow-hidden"
+                  className="bg-surface p-6 rounded-[2.5rem] border border-slate-700/50 hover:border-slate-600 hover:-translate-y-1 transition-all group relative overflow-hidden"
                 >
                   <div className="flex justify-between items-start mb-6">
                     <div className={`w-14 h-14 ${styles.icon} rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition duration-300`}>
@@ -287,10 +281,10 @@ export default function StudentTestsPage() {
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-gray-800 mb-2 leading-tight">
+                  <h3 className="text-xl font-bold text-slate-100 mb-2 leading-tight">
                     {test.topic.name}
                   </h3>
-                  <p className="text-sm text-gray-400 font-medium mb-6 line-clamp-2">
+                  <p className="text-sm text-slate-500 font-medium mb-6 line-clamp-2">
                     {test.type === "ERROR"
                       ? "Repasa las preguntas que has fallado anteriormente."
                       : test.type === "CUSTOM"
@@ -298,9 +292,9 @@ export default function StudentTestsPage() {
                       : "Domina este bloque de contenido practicando con preguntas reales de examen."}
                   </p>
 
-                  <div className="flex items-center justify-between pt-6 border-t border-gray-50">
-                    <div className="flex items-center gap-2 text-gray-400 font-bold text-xs">
-                      <Clock size={14} className="text-yellow-500" />
+                  <div className="flex items-center justify-between pt-6 border-t border-slate-700/30">
+                    <div className="flex items-center gap-2 text-slate-500 font-bold text-xs">
+                      <Clock size={14} className="text-accent" />
                       30 min
                     </div>
                     <Link

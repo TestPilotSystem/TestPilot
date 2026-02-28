@@ -27,7 +27,6 @@ export default function RequestsPage() {
     }
   }, []);
 
-  // Polling every 30 seconds
   useEffect(() => {
     fetchRequests();
 
@@ -60,10 +59,10 @@ export default function RequestsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 mb-8">
-        <div className="bg-yellow-700 p-2 rounded-lg text-white">
+        <div className="bg-accent p-2 rounded-lg text-white">
           <UserCheck size={24} />
         </div>
-        <h2 className="text-2xl font-bold text-gray-800">Solicitudes</h2>
+        <h2 className="text-2xl font-bold text-slate-50">Solicitudes</h2>
       </div>
 
       <div className="animate-in fade-in duration-500">

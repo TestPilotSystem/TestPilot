@@ -25,8 +25,6 @@ export default function TestDetailsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
-
-  // State for AI question generation
   const [isGeneratingIA, setIsGeneratingIA] = useState(false);
 
   useEffect(() => {
@@ -81,7 +79,6 @@ export default function TestDetailsPage() {
     }
   };
 
-  // Logic for AI question generation
   const handleGenerateIA = async () => {
     setIsGeneratingIA(true);
     const toastId = toast.loading("La IA está redactando la pregunta...");
@@ -94,7 +91,6 @@ export default function TestDetailsPage() {
       if (!aiRes.ok) throw new Error("Fallo en la generación de la IA");
       const aiData = await aiRes.json();
 
-      // save to DB
       const saveRes = await fetch("/api/admin/questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -111,7 +107,6 @@ export default function TestDetailsPage() {
 
       const newQuestion = await saveRes.json();
 
-      // Update state
       setTest({ ...test, questions: [...test.questions, newQuestion] });
       toast.success("Pregunta generada y guardada con éxito", { id: toastId });
     } catch (error) {
@@ -125,7 +120,7 @@ export default function TestDetailsPage() {
 
   if (loading)
     return (
-      <div className="p-20 text-center font-bold text-gray-400">
+      <div className="p-20 text-center font-bold text-slate-500">
         Cargando test...
       </div>
     );
@@ -134,19 +129,18 @@ export default function TestDetailsPage() {
     <div className="max-w-5xl mx-auto p-8 space-y-12 pb-32">
       <Toaster richColors />
 
-      {/* Header */}
-      <div className="flex justify-between items-center bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm">
+      <div className="flex justify-between items-center bg-surface p-8 rounded-[2.5rem] border border-slate-700/50">
         <div className="space-y-3">
           <Link
             href="/admin/inicio"
-            className="flex items-center gap-2 text-xs font-bold text-gray-400 hover:text-yellow-600 uppercase tracking-widest transition"
+            className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-accent uppercase tracking-widest transition"
           >
             <ChevronLeft size={14} /> Volver al panel
           </Link>
-          <h1 className="text-3xl font-black text-gray-800">
+          <h1 className="text-3xl font-black text-slate-50">
             {test.topic.name}
           </h1>
-          <div className="flex gap-4 text-sm text-gray-400 font-bold">
+          <div className="flex gap-4 text-sm text-slate-500 font-bold">
             <span className="flex items-center gap-1.5">
               <Calendar size={14} />{" "}
               {new Date(test.createdAt).toLocaleDateString()}
@@ -158,13 +152,12 @@ export default function TestDetailsPage() {
         </div>
         <button
           onClick={() => setIsDeleteModalOpen(true)}
-          className="flex items-center gap-2 bg-red-50 text-red-600 px-6 py-3 rounded-2xl font-bold hover:bg-red-100 transition"
+          className="flex items-center gap-2 bg-red-500/10 text-red-400 px-6 py-3 rounded-2xl font-bold hover:bg-red-500/20 transition"
         >
           <Trash2 size={18} /> Eliminar Test
         </button>
       </div>
 
-      {/* Listado de Preguntas */}
       <div className="grid grid-cols-1 gap-8">
         {test.questions.map((q: any, index: number) => (
           <QuestionCard
@@ -177,13 +170,12 @@ export default function TestDetailsPage() {
         ))}
       </div>
 
-      {/* Sección Añadir Pregunta */}
-      <div className="bg-[#fbfaf7] border-2 border-dashed border-gray-200 rounded-[2.5rem] p-12 flex flex-col items-center text-center space-y-6">
+      <div className="bg-slate-800/50 border-2 border-dashed border-slate-600 rounded-[2.5rem] p-12 flex flex-col items-center text-center space-y-6">
         <div className="space-y-2">
-          <h2 className="text-2xl font-black text-gray-800 tracking-tight">
+          <h2 className="text-2xl font-black text-slate-100 tracking-tight">
             ¿Faltan preguntas en este test?
           </h2>
-          <p className="text-gray-500 max-w-md mx-auto">
+          <p className="text-slate-400 max-w-md mx-auto">
             Añade contenido extra para completar el examen. Puedes redactarla tú
             mismo o pedirle ayuda a la inteligencia artificial.
           </p>
@@ -192,20 +184,20 @@ export default function TestDetailsPage() {
         <div className="flex flex-wrap justify-center gap-4">
           <button
             onClick={() => setIsManualModalOpen(true)}
-            className="flex items-center gap-3 bg-white text-gray-800 border border-gray-100 px-8 py-4 rounded-2xl font-bold hover:bg-gray-50 transition shadow-sm"
+            className="flex items-center gap-3 bg-surface text-slate-200 border border-slate-700/50 px-8 py-4 rounded-2xl font-bold hover:bg-slate-700 transition"
           >
-            <Plus size={20} className="text-[#d4af37]" /> Crear pregunta manual
+            <Plus size={20} className="text-accent" /> Crear pregunta manual
           </button>
 
           <button
             onClick={handleGenerateIA}
             disabled={isGeneratingIA}
-            className="flex items-center gap-3 bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-black transition shadow-lg shadow-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-3 bg-accent text-white px-8 py-4 rounded-2xl font-bold hover:bg-accent-light transition shadow-lg shadow-accent/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isGeneratingIA ? (
-              <Loader2 size={20} className="animate-spin text-yellow-400" />
+              <Loader2 size={20} className="animate-spin" />
             ) : (
-              <Sparkles size={20} className="text-yellow-400" />
+              <Sparkles size={20} />
             )}
             {isGeneratingIA ? "Generando..." : "Generar con IA"}
           </button>

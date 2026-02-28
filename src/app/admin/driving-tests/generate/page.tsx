@@ -80,11 +80,11 @@ export default function GenerateTestPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
       <Toaster richColors position="top-right" />
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-        <div className="h-2 bg-gradient-to-r from-yellow-400 via-yellow-600 to-yellow-400" />
+      <div className="w-full max-w-md bg-surface rounded-3xl shadow-xl overflow-hidden border border-slate-700/50">
+        <div className="h-2 bg-gradient-to-r from-brand via-brand-light to-brand" />
 
         <div className="p-8 flex flex-col items-center">
-          <div className="relative w-32 h-32 mb-6 rounded-full bg-gray-50 flex items-center justify-center border-4 border-white shadow-md">
+          <div className="relative w-32 h-32 mb-6 rounded-full bg-slate-800 flex items-center justify-center border-4 border-surface shadow-md">
             <Image
               src="/generate.png"
               alt="Generar"
@@ -92,30 +92,29 @@ export default function GenerateTestPage() {
               height={80}
               className="object-contain"
             />
-            <div className="absolute bottom-0 right-2 bg-yellow-500 p-1.5 rounded-lg shadow-sm">
+            <div className="absolute bottom-0 right-2 bg-accent p-1.5 rounded-lg shadow-sm">
               <Sparkles size={16} className="text-white" />
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-gray-800 mb-1">
+          <h1 className="text-2xl font-bold text-slate-50 mb-1">
             Generar Test AI
           </h1>
-          <p className="text-gray-500 text-sm mb-8">Panel de Administración</p>
+          <p className="text-slate-400 text-sm mb-8">Panel de Administración</p>
 
           <div className="w-full space-y-5">
-            {/* Dropdown de Temas */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1 text-center block">
+              <label className="text-sm font-semibold text-slate-300 ml-1 text-center block">
                 Selecciona el Tema
               </label>
               <div className="relative">
                 <BookOpen
                   size={18}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 z-10"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10"
                 />
                 <select
                   disabled={fetchingTopics || loading}
-                  className="w-full pl-10 pr-10 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 appearance-none outline-none transition-all text-gray-700 disabled:opacity-50"
+                  className="w-full pl-10 pr-10 py-3 bg-slate-800 border border-slate-600 rounded-xl focus:ring-2 focus:ring-accent appearance-none outline-none transition-all text-slate-200 disabled:opacity-50"
                   onChange={(e) => {
                     const topic = topics.find((t) => t.id === e.target.value);
                     if (topic) setSelectedTopic(topic);
@@ -133,26 +132,25 @@ export default function GenerateTestPage() {
                 </select>
                 <ChevronDown
                   size={18}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
                 />
               </div>
             </div>
 
-            {/* Input Número de preguntas */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1 text-center block">
+              <label className="text-sm font-semibold text-slate-300 ml-1 text-center block">
                 Número de preguntas
               </label>
               <div className="relative">
                 <Hash
                   size={18}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
                 />
                 <input
                   type="number"
                   min={1}
                   max={30}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-yellow-500 outline-none transition-all text-gray-700"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-800 border border-slate-600 rounded-xl focus:ring-2 focus:ring-accent outline-none transition-all text-slate-200"
                   value={isNaN(numQuestions) ? "" : numQuestions}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -162,9 +160,9 @@ export default function GenerateTestPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 bg-orange-50 p-4 rounded-xl border border-orange-100">
-              <AlertCircle size={20} className="text-orange-500 shrink-0" />
-              <p className="text-xs text-orange-700 leading-tight">
+            <div className="flex items-center gap-3 bg-highlight/10 p-4 rounded-xl border border-highlight/20">
+              <AlertCircle size={20} className="text-highlight shrink-0" />
+              <p className="text-xs text-highlight/80 leading-tight">
                 La generación puede tardar unos minutos. Por favor, ten
                 paciencia.
               </p>
@@ -173,7 +171,7 @@ export default function GenerateTestPage() {
             <button
               onClick={handleGenerate}
               disabled={loading || fetchingTopics}
-              className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+              className="w-full bg-accent hover:bg-accent-light text-white font-bold py-4 rounded-xl shadow-lg shadow-accent/20 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
             >
               {loading ? (
                 <>

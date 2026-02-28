@@ -22,7 +22,7 @@ export default function ResultPage() {
   if (loading)
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loader2 className="animate-spin text-yellow-600" size={40} />
+        <Loader2 className="animate-spin text-accent" size={40} />
       </div>
     );
 
@@ -37,13 +37,13 @@ export default function ResultPage() {
   const angleFalladas = (falladas / total) * 360 + angleCorrectas;
 
   return (
-    <div className="flex-1 min-h-screen bg-[#fafafa]">
+    <div className="flex-1 min-h-screen">
       <main className="p-8 flex flex-col items-center">
-        <div className="max-w-4xl w-full bg-white p-12 rounded-[3rem] border border-gray-100 shadow-sm text-center">
-          <h1 className="text-3xl font-black text-gray-800 mb-2">
+        <div className="max-w-4xl w-full bg-surface p-12 rounded-[3rem] border border-slate-700/50 text-center">
+          <h1 className="text-3xl font-black text-slate-50 mb-2">
             Resultado del Test
           </h1>
-          <p className="text-gray-400 font-bold mb-12 uppercase tracking-widest text-sm">
+          <p className="text-slate-500 font-bold mb-12 uppercase tracking-widest text-sm">
             {data.test.topic.name}
           </p>
 
@@ -52,14 +52,14 @@ export default function ResultPage() {
               <div
                 className="w-64 h-64 rounded-full relative flex items-center justify-center"
                 style={{
-                  background: `conic-gradient(#22c55e 0deg ${angleCorrectas}deg, #ef4444 ${angleCorrectas}deg ${angleFalladas}deg, #e5e7eb ${angleFalladas}deg 360deg)`,
+                  background: `conic-gradient(#22c55e 0deg ${angleCorrectas}deg, #ef4444 ${angleCorrectas}deg ${angleFalladas}deg, #334155 ${angleFalladas}deg 360deg)`,
                 }}
               >
-                <div className="w-48 h-48 bg-white rounded-full flex flex-col items-center justify-center shadow-inner">
-                  <span className="text-5xl font-black text-gray-800">
+                <div className="w-48 h-48 bg-[#0F172A] rounded-full flex flex-col items-center justify-center shadow-inner">
+                  <span className="text-5xl font-black text-slate-50">
                     {data.score}%
                   </span>
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-tighter">
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">
                     Puntuación Final
                   </span>
                 </div>
@@ -67,30 +67,30 @@ export default function ResultPage() {
             </div>
 
             <div className="space-y-6 text-left">
-              <div className="flex items-center justify-between p-4 bg-green-50 rounded-2xl border border-green-100">
+              <div className="flex items-center justify-between p-4 bg-green-500/10 rounded-2xl border border-green-500/20">
                 <div className="flex items-center gap-3">
-                  <CheckCircle2 className="text-green-600" />
-                  <span className="font-bold text-green-800">Acertadas</span>
+                  <CheckCircle2 className="text-green-400" />
+                  <span className="font-bold text-green-400">Acertadas</span>
                 </div>
-                <span className="text-xl font-black text-green-600">
+                <span className="text-xl font-black text-green-400">
                   {correctas}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-4 bg-red-50 rounded-2xl border border-red-100">
+              <div className="flex items-center justify-between p-4 bg-red-500/10 rounded-2xl border border-red-500/20">
                 <div className="flex items-center gap-3">
-                  <XCircle className="text-red-600" />
-                  <span className="font-bold text-red-800">Falladas</span>
+                  <XCircle className="text-red-400" />
+                  <span className="font-bold text-red-400">Falladas</span>
                 </div>
-                <span className="text-xl font-black text-red-600">
+                <span className="text-xl font-black text-red-400">
                   {falladas}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+              <div className="flex items-center justify-between p-4 bg-slate-700/30 rounded-2xl border border-slate-600/50">
                 <div className="flex items-center gap-3">
-                  <HelpCircle className="text-gray-400" />
-                  <span className="font-bold text-gray-600">En blanco</span>
+                  <HelpCircle className="text-slate-500" />
+                  <span className="font-bold text-slate-400">En blanco</span>
                 </div>
-                <span className="text-xl font-black text-gray-400">
+                <span className="text-xl font-black text-slate-500">
                   {blanco}
                 </span>
               </div>
@@ -99,7 +99,7 @@ export default function ResultPage() {
 
           <button
             onClick={() => router.push("/estudiante/inicio")}
-            className="mt-12 bg-yellow-500 hover:bg-yellow-600 text-white px-10 py-4 rounded-2xl font-black flex items-center gap-3 mx-auto transition shadow-lg shadow-yellow-100 cursor-pointer"
+            className="mt-12 bg-accent hover:bg-accent-light text-white px-10 py-4 rounded-2xl font-black flex items-center gap-3 mx-auto transition shadow-lg shadow-accent/20 cursor-pointer"
           >
             <Home size={20} /> Volver al menú principal
           </button>

@@ -5,7 +5,7 @@ import LoginForm from '@/components/Auth/LoginForm';
 
 const LoginPage = () => {
   return (
-    <main className="flex justify-center items-center min-h-screen bg-gray-50 p-4">
+    <main className="flex justify-center items-start min-h-screen bg-[#0F172A] px-4 pt-28 pb-12">
       <LoginForm />
     </main>
   );
