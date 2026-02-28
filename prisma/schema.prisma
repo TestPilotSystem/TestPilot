@@ -24,6 +24,13 @@ enum TestType {
   CUSTOM
 }
 
+enum NotificationType {
+  ACCOUNT_APPROVED
+  ACCOUNT_REJECTED
+  ADMIN_MESSAGE
+  TEST_SUMMARY
+}
+
 model User {
   id                 Int       @id @default(autoincrement())
   email              String    @unique
@@ -42,7 +49,8 @@ model User {
 
   requests     Request[]
   userTests    UserTest[]
-  chatMessages ChatMessage[]
+  chatMessages   ChatMessage[]
+  notifications  Notification[]
 }
 
 model Request {
@@ -148,4 +156,21 @@ model ChatConfig {
   tone            String   @default("formal")
   useStudentNames Boolean  @default(false)
   updatedAt       DateTime @updatedAt
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    Int
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title     String
+  body      String           @db.Text
+  type      NotificationType
+  read      Boolean          @default(false)
+  emailSent Boolean          @default(false)
+
+  createdAt DateTime         @default(now())
+
+  @@index([userId])
+  @@index([userId, read])
 }
