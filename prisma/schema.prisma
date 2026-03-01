@@ -51,6 +51,7 @@ model User {
   userTests    UserTest[]
   chatMessages   ChatMessage[]
   notifications  Notification[]
+  aiToken        AiToken?
 }
 
 model Request {
@@ -173,4 +174,21 @@ model Notification {
 
   @@index([userId])
   @@index([userId, read])
+}
+
+model AiToken {
+  id        Int          @id @default(autoincrement())
+  userId    Int          @unique @map("user_id")
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String       @unique @db.VarChar(64)
+  createdAt DateTime     @default(now()) @map("created_at")
+  requests  AiRequest[]
+  @@map("ai_tokens")
+}
+model AiRequest {
+  id        Int      @id @default(autoincrement())
+  tokenId   Int      @map("token_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  token     AiToken  @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  @@map("ai_requests")
 }

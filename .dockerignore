@@ -3,3 +3,16 @@ node_modules
 out
 build
 .git
+.env
+.env.*
+docker-compose.yml
+coverage
+.swc
+.github
+.gitignore
+LICENSE
+README.md
+commitlint.config.mjs
+babel.config.js
+jest.config.ts
+jest.setup.ts
