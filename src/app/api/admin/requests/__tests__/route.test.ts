@@ -70,6 +70,7 @@ describe("Admin Requests API", () => {
       (prisma.request.update as jest.Mock).mockResolvedValue({
         id: 1,
         status: "APPROVED",
+        user: { id: "user-1" },
       });
 
       const mockRequest = {
@@ -87,6 +88,7 @@ describe("Admin Requests API", () => {
           status: "APPROVED",
           adminNotes: "Bienvenido a bordo",
         },
+        include: { user: { select: { id: true } } },
       });
     });
 
