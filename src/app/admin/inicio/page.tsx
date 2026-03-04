@@ -24,7 +24,7 @@ export default function AdminHomePage() {
   useEffect(() => {
     fetch("/api/admin/driving-tests")
       .then((res) => res.json())
-      .then((data) => setAllTests(data));
+      .then((data) => setAllTests(Array.isArray(data) ? data : []));
 
     fetchRequests();
     const interval = setInterval(fetchRequests, 30000);
@@ -35,7 +35,8 @@ export default function AdminHomePage() {
     try {
       const res = await fetch("/api/admin/requests");
       const data = await res.json();
-      setPendingRequests(data.filter((r: any) => r.status === "PENDING"));
+      const list = Array.isArray(data) ? data : [];
+      setPendingRequests(list.filter((r: any) => r.status === "PENDING"));
     } catch (error) {
       console.error("Error al cargar solicitudes", error);
     }

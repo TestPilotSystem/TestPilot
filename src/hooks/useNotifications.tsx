@@ -61,10 +61,13 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     if (!user) return;
 
     lastCountRef.current = -1;
-    fetchUnreadCount();
+    const timeout = setTimeout(fetchUnreadCount, 0);
 
     const interval = setInterval(fetchUnreadCount, POLL_INTERVAL);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
   }, [user, fetchUnreadCount]);
 
   const markAsRead = useCallback(async (notificationId?: string) => {

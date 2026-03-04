@@ -73,7 +73,7 @@ export default function NotificationInbox() {
     if (contextUnreadCount >= 0) {
       fetchNotifications();
     }
-  }, [contextUnreadCount]);
+  }, [contextUnreadCount, fetchNotifications]);
 
   const handleSelect = async (notification: Notification) => {
     setSelectedId(notification.id);

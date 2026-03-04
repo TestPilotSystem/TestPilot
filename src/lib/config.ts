@@ -1,6 +1,6 @@
 function getEnvVar(name: string, defaultValue?: string): string {
   const value = process.env[name] ?? defaultValue;
-  if (!value) {
+  if (value === undefined) {
     // During build time, return placeholder to avoid build failure
     if (process.env.NEXT_PHASE === "phase-production-build") {
       return `PLACEHOLDER_${name}`;

@@ -87,7 +87,7 @@ export default function TestRunner({ test }: { test: any }) {
       toast.error("Error al guardar el test");
       setIsSubmitting(false);
     }
-  }, [isSubmitting, test.id, test.type, test.questions, responses, router, timeLeft]);
+  }, [isSubmitting, test.id, test.type, test.questions, responses, router, timeLeft, TOTAL_TIME]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
