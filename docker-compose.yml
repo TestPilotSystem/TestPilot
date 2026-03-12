@@ -12,7 +12,7 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD" ]
+      test: "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"
       interval: 5s
       timeout: 5s
       retries: 10
@@ -29,42 +29,15 @@ services:
     environment:
       DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
       JWT_SECRET: ${JWT_SECRET}
-      AI_API_BASE_URL: http://ai:8000
+      AI_API_BASE_URL: http://host.docker.internal:8000
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       APP_URL: ${APP_URL:-http://localhost:3000}
+      WATCHPACK_POLLING: "true"
+      HOSTNAME: "0.0.0.0"
     depends_on:
       db:
         condition: service_healthy
 
-  ai:
-    build:
-      context: ../test-pilot-ai
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    volumes:
-      - ai_vector_db:/app/vector_db
-      - ai_temp_uploads:/app/temp_uploads
-    environment:
-      LLM_MODEL: ${LLM_MODEL:-gemma2:9b}
-      LLM_TEMPERATURE: ${LLM_TEMPERATURE:-0.7}
-      LLM_PROVIDER: ${LLM_PROVIDER:-ollama}
-      GROQ_MODEL: ${GROQ_MODEL:-llama-3.1-8b-instant}
-      GROQ_API_KEY: ${GROQ_API_KEY:-}
-      CHUNK_SIZE: ${CHUNK_SIZE:-1000}
-      CHUNK_OVERLAP: ${CHUNK_OVERLAP:-200}
-      DEFAULT_SEARCH_K: ${DEFAULT_SEARCH_K:-4}
-      EMBEDDINGS_MODEL: ${EMBEDDINGS_MODEL:-sentence-transformers/all-MiniLM-L6-v2}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
-      UPLOAD_DIR: temp_uploads
-      CHROMA_PATH: vector_db
-      DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
-      OLLAMA_HOST: ${OLLAMA_HOST:-http://host.docker.internal:11434}
-    depends_on:
-      db:
-        condition: service_healthy
 
 volumes:
   dbdata:
-  ai_vector_db:
-  ai_temp_uploads:

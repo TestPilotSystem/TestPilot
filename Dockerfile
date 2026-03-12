@@ -5,11 +5,10 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-COPY . .
-
-RUN chmod +x entrypoint.sh
-
+COPY prisma ./prisma/
 RUN npx prisma generate
+
+ENV HOSTNAME="0.0.0.0"
 
 EXPOSE 3000
 
