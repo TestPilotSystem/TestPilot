@@ -52,6 +52,7 @@ model User {
   chatMessages   ChatMessage[]
   notifications  Notification[]
   aiToken        AiToken?
+  flashcardDecks FlashcardDeck[]
 }
 
 model Request {
@@ -186,9 +187,33 @@ model AiToken {
   @@map("ai_tokens")
 }
 model AiRequest {
-  id        Int      @id @default(autoincrement())
-  tokenId   Int      @map("token_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  token     AiToken  @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  id          Int      @id @default(autoincrement())
+  tokenId     Int      @map("token_id")
+  requestType String   @default("custom_test") @map("request_type") @db.VarChar(50)
+  createdAt   DateTime @default(now()) @map("created_at")
+  token       AiToken  @relation(fields: [tokenId], references: [id], onDelete: Cascade)
   @@map("ai_requests")
+}
+
+model FlashcardDeck {
+  id        String   @id @default(cuid())
+  name      String
+  topicName String
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  cards     Flashcard[]
+
+  @@index([userId])
+}
+
+model Flashcard {
+  id          String        @id @default(cuid())
+  deckId      String
+  deck        FlashcardDeck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  pregunta    String        @db.Text
+  respuesta   String        @db.Text
+  explicacion String        @db.Text
+
+  @@index([deckId])
 }
