@@ -9,15 +9,15 @@ const mockFile = '<rootDir>/__mocks__/fileMock.js';
 const mockIdentity = 'identity-obj-proxy';
 
 const baseConfig: Config = {
-    coverageProvider: 'v8', 
+    coverageProvider: 'v8',
     moduleDirectories: ['node_modules', '<rootDir>/'],
-    
+
     moduleNameMapper: {
-        '^@/(.*)$': '<rootDir>/src/$1', 
+        '^@/(.*)$': '<rootDir>/src/$1',
         '\\.(css|less|sass|scss)$': mockIdentity,
         '\\.(gif|ttf|eot|svg|png)$': mockFile,
     },
-    
+
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 
     transform: {
@@ -25,6 +25,15 @@ const baseConfig: Config = {
     },
 
     testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
+
+    coverageThreshold: {
+        global: {
+            branches: 75,
+            functions: 70,
+            lines: 80,
+            statements: 80,
+        },
+    },
 };
 
 const jestConfig: Config = {
