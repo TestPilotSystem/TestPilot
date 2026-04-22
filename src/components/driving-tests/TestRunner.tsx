@@ -10,9 +10,29 @@ import {
   Loader2,
   ChevronsLeft,
   Check,
+  X,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle2,
+  XCircle,
+  MinusCircle,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import ConfirmModal from "@/components/ui/ConfirmModal";
+
+interface QuestionReview {
+  question: any;
+  userAnswer: string;
+  isCorrect: boolean;
+}
+
+interface FinishState {
+  rectified: number;
+  correct: number;
+  total: number;
+  questionReview: QuestionReview[];
+}
 
 export default function TestRunner({ test }: { test: any }) {
   const router = useRouter();
@@ -20,54 +40,69 @@ export default function TestRunner({ test }: { test: any }) {
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [timeLeft, setTimeLeft] = useState(30 * 60);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [showReview, setShowReview] = useState(false);
+  const [finishState, setFinishState] = useState<FinishState | null>(null);
 
   const TOTAL_TIME = 30 * 60;
 
-  const [finishState, setFinishState] = useState<{ rectified: number; correct: number; total: number } | null>(null);
+  const buildReview = useCallback((): QuestionReview[] => {
+    return test.questions.map((q: any) => {
+      const userAnswer = String(responses[q.id] || "").trim();
+      const correct = String(q.respuestaCorrecta).trim();
+      return {
+        question: q,
+        userAnswer,
+        isCorrect: userAnswer.toLowerCase() === correct.toLowerCase(),
+      };
+    });
+  }, [test.questions, responses]);
 
   const handleFinish = useCallback(async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
     if (test.type === "ERROR") {
-        try {
-            const res = await fetch("/api/student/error-tests/submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ testId: test.id, responses }),
-            });
+      try {
+        const res = await fetch("/api/student/error-tests/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ testId: test.id, responses }),
+        });
 
-            if (!res.ok) throw new Error();
-            const data = await res.json();
+        if (!res.ok) throw new Error();
+        const data = await res.json();
 
-            setFinishState({
-              rectified: data.rectifiedCount,
-              correct: data.correctCount,
-              total: data.totalQuestions
-            });
-            setIsSubmitting(false);
-        } catch (error) {
-            toast.error("Error al procesar el test de errores");
-            setIsSubmitting(false);
-        }
-        return;
+        setFinishState({
+          rectified: data.rectifiedCount,
+          correct: data.correctCount,
+          total: data.totalQuestions,
+          questionReview: buildReview(),
+        });
+        setIsSubmitting(false);
+      } catch {
+        toast.error("Error al procesar el test de errores");
+        setIsSubmitting(false);
+      }
+      return;
     }
 
     if (test.type === "CUSTOM") {
-        let correctCount = 0;
-        for (const q of test.questions) {
-          const given = String(responses[q.id] || "").trim();
-          const correct = String(q.respuestaCorrecta).trim();
-          if (given.toLowerCase() === correct.toLowerCase()) correctCount++;
-        }
+      let correctCount = 0;
+      for (const q of test.questions) {
+        const given = String(responses[q.id] || "").trim();
+        const correct = String(q.respuestaCorrecta).trim();
+        if (given.toLowerCase() === correct.toLowerCase()) correctCount++;
+      }
 
-        setFinishState({
-          rectified: 0,
-          correct: correctCount,
-          total: test.questions.length,
-        });
-        setIsSubmitting(false);
-        return;
+      setFinishState({
+        rectified: 0,
+        correct: correctCount,
+        total: test.questions.length,
+        questionReview: buildReview(),
+      });
+      setIsSubmitting(false);
+      return;
     }
 
     const timeSpentSeconds = TOTAL_TIME - timeLeft;
@@ -83,11 +118,11 @@ export default function TestRunner({ test }: { test: any }) {
 
       toast.success("Test finalizado correctamente");
       router.push(`/estudiante/driving-tests/resultados/${data.id}`);
-    } catch (error) {
+    } catch {
       toast.error("Error al guardar el test");
       setIsSubmitting(false);
     }
-  }, [isSubmitting, test.id, test.type, test.questions, responses, router, timeLeft, TOTAL_TIME]);
+  }, [isSubmitting, test, responses, router, timeLeft, TOTAL_TIME, buildReview]);
 
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -111,60 +146,170 @@ export default function TestRunner({ test }: { test: any }) {
     const score = Math.round((finishState.correct / finishState.total) * 100);
 
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 bg-surface p-12 rounded-[2.5rem] border border-slate-700/50">
-        <div className={`w-24 h-24 ${isCustom ? "bg-brand/20" : "bg-green-500/10"} rounded-full flex items-center justify-center ${isCustom ? "text-brand-light" : "text-green-400"} mb-4 animate-bounce`}>
-          <Check size={48} strokeWidth={3} />
+      <div className="space-y-6">
+        <div className="flex flex-col items-center justify-center text-center space-y-8 bg-surface p-12 rounded-[2.5rem] border border-slate-700/50">
+          <div
+            className={`w-24 h-24 ${isCustom ? "bg-brand/20" : "bg-green-500/10"} rounded-full flex items-center justify-center ${isCustom ? "text-brand-light" : "text-green-400"} mb-4 animate-bounce`}
+          >
+            <Check size={48} strokeWidth={3} />
+          </div>
+          <div>
+            <h2 className="text-3xl font-black text-slate-50 mb-2">
+              {isCustom ? "¡Test Personalizado Completado!" : "¡Repaso Completado!"}
+            </h2>
+            {isCustom ? (
+              <>
+                <p className="text-slate-400 font-medium text-lg">
+                  Has obtenido un{" "}
+                  <span className="text-brand-light font-bold">{score}%</span> de
+                  aciertos.
+                </p>
+                <p className="text-sm text-slate-500 mt-2">
+                  Aciertos: {finishState.correct}/{finishState.total}
+                </p>
+                <p className="text-xs text-slate-600 mt-1">
+                  Este test no afecta a tus estadísticas.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-slate-400 font-medium text-lg">
+                  Has eliminado{" "}
+                  <span className="text-green-400 font-bold">
+                    {finishState.rectified}
+                  </span>{" "}
+                  errores de tu historial.
+                </p>
+                <p className="text-sm text-slate-500 mt-2">
+                  Aciertos: {finishState.correct}/{finishState.total}
+                </p>
+              </>
+            )}
+          </div>
+          <div className="flex gap-4 flex-wrap justify-center">
+            <button
+              onClick={() => setShowReview(!showReview)}
+              className="flex items-center gap-2 bg-slate-700/50 hover:bg-slate-700 text-slate-300 px-6 py-3 rounded-2xl font-bold transition cursor-pointer"
+            >
+              {showReview ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              {showReview ? "Ocultar respuestas" : "Ver respuestas"}
+            </button>
+            <button
+              onClick={() => router.push("/estudiante/driving-tests")}
+              className="bg-accent text-white px-8 py-3 rounded-2xl font-black hover:bg-accent-light transition shadow-xl shadow-accent/20 cursor-pointer"
+            >
+              Volver al Dashboard
+            </button>
+          </div>
         </div>
-        <div>
-          <h2 className="text-3xl font-black text-slate-50 mb-2">
-            {isCustom ? "¡Test Personalizado Completado!" : "¡Repaso Completado!"}
-          </h2>
-          {isCustom ? (
-            <>
-              <p className="text-slate-400 font-medium text-lg">
-                Has obtenido un <span className="text-brand-light font-bold">{score}%</span> de aciertos.
-              </p>
-              <p className="text-sm text-slate-500 mt-2">
-                Aciertos: {finishState.correct}/{finishState.total}
-              </p>
-              <p className="text-xs text-slate-600 mt-1">
-                Este test no afecta a tus estadísticas.
-              </p>
-            </>
-          ) : (
-            <>
-              <p className="text-slate-400 font-medium text-lg">
-                Has eliminado <span className="text-green-400 font-bold">{finishState.rectified}</span> errores de tu historial.
-              </p>
-              <p className="text-sm text-slate-500 mt-2">
-                Aciertos: {finishState.correct}/{finishState.total}
-              </p>
-            </>
-          )}
-        </div>
-        <button
-          onClick={() => router.push("/estudiante/driving-tests")}
-          className="bg-accent text-white px-8 py-4 rounded-2xl font-black text-lg hover:bg-accent-light transition shadow-xl shadow-accent/20"
-        >
-          Volver al Dashboard
-        </button>
+
+        {showReview && (
+          <div className="space-y-4">
+            {finishState.questionReview.map((item, i) => (
+              <div
+                key={item.question.id}
+                className={`bg-surface p-6 rounded-2xl border ${
+                  item.userAnswer === ""
+                    ? "border-slate-600/50"
+                    : item.isCorrect
+                    ? "border-green-500/30"
+                    : "border-red-500/30"
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <div
+                    className={`mt-1 shrink-0 ${
+                      item.userAnswer === ""
+                        ? "text-slate-500"
+                        : item.isCorrect
+                        ? "text-green-400"
+                        : "text-red-400"
+                    }`}
+                  >
+                    {item.userAnswer === "" ? (
+                      <MinusCircle size={22} />
+                    ) : item.isCorrect ? (
+                      <CheckCircle2 size={22} />
+                    ) : (
+                      <XCircle size={22} />
+                    )}
+                  </div>
+                  <div className="flex-1 space-y-3">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                      Pregunta {i + 1}
+                    </p>
+                    <p className="text-slate-100 font-semibold">
+                      {item.question.enunciado}
+                    </p>
+                    {item.userAnswer === "" ? (
+                      <p className="text-sm text-slate-500 italic">
+                        Sin respuesta
+                      </p>
+                    ) : item.isCorrect ? (
+                      <p className="text-sm text-green-400 font-medium">
+                        Tu respuesta: {item.userAnswer} ✓
+                      </p>
+                    ) : (
+                      <div className="space-y-1">
+                        <p className="text-sm text-red-400 font-medium line-through opacity-70">
+                          Tu respuesta: {item.userAnswer}
+                        </p>
+                        <p className="text-sm text-green-400 font-medium">
+                          Respuesta correcta: {item.question.respuestaCorrecta}
+                        </p>
+                      </div>
+                    )}
+                    {item.question.explicacion && (
+                      <p className="text-sm text-slate-400 bg-slate-800/50 rounded-xl p-3 leading-relaxed">
+                        {item.question.explicacion}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
 
   return (
     <div className="space-y-8">
+      <ConfirmModal
+        isOpen={showExitModal}
+        onClose={() => setShowExitModal(false)}
+        onConfirm={() => router.push("/estudiante/driving-tests")}
+        title="¿Abandonar el test?"
+        description="Si abandonas ahora perderás todas tus respuestas y el progreso no se guardará."
+        confirmText="Abandonar test"
+        confirmButtonClass="bg-red-500 hover:bg-red-600"
+        icon={<X size={32} />}
+        iconBgClass="bg-red-500/10"
+        iconTextClass="text-red-400"
+      />
+
       <div className="flex justify-between items-center bg-surface p-6 rounded-3xl border border-slate-700/50">
-        <h2 className="text-xl font-bold text-slate-100">{test.topic?.name || test.name}</h2>
-        <div
-          className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-black ${
-            timeLeft < 300
-              ? "bg-red-500/10 text-red-400 animate-pulse"
-              : "bg-accent/10 text-accent"
-          }`}
-        >
-          <Clock size={20} />
-          {formatTime(timeLeft)}
+        <h2 className="text-xl font-bold text-slate-100">
+          {test.topic?.name || test.name}
+        </h2>
+        <div className="flex items-center gap-4">
+          <div
+            className={`flex items-center gap-2 px-4 py-2 rounded-2xl font-black ${
+              timeLeft < 300
+                ? "bg-red-500/10 text-red-400 animate-pulse"
+                : "bg-accent/10 text-accent"
+            }`}
+          >
+            <Clock size={20} />
+            {formatTime(timeLeft)}
+          </div>
+          <button
+            onClick={() => setShowExitModal(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-2xl font-bold text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-slate-700/50 hover:border-red-500/30 transition cursor-pointer"
+          >
+            <X size={18} /> Abandonar
+          </button>
         </div>
       </div>
 
@@ -203,7 +348,7 @@ export default function TestRunner({ test }: { test: any }) {
       </div>
 
       <div className="bg-surface p-6 rounded-3xl border border-slate-700/50 flex flex-col md:flex-row gap-6 items-center justify-between">
-        <div className="flex gap-2 overflow-x-auto max-w-md pb-2">
+        <div className="flex flex-wrap gap-2">
           {test.questions.map((q: any, i: number) => (
             <button
               key={i}
@@ -221,7 +366,7 @@ export default function TestRunner({ test }: { test: any }) {
           ))}
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0">
           <button
             onClick={() => setCurrentIndex(0)}
             className="p-4 border border-slate-600 rounded-2xl hover:bg-slate-800 text-slate-300 cursor-pointer transition"

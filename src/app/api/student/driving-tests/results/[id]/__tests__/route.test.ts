@@ -25,7 +25,19 @@ describe("GET /api/student/driving-tests/results/[id]", () => {
     test: {
       topic: { name: "Señales" },
     },
-    responses: [{ id: "res-1", questionId: "q1", esCorrecta: true }],
+    responses: [
+      {
+        id: "res-1",
+        questionId: "q1",
+        esCorrecta: true,
+        respuestaDada: "Respuesta A",
+        question: {
+          enunciado: "¿Qué indica esta señal?",
+          respuestaCorrecta: "Respuesta A",
+          explicacion: null,
+        },
+      },
+    ],
   };
 
   beforeEach(() => {
@@ -63,7 +75,7 @@ describe("GET /api/student/driving-tests/results/[id]", () => {
       where: { id: RESULT_ID },
       include: {
         test: { include: { topic: true } },
-        responses: true,
+        responses: { include: { question: true } },
       },
     });
   });

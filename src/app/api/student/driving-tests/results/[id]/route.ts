@@ -17,7 +17,7 @@ export async function GET(
       where: { id },
       include: {
         test: { include: { topic: true } },
-        responses: true,
+        responses: { include: { question: true } },
       },
     });
 

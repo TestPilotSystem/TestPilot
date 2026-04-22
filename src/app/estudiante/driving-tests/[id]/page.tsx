@@ -21,15 +21,17 @@ export default function TestExecutionPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center min-h-screen">
+      <div className="fixed inset-0 z-50 bg-[#0F172A] flex items-center justify-center">
         <Loader2 className="animate-spin text-accent" size={40} />
       </div>
     );
   }
 
   return (
-    <div className="flex-1 min-h-screen">
-      <main className="p-8">{test && <TestRunner test={test} />}</main>
+    <div className="fixed inset-0 z-50 bg-[#0F172A] overflow-y-auto">
+      <div className="p-8 max-w-5xl mx-auto">
+        {test && <TestRunner test={test} />}
+      </div>
     </div>
   );
 }
