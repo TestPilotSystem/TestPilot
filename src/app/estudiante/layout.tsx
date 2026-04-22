@@ -7,11 +7,11 @@ export default function StudentLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-[#0F172A] overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-[#0F172A]">
       <SideBarStudent />
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         <DashboardHeader />
-        <main className="p-8 flex-1">{children}</main>
+        <main className="flex-1 overflow-y-auto p-8">{children}</main>
       </div>
     </div>
   );

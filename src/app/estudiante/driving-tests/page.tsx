@@ -1,11 +1,21 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { BookOpen, Search, Filter, Clock, Loader2, Check, AlertTriangle, Sparkles, RefreshCw } from "lucide-react";
+import {
+  BookOpen,
+  Search,
+  Filter,
+  Clock,
+  Loader2,
+  Check,
+  AlertTriangle,
+  Sparkles,
+  RefreshCw,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import ConfirmModal from "@/components/ui/ConfirmModal";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 type TestType = "BASIC" | "ERROR" | "CUSTOM";
 
@@ -16,10 +26,25 @@ interface TestItem {
   _count: { questions: number };
 }
 
-const TYPE_CONFIG: Record<TestType, { label: string; icon: React.ReactNode; color: string }> = {
-  BASIC: { label: "Tests Básicos", icon: <BookOpen size={16} />, color: "yellow" },
-  ERROR: { label: "Tests de Errores", icon: <AlertTriangle size={16} />, color: "red" },
-  CUSTOM: { label: "Tests Personalizados", icon: <Sparkles size={16} />, color: "purple" },
+const TYPE_CONFIG: Record<
+  TestType,
+  { label: string; icon: React.ReactNode; color: string }
+> = {
+  BASIC: {
+    label: "Tests Básicos",
+    icon: <BookOpen size={16} />,
+    color: "yellow",
+  },
+  ERROR: {
+    label: "Tests de Errores",
+    icon: <AlertTriangle size={16} />,
+    color: "red",
+  },
+  CUSTOM: {
+    label: "Tests Personalizados",
+    icon: <Sparkles size={16} />,
+    color: "purple",
+  },
 };
 
 export default function StudentTestsPage() {
@@ -29,12 +54,22 @@ export default function StudentTestsPage() {
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState("");
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedTypes, setSelectedTypes] = useState<TestType[]>(["BASIC", "ERROR", "CUSTOM"]);
+  const [selectedTypes, setSelectedTypes] = useState<TestType[]>([
+    "BASIC",
+    "ERROR",
+    "CUSTOM",
+  ]);
 
   const fetchTests = useCallback(async () => {
+    if (selectedTypes.length === 0) {
+      setTests([]);
+      setLoading(false);
+      return;
+    }
+
     const params = new URLSearchParams();
     if (search) params.set("search", search);
-    if (selectedTypes.length < 3 && selectedTypes.length > 0) {
+    if (selectedTypes.length < 3) {
       params.set("types", selectedTypes.join(","));
     }
 
@@ -48,7 +83,9 @@ export default function StudentTestsPage() {
   const regenerateErrorTests = async () => {
     setRefreshing(true);
     try {
-      const res = await fetch("/api/student/error-tests/generate", { method: "POST" });
+      const res = await fetch("/api/student/error-tests/generate", {
+        method: "POST",
+      });
       const data = await res.json();
       if (res.ok) {
         toast.success(data.message);
@@ -70,14 +107,18 @@ export default function StudentTestsPage() {
   const generateCustomTest = async () => {
     setGeneratingCustom(true);
     try {
-      const res = await fetch("/api/student/custom-tests/generate", { method: "POST" });
+      const res = await fetch("/api/student/custom-tests/generate", {
+        method: "POST",
+      });
       const data = await res.json();
       if (res.ok) {
         setShowCustomModal(false);
         toast.success(data.message);
         fetchTests();
       } else if (res.status === 429) {
-        toast.error("Has excedido el límite de generación. Inténtalo de nuevo más tarde.");
+        toast.error(
+          "Has excedido el límite de generación. Inténtalo de nuevo más tarde.",
+        );
       } else {
         toast.error(data.message || "Error al generar test personalizado");
       }
@@ -98,7 +139,7 @@ export default function StudentTestsPage() {
 
   const toggleType = (type: TestType) => {
     setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     );
   };
 
@@ -146,8 +187,7 @@ export default function StudentTestsPage() {
 
   return (
     <div className="flex-1 min-h-screen">
-      <Toaster richColors position="top-center" />
-      <main className="p-8 space-y-6">
+<main className="p-8 space-y-6">
         <header>
           <h1 className="text-3xl font-black text-slate-50 tracking-tight">
             Tests Disponibles 🚗
@@ -186,7 +226,11 @@ export default function StudentTestsPage() {
             className="p-4 bg-brand/10 border border-brand/20 rounded-2xl text-brand-light hover:bg-brand/20 transition cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             title="Generar test personalizado con IA"
           >
-            {generatingCustom ? <Loader2 size={24} className="animate-spin" /> : <Sparkles size={24} />}
+            {generatingCustom ? (
+              <Loader2 size={24} className="animate-spin" />
+            ) : (
+              <Sparkles size={24} />
+            )}
           </button>
 
           <ConfirmModal
@@ -208,7 +252,9 @@ export default function StudentTestsPage() {
             <button
               onClick={() => setShowFilters(!showFilters)}
               className={`p-4 bg-surface border rounded-2xl transition cursor-pointer ${
-                showFilters ? "border-accent text-accent" : "border-slate-700/50 text-slate-500 hover:text-accent"
+                showFilters
+                  ? "border-accent text-accent"
+                  : "border-slate-700/50 text-slate-500 hover:text-accent"
               }`}
             >
               <Filter size={24} />
@@ -228,10 +274,18 @@ export default function StudentTestsPage() {
                       className="w-5 h-5 rounded-md border-2 flex items-center justify-center transition"
                       style={{
                         backgroundColor: selectedTypes.includes(type)
-                          ? type === "BASIC" ? "#2563EB" : type === "ERROR" ? "#ef4444" : "#5A2A82"
+                          ? type === "BASIC"
+                            ? "#2563EB"
+                            : type === "ERROR"
+                              ? "#ef4444"
+                              : "#5A2A82"
                           : "transparent",
                         borderColor: selectedTypes.includes(type)
-                          ? type === "BASIC" ? "#2563EB" : type === "ERROR" ? "#ef4444" : "#5A2A82"
+                          ? type === "BASIC"
+                            ? "#2563EB"
+                            : type === "ERROR"
+                              ? "#ef4444"
+                              : "#5A2A82"
                           : "#475569",
                       }}
                     >
@@ -273,10 +327,14 @@ export default function StudentTestsPage() {
                   className="bg-surface p-6 rounded-[2.5rem] border border-slate-700/50 hover:border-slate-600 hover:-translate-y-1 transition-all group relative overflow-hidden"
                 >
                   <div className="flex justify-between items-start mb-6">
-                    <div className={`w-14 h-14 ${styles.icon} rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition duration-300`}>
+                    <div
+                      className={`w-14 h-14 ${styles.icon} rounded-2xl flex items-center justify-center text-2xl group-hover:scale-110 transition duration-300`}
+                    >
                       {getTypeIcon(test.type)}
                     </div>
-                    <span className={`${styles.badge} text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border`}>
+                    <span
+                      className={`${styles.badge} text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest border`}
+                    >
                       {test._count.questions} Preguntas
                     </span>
                   </div>
@@ -288,8 +346,8 @@ export default function StudentTestsPage() {
                     {test.type === "ERROR"
                       ? "Repasa las preguntas que has fallado anteriormente."
                       : test.type === "CUSTOM"
-                      ? "Test personalizado generado por IA según tu progreso."
-                      : "Domina este bloque de contenido practicando con preguntas reales de examen."}
+                        ? "Test personalizado generado por IA según tu progreso."
+                        : "Domina este bloque de contenido practicando con preguntas reales de examen."}
                   </p>
 
                   <div className="flex items-center justify-between pt-6 border-t border-slate-700/30">
