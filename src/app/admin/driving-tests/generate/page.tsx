@@ -84,17 +84,8 @@ export default function GenerateTestPage() {
         <div className="h-2 bg-gradient-to-r from-brand via-brand-light to-brand" />
 
         <div className="p-8 flex flex-col items-center">
-          <div className="relative w-32 h-32 mb-6 rounded-full bg-slate-800 flex items-center justify-center border-4 border-surface shadow-md">
-            <Image
-              src="/generate.png"
-              alt="Generar"
-              width={80}
-              height={80}
-              className="object-contain"
-            />
-            <div className="absolute bottom-0 right-2 bg-accent p-1.5 rounded-lg shadow-sm">
-              <Sparkles size={16} className="text-white" />
-            </div>
+          <div className="relative w-24 h-24 mb-6 rounded-2xl bg-gradient-to-br from-brand to-accent flex items-center justify-center shadow-lg shadow-accent/30">
+            <Sparkles size={40} className="text-white" />
           </div>
 
           <h1 className="text-2xl font-bold text-slate-50 mb-1">

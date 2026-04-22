@@ -9,6 +9,8 @@ import {
   Loader2,
   TrendingUp,
   TrendingDown,
+  AlertTriangle,
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -28,6 +30,12 @@ interface TestItem {
   topic?: { name: string };
   _count: { questions: number };
 }
+
+const TEST_TYPE: Record<string, { icon: React.ElementType; bg: string; text: string }> = {
+  ERROR:  { icon: AlertTriangle, bg: "bg-error/10",  text: "text-error-light"  },
+  CUSTOM: { icon: Sparkles,      bg: "bg-brand/10",  text: "text-brand-light"  },
+  BASIC:  { icon: BookOpen,      bg: "bg-accent/10", text: "text-accent-light" },
+};
 
 export default function StudentDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -56,7 +64,7 @@ export default function StudentDashboard() {
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="animate-spin text-accent" size={40} />
+        <Loader2 className="animate-spin text-accent" size={36} />
       </div>
     );
   }
@@ -64,116 +72,141 @@ export default function StudentDashboard() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-surface p-8 rounded-[2.5rem] border border-slate-700/50">
-          <div className="flex justify-between items-center mb-6">
+
+        {/* ── Tests Disponibles ─────────────────────────────── */}
+        <div className="lg:col-span-2 bg-surface p-7 rounded-3xl border border-border">
+          <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500/10 text-blue-400 rounded-xl">
-                <BookOpen size={20} />
+              <div className="p-2 bg-accent/10 text-accent-light rounded-xl">
+                <FileText size={18} />
               </div>
-              <h2 className="text-xl font-bold text-slate-100 tracking-tight">
-                Tests Disponibles 🚗
+              <h2 className="text-lg font-bold text-fg-primary tracking-tight">
+                Tests Disponibles
               </h2>
             </div>
             <Link
               href="/estudiante/driving-tests"
-              className="text-sm font-bold text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1 transition"
+              className="flex items-center gap-1 text-sm font-bold text-accent hover:text-accent-light transition-colors duration-[120ms]"
             >
-              Ver Todos <ChevronRight size={14} />
+              Ver todos <ChevronRight size={14} />
             </Link>
           </div>
 
           {tests.length === 0 ? (
-            <p className="text-sm text-slate-500 text-center py-8">
+            <div className="flex items-center justify-center py-12 text-fg-muted text-sm">
               No hay tests disponibles aún.
-            </p>
+            </div>
           ) : (
-            <div className="space-y-3">
-              {tests.slice(0, 5).map((test) => (
-                <Link
-                  key={test.id}
-                  href={`/estudiante/driving-tests/${test.id}`}
-                  className="flex items-center justify-between p-4 border border-slate-700/30 rounded-2xl hover:border-accent/30 hover:bg-accent/5 transition group"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold ${
-                      test.type === "ERROR"
-                        ? "bg-red-500/10 text-red-400"
-                        : test.type === "CUSTOM"
-                        ? "bg-purple-500/20 text-purple-400"
-                        : "bg-blue-500/10 text-blue-400"
-                    }`}>
-                      {test.type === "ERROR" ? "❌" : test.type === "CUSTOM" ? "✨" : "📚"}
+            <div className="space-y-2">
+              {tests.slice(0, 5).map((test) => {
+                const { icon: Icon, bg, text } = TEST_TYPE[test.type] ?? TEST_TYPE.BASIC;
+                return (
+                  <Link
+                    key={test.id}
+                    href={`/estudiante/driving-tests/${test.id}`}
+                    className="flex items-center justify-between p-4 border border-border rounded-xl hover:border-accent/30 hover:bg-accent/5 transition-all duration-[120ms] group"
+                  >
+                    <div className="flex items-center gap-3.5">
+                      <div className={`w-9 h-9 ${bg} ${text} rounded-lg flex items-center justify-center shrink-0`}>
+                        <Icon size={16} />
+                      </div>
+                      <div>
+                        <p className="font-bold text-fg-primary text-sm leading-none mb-1">
+                          {test.name}
+                        </p>
+                        <p className="text-xs text-fg-muted">
+                          {test.topic?.name || test.type} · {test._count.questions} preguntas
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-slate-100 text-sm">{test.name}</h4>
-                      <p className="text-xs text-slate-500">
-                        {test.topic?.name || test.type} · {test._count.questions} preguntas
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight size={16} className="text-slate-600 group-hover:text-blue-400 transition" />
-                </Link>
-              ))}
+                    <ChevronRight
+                      size={15}
+                      className="text-fg-subtle group-hover:text-accent transition-colors duration-[120ms] shrink-0"
+                    />
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>
 
-        <div className="flex flex-col gap-6 h-full">
+        {/* ── Right column ──────────────────────────────────── */}
+        <div className="flex flex-col gap-6">
+
+          {/* Topics card */}
           {(stats?.bestTopic || stats?.worstTopic) && (
-            <div className="bg-surface p-6 rounded-[2.5rem] border border-slate-700/50 flex-1 flex flex-col justify-center space-y-4">
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Temas</h3>
+            <div className="bg-surface p-6 rounded-3xl border border-border flex-1 flex flex-col justify-center gap-3">
+              <p className="text-[10px] font-black text-fg-muted uppercase tracking-widest">
+                Temas destacados
+              </p>
+
               {stats?.bestTopic && (
-                <div className="flex items-center gap-3 p-3 bg-green-500/10 rounded-2xl">
-                  <TrendingUp size={18} className="text-green-400" />
+                <div className="flex items-start gap-3 p-3.5 bg-success/8 border border-success/15 rounded-xl">
+                  <TrendingUp size={16} className="text-success-light mt-0.5 shrink-0" />
                   <div>
-                    <p className="text-xs text-green-400 font-bold">Mejor tema</p>
-                    <p className="text-sm font-bold text-slate-100">{stats.bestTopic.topicName}</p>
-                    <p className="text-xs text-slate-500">{stats.bestTopic.avgScore}% aciertos</p>
+                    <p className="text-[10px] text-success-light font-black uppercase tracking-wider">
+                      Mejor tema
+                    </p>
+                    <p className="text-sm font-bold text-fg-primary mt-0.5">
+                      {stats.bestTopic.topicName}
+                    </p>
+                    <p className="text-xs text-fg-muted">{stats.bestTopic.avgScore}% aciertos</p>
                   </div>
                 </div>
               )}
-              {stats?.worstTopic && stats.worstTopic.topicName !== stats.bestTopic?.topicName && (
-                <div className="flex items-center gap-3 p-3 bg-red-500/10 rounded-2xl">
-                  <TrendingDown size={18} className="text-red-400" />
-                  <div>
-                    <p className="text-xs text-red-400 font-bold">Tema a mejorar</p>
-                    <p className="text-sm font-bold text-slate-100">{stats.worstTopic.topicName}</p>
-                    <p className="text-xs text-slate-500">{stats.worstTopic.avgScore}% aciertos</p>
+
+              {stats?.worstTopic &&
+                stats.worstTopic.topicName !== stats.bestTopic?.topicName && (
+                  <div className="flex items-start gap-3 p-3.5 bg-error/8 border border-error/15 rounded-xl">
+                    <TrendingDown size={16} className="text-error-light mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[10px] text-error-light font-black uppercase tracking-wider">
+                        A mejorar
+                      </p>
+                      <p className="text-sm font-bold text-fg-primary mt-0.5">
+                        {stats.worstTopic.topicName}
+                      </p>
+                      <p className="text-xs text-fg-muted">{stats.worstTopic.avgScore}% aciertos</p>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+
               <Link
                 href="/estudiante/progreso"
-                className="block text-center text-sm font-bold text-blue-400 hover:text-blue-300 hover:underline pt-1 transition"
+                className="text-center text-sm font-bold text-accent hover:text-accent-light transition-colors duration-[120ms] pt-1"
               >
                 Ver progreso completo →
               </Link>
             </div>
           )}
 
-          <div className="bg-brand/10 p-6 rounded-[2.5rem] border border-brand/20 relative overflow-hidden flex-1 flex flex-col justify-center">
-            <div className="space-y-3 z-10 relative">
-              <div className="flex items-center gap-2 text-purple-400">
-                <Sparkles size={18} />
-                <span className="font-bold text-sm uppercase tracking-wider">
-                  Tutor Virtual 🧑‍🏫
+          {/* Tutor Virtual CTA */}
+          <div className="bg-brand/8 p-6 rounded-3xl border border-brand/20 relative overflow-hidden flex-1 flex flex-col justify-center gap-4">
+            <div className="absolute right-4 bottom-4 opacity-[0.07] rotate-12 pointer-events-none">
+              <BookOpen size={80} className="text-brand-light" />
+            </div>
+
+            <div className="relative z-10 space-y-3">
+              <div className="flex items-center gap-2 text-brand-light">
+                <Sparkles size={15} />
+                <span className="font-black text-[10px] uppercase tracking-widest">
+                  Tutor Virtual
                 </span>
               </div>
-              <p className="text-sm text-slate-400 font-medium">
+              <p className="text-sm text-fg-secondary leading-relaxed">
                 Obtén ayuda personalizada y resuelve tus dudas al instante.
               </p>
               <Link
                 href="/estudiante/tutor"
-                className="bg-blue-600 text-white px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-blue-500 transition shadow-lg shadow-blue-600/20 cursor-pointer w-fit"
+                className="inline-flex items-center gap-2 h-10 px-5 bg-brand hover:bg-brand-light active:bg-brand-dark text-white text-sm font-bold rounded-xl shadow-sm hover:shadow-brand transition-all duration-[120ms] active:scale-[0.97]"
               >
-                <MessageSquare size={16} /> Preguntar al Tutor
+                <MessageSquare size={15} />
+                Preguntar al Tutor
               </Link>
-            </div>
-            <div className="absolute right-4 bottom-4 opacity-20 rotate-12">
-              <BookOpen size={80} className="text-purple-400" />
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

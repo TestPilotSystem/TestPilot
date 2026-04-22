@@ -5,6 +5,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
+const NAV_LINKS = [
+  { name: "Inicio",          path: "/" },
+  { name: "Estadísticas",    path: "/estadisticas" },
+  { name: "Sobre nosotros",  path: "/about" },
+  { name: "Contacto",        path: "/contact" },
+];
+
 const Navbar = () => {
   const router = useRouter();
 
@@ -12,49 +19,54 @@ const Navbar = () => {
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-[#0F172A]/95 backdrop-blur-md border-b border-slate-700/50 shadow-lg shadow-black/10"
+      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 h-16 bg-background/90 backdrop-blur-md border-b border-border shadow-sm"
     >
-      <div className="flex items-center gap-2 cursor-pointer" onClick={() => router.push('/')}>
-        <div className="relative w-[150px] h-[50px] rounded-full overflow-hidden flex items-center justify-center">
-              <Image
-                src="/logo.png"
-                alt="TestPilot Logo"
-                layout="fill"
-                objectFit="contain"
-                priority
-                className="opacity-90"
-              />
-        </div>
+      {/* Logo */}
+      <div
+        className="relative w-[130px] h-[42px] cursor-pointer flex items-center"
+        onClick={() => router.push("/")}
+      >
+        <Image
+          src="/logo.png"
+          alt="TestPilot Logo"
+          fill
+          style={{ objectFit: "contain" }}
+          priority
+          className="opacity-90"
+        />
       </div>
 
-      <div className="hidden md:flex items-center gap-8 text-slate-400 font-medium">
-        {[
-          { name: "Inicio", path: "/" },
-          { name: "Sobre nosotros", path: "/about" },
-          { name: "Contacto", path: "/contact" }
-        ].map((link) => (
-          <Link key={link.path} href={link.path} className="relative group hover:text-slate-100 transition-colors">
+      {/* Nav links */}
+      <div className="hidden md:flex items-center gap-7">
+        {NAV_LINKS.map((link) => (
+          <Link
+            key={link.path}
+            href={link.path}
+            className="relative text-sm font-medium text-fg-muted hover:text-fg-primary transition-colors duration-[120ms] group"
+          >
             {link.name}
-            <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-accent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-out origin-left" />
+            <span className="absolute inset-x-0 -bottom-0.5 h-px bg-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-[220ms] ease-out origin-left rounded-full" />
           </Link>
         ))}
       </div>
 
-      <div className="flex items-center gap-4">
+      {/* Auth buttons */}
+      <div className="flex items-center gap-3">
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => router.push('/register')}
-          className="px-6 py-2 text-slate-300 font-semibold border border-slate-600 rounded-full hover:bg-slate-800 hover:text-slate-100 transition-colors cursor-pointer"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => router.push("/register")}
+          className="h-9 px-5 text-sm font-semibold text-fg-secondary border border-border-strong rounded-full hover:bg-surface-raised hover:text-fg-primary hover:border-border transition-all duration-[120ms] cursor-pointer"
         >
           Registrarse
         </motion.button>
+
         <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => router.push('/login')}
-          className="px-6 py-2 bg-accent hover:bg-accent-light text-white font-semibold rounded-full shadow-md shadow-accent/20 hover:shadow-lg transition-all cursor-pointer"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          onClick={() => router.push("/login")}
+          className="h-9 px-5 text-sm font-semibold text-white bg-brand hover:bg-brand-light rounded-full shadow-sm hover:shadow-brand transition-all duration-[120ms] cursor-pointer"
         >
           Iniciar sesión
         </motion.button>

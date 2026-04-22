@@ -5,23 +5,24 @@ export function PendingAlert({ count }: { count: number }) {
   if (count === 0) return null;
 
   return (
-    <div className="bg-highlight/10 border border-highlight/20 p-6 rounded-[2rem] flex items-center justify-between animate-pulse">
+    <div className="flex items-center justify-between p-5 bg-warning/8 border border-warning/20 rounded-2xl">
       <div className="flex items-center gap-4">
-        <div className="p-3 bg-slate-800 rounded-2xl text-highlight shadow-sm">
-          <UserPlus size={24} />
+        <div className="p-3 bg-warning/10 rounded-xl text-warning border border-warning/20 shrink-0">
+          <UserPlus size={22} />
         </div>
         <div>
-          <h3 className="font-black text-highlight uppercase tracking-tight text-sm">
+          <h3 className="font-black text-warning text-sm uppercase tracking-tight leading-none">
             Solicitudes Pendientes
           </h3>
-          <p className="text-highlight/70 text-xs">
-            Tienes {count} alumnos esperando para unirse a la plataforma.
+          <p className="text-warning/70 text-xs mt-1 font-medium">
+            {count} {count === 1 ? "alumno" : "alumnos"} esperando para unirse a la plataforma.
           </p>
         </div>
       </div>
+
       <Link
         href="/admin/requests"
-        className="bg-highlight text-slate-900 px-6 py-3 rounded-xl font-bold text-xs hover:bg-highlight/80 transition"
+        className="h-9 px-5 flex items-center text-xs font-bold text-background bg-warning hover:bg-warning-light rounded-full transition-all duration-[120ms] active:scale-[0.97] shrink-0"
       >
         Gestionar ahora
       </Link>

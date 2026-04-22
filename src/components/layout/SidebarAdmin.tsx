@@ -14,66 +14,86 @@ import {
   Settings,
 } from "lucide-react";
 
-const Sidebar = () => {
+const menuItems = [
+  { name: "Inicio",          icon: Home,         href: "/admin/inicio" },
+  { name: "Tests",           icon: FileText,      href: "/admin/driving-tests" },
+  { name: "Temario",         icon: NotebookText,  href: "/admin/docs" },
+  { name: "Usuarios",        icon: Users,         href: "/admin/users" },
+  { name: "Seguimiento",     icon: Activity,      href: "/admin/seguimiento" },
+  { name: "Configurar IA",   icon: Wrench,        href: "/admin/ai/config" },
+  { name: "Notificaciones",  icon: Bell,          href: "/admin/notificaciones" },
+];
+
+function NavItem({ href, icon: Icon, name, active }: {
+  href:   string;
+  icon:   React.ElementType;
+  name:   string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={[
+        "relative flex items-center gap-3.5 px-4 py-2.5 rounded-xl font-semibold text-sm",
+        "transition-all duration-[120ms] group",
+        active
+          ? "bg-brand/10 text-brand-light"
+          : "text-fg-muted hover:bg-surface-raised hover:text-fg-primary",
+      ].join(" ")}
+    >
+      {active && (
+        <span className="absolute left-0 inset-y-2.5 w-0.5 rounded-full bg-brand-light" />
+      )}
+
+      <Icon
+        size={19}
+        className={active ? "text-brand-light" : "text-fg-subtle group-hover:text-fg-secondary transition-colors duration-[120ms]"}
+      />
+      {name}
+    </Link>
+  );
+}
+
+const SidebarAdmin = () => {
   const pathname = usePathname();
 
-  const menuItems = [
-    { name: "Inicio", icon: Home, href: "/admin/inicio" },
-    { name: "Tests", icon: FileText, href: "/admin/driving-tests" },
-    { name: "Temario", icon: NotebookText, href: "/admin/docs" },
-    { name: "Usuarios", icon: Users, href: "/admin/users" },
-    { name: "Seguimiento", icon: Activity, href: "/admin/seguimiento" },
-    { name: "Configurar IA", icon: Wrench, href: "/admin/ai/config" },
-    { name: "Notificaciones", icon: Bell, href: "/admin/notificaciones" },
-  ];
-
   return (
-    <aside className="w-72 shrink-0 h-screen bg-[#0F172A] border-r border-slate-700/50 flex flex-col p-6 overflow-y-auto">
-      <div className="mb-12 flex justify-center">
+    <aside className="w-64 shrink-0 h-screen bg-surface border-r border-border flex flex-col p-5 overflow-y-auto">
+      {/* Logo */}
+      <div className="mb-10 flex justify-center pt-2">
         <Image
           src="/logo.png"
           alt="TestPilot"
-          width={120}
-          height={120}
-          className="object-contain"
+          width={110}
+          height={110}
+          className="object-contain opacity-90"
         />
       </div>
 
-      <nav className="flex-1 space-y-2">
-        {menuItems.map((item) => {
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition ${
-                isActive
-                  ? "bg-brand text-white shadow-lg shadow-brand/20"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-              }`}
-            >
-              <item.icon size={22} />
-              {item.name}
-            </Link>
-          );
-        })}
+      {/* Main nav */}
+      <nav className="flex-1 flex flex-col gap-1">
+        {menuItems.map((item) => (
+          <NavItem
+            key={item.name}
+            href={item.href}
+            icon={item.icon}
+            name={item.name}
+            active={pathname === item.href}
+          />
+        ))}
       </nav>
 
-      <div className="pt-6 border-t border-slate-700/50">
-        <Link
+      {/* Settings — bottom */}
+      <div className="pt-4 border-t border-border">
+        <NavItem
           href="/admin/ajustes"
-          className={`flex items-center gap-4 px-4 py-3 rounded-xl font-semibold transition ${
-            pathname === "/admin/ajustes"
-              ? "bg-brand text-white shadow-lg shadow-brand/20"
-              : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
-          }`}
-        >
-          <Settings size={22} />
-          Ajustes
-        </Link>
+          icon={Settings}
+          name="Ajustes"
+          active={pathname === "/admin/ajustes"}
+        />
       </div>
     </aside>
   );
 };
 
-export default Sidebar;
+export default SidebarAdmin;

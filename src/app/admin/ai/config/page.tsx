@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Settings, Loader2, Check, MessageSquare, User, RefreshCw, BookOpen, Info } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 const TONE_OPTIONS = [
   { value: "formal", label: "Formal", description: "Trato respetuoso y profesional" },
@@ -91,8 +91,6 @@ export default function AIConfigPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-8 space-y-12">
-      <Toaster richColors />
-
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-black text-slate-50 tracking-tight">
           Configuración del Tutor IA

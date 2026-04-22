@@ -1,30 +1,50 @@
-'use client';
+"use client";
 
-import React from "react";
 import RegisterForm from "@/components/Auth/RegisterForm";
 import Link from "next/link";
+import { UserPlus } from "lucide-react";
 
 const RegisterPage = () => {
-    return (
-    <main className="flex justify-center items-start min-h-screen bg-[#0F172A] px-4 pt-28 pb-12">
-            <div className="p-8 md:p-10 bg-[#1E293B] rounded-2xl shadow-xl w-full max-w-2xl border border-slate-700/50 max-h-[95vh] overflow-y-auto">
+  return (
+    <main className="flex justify-center items-start min-h-screen px-4 pt-24 pb-16">
+      <div className="w-full max-w-lg">
 
-                <h1 className="text-center text-3xl font-bold text-slate-50 mb-2">Crea tu cuenta de estudiante</h1>
-                <p className="text-center text-sm text-brand-light mb-8">
-                    Un paso cada día. Un Test hoy, tu carnet mañana.
-                </p>
+        <div className="bg-surface-raised rounded-2xl border border-border shadow-lg overflow-hidden">
+          {/* Top gradient strip — same pattern as modals */}
+          <div className="h-0.5 bg-gradient-to-r from-brand via-brand-light to-accent" />
 
-                <RegisterForm />
-
-                <p className="mt-8 text-center text-sm text-slate-400">
-                    ¿Ya tienes una cuenta?
-                    <Link href="/login" className="font-semibold text-accent hover:text-accent-light ml-1">
-                        Iniciar Sesión
-                    </Link>
-                </p>
+          <div className="p-8 md:p-10">
+            {/* Header */}
+            <div className="flex flex-col items-center text-center mb-8">
+              <div className="p-3.5 bg-brand/10 text-brand-light rounded-xl border border-brand/20 mb-5">
+                <UserPlus size={24} />
+              </div>
+              <h1 className="text-2xl font-bold text-fg-primary mb-1.5">
+                Crea tu cuenta
+              </h1>
+              <p className="text-sm text-fg-muted">
+                Un test hoy,{" "}
+                <span className="text-brand-light font-semibold">tu carnet mañana.</span>
+              </p>
             </div>
-        </main>
-    );
+
+            <RegisterForm />
+
+            <p className="mt-7 text-center text-sm text-fg-muted">
+              ¿Ya tienes cuenta?{" "}
+              <Link
+                href="/login"
+                className="font-bold text-accent hover:text-accent-light transition-colors duration-[120ms]"
+              >
+                Iniciar sesión
+              </Link>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  );
 };
 
 export default RegisterPage;

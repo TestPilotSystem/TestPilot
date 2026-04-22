@@ -13,197 +13,199 @@ import ContactSupportModal from "@/components/notifications/ContactSupportModal"
 const DashboardHeader = () => {
   const { user, logout } = useAuth();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted]       = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { unreadCount, inboxPath } = useNotifications();
-  const [supportOpen, setSupportOpen] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setMounted(true);
-    }, 0);
-
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setIsMenuOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const displayName = mounted ? user?.username || "Usuario" : "Usuario";
-  const displayRole = mounted ? user?.role || "Invitado" : "Invitado";
-  const displayDni = mounted ? user?.dni || "No disponible" : "---";
-  const displayAvatar = mounted ? user?.avatarId : null;
-  const isAdmin = displayRole === "ADMIN";
-  const settingsPath = isAdmin ? "/admin/ajustes" : "/estudiante/ajustes";
-
-  const handleLogout = () => {
-    logout();
-  };
+  const displayName   = mounted ? user?.username || "Usuario"        : "Usuario";
+  const displayRole   = mounted ? user?.role     || "Invitado"       : "Invitado";
+  const displayDni    = mounted ? user?.dni       || "No disponible"  : "---";
+  const displayAvatar = mounted ? user?.avatarId  : null;
+  const isAdmin       = displayRole === "ADMIN";
+  const settingsPath  = isAdmin ? "/admin/ajustes" : "/estudiante/ajustes";
 
   return (
     <>
-    <Toaster richColors position="top-right" />
-    <header className="h-20 border-b border-slate-700/50 flex items-center justify-between px-8 bg-[#1E293B]">
-      <div>
-        <h1 className="text-xl font-bold text-slate-50">
-          Bienvenido de nuevo,{" "}
-          <span className="text-accent-light">{displayName}</span>
-        </h1>
-      </div>
+      <Toaster richColors position="top-right" />
 
-      <div className="flex items-center gap-6">
-        <button
-          onClick={() => router.push(inboxPath)}
-          className="relative text-slate-400 hover:text-slate-200 cursor-pointer transition"
-        >
-          <Bell size={22} />
-          {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 rounded-full border-2 border-[#1E293B] flex items-center justify-center text-[10px] font-bold text-white px-1">
-              {unreadCount > 99 ? "99+" : unreadCount}
-            </span>
-          )}
-        </button>
+      <header className="h-16 border-b border-border flex items-center justify-between px-8 bg-surface shrink-0">
+        {/* Welcome */}
+        <div>
+          <h1 className="text-base font-bold text-fg-primary leading-none">
+            Bienvenido de nuevo,{" "}
+            <span className="text-accent-light">{displayName}</span>
+          </h1>
+        </div>
 
-        <div className="flex items-center gap-3 pl-6 border-l border-slate-700/50 relative" ref={menuRef}>
+        <div className="flex items-center gap-5">
+          {/* Notifications */}
           <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition"
+            onClick={() => router.push(inboxPath)}
+            className="relative p-2 text-fg-muted hover:text-fg-primary hover:bg-surface-raised rounded-lg transition-all duration-[120ms] active:scale-95"
           >
-            <div className="text-right">
-              <p className="text-sm font-bold text-slate-50 leading-none">
-                {displayName}
-              </p>
-              <p className="text-xs text-slate-500 mt-1 uppercase tracking-tighter font-semibold">
-                {displayRole}
-              </p>
-            </div>
-            <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden border border-brand-light/50">
-              {displayAvatar ? (
-                <Image
-                  src={`/avatars/${displayAvatar}.webp`}
-                  alt="Avatar"
-                  width={40}
-                  height={40}
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-brand flex items-center justify-center text-white font-bold">
-                  {displayName.charAt(0).toUpperCase()}
-                </div>
-              )}
-            </div>
-            <ChevronDown
-              size={16}
-              className={`text-slate-500 transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`}
-            />
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 min-w-[16px] h-4 bg-error rounded-full border border-surface flex items-center justify-center text-[9px] font-black text-white px-1 leading-none">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </button>
 
-          <AnimatePresence>
-            {!isMenuOpen && (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.15 }}
-                onClick={handleLogout}
-                className="ml-2 p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition cursor-pointer"
-                title="Cerrar sesión"
-              >
-                <LogOut size={20} />
-              </motion.button>
-            )}
-          </AnimatePresence>
+          {/* User menu */}
+          <div
+            className="flex items-center gap-3 pl-5 border-l border-border relative"
+            ref={menuRef}
+          >
+            <button
+              onClick={() => setIsMenuOpen((v) => !v)}
+              className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity duration-[120ms]"
+            >
+              {/* Name + role */}
+              <div className="text-right">
+                <p className="text-sm font-bold text-fg-primary leading-none">{displayName}</p>
+                <p className="text-[10px] text-fg-muted mt-1 uppercase tracking-widest font-semibold">
+                  {displayRole}
+                </p>
+              </div>
 
-          <AnimatePresence>
-            {isMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                transition={{ duration: 0.15 }}
-                className="absolute right-0 top-full mt-2 w-72 bg-[#1E293B] rounded-2xl shadow-xl border border-slate-700/50 overflow-hidden z-50"
-              >
-                <div className="p-5 bg-brand/20 border-b border-slate-700/50">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden border-2 border-brand-light/50">
-                      {displayAvatar ? (
-                        <Image
-                          src={`/avatars/${displayAvatar}.webp`}
-                          alt="Avatar"
-                          width={56}
-                          height={56}
-                          className="object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-brand flex items-center justify-center text-white font-bold text-xl">
-                          {displayName.charAt(0).toUpperCase()}
-                        </div>
-                      )}
+              {/* Avatar */}
+              <div className="w-9 h-9 rounded-full overflow-hidden border border-brand/30 shrink-0">
+                {displayAvatar ? (
+                  <Image
+                    src={`/avatars/${displayAvatar}.webp`}
+                    alt="Avatar"
+                    width={36}
+                    height={36}
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-brand/20 flex items-center justify-center text-brand-light font-bold text-sm">
+                    {displayName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+
+              <ChevronDown
+                size={15}
+                className={`text-fg-muted transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {/* Quick logout (visible when menu closed) */}
+            <AnimatePresence>
+              {!isMenuOpen && (
+                <motion.button
+                  key="logout-quick"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.12 }}
+                  onClick={logout}
+                  className="p-2 text-fg-muted hover:text-error-light hover:bg-error/10 rounded-lg transition-all duration-[120ms] active:scale-95 cursor-pointer"
+                  title="Cerrar sesión"
+                >
+                  <LogOut size={18} />
+                </motion.button>
+              )}
+            </AnimatePresence>
+
+            {/* Dropdown menu */}
+            <AnimatePresence>
+              {isMenuOpen && (
+                <motion.div
+                  key="menu"
+                  initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                  transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                  className="absolute right-0 top-full mt-2 w-72 bg-surface-raised rounded-2xl shadow-lg border border-border-strong overflow-hidden z-50"
+                >
+                  {/* User info header */}
+                  <div className="p-5 bg-brand/8 border-b border-border">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-brand/30 shrink-0">
+                        {displayAvatar ? (
+                          <Image
+                            src={`/avatars/${displayAvatar}.webp`}
+                            alt="Avatar"
+                            width={48}
+                            height={48}
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-brand/20 flex items-center justify-center text-brand-light font-bold text-lg">
+                            {displayName.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-bold text-fg-primary">{displayName}</p>
+                        <p className="text-[10px] text-fg-muted uppercase tracking-widest font-semibold mt-0.5">
+                          {isAdmin ? "Administrador" : "Estudiante"}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-slate-50 text-lg">{displayName}</p>
-                      <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold">
-                        {displayRole === "ADMIN" ? "Administrador" : "Estudiante"}
-                      </p>
+
+                    <div className="mt-3.5 flex items-center gap-2 text-xs text-fg-muted">
+                      <User size={13} className="text-fg-subtle shrink-0" />
+                      <span className="font-medium">DNI:</span>
+                      <span className="text-fg-secondary font-mono">{displayDni}</span>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex items-center gap-2 text-sm text-slate-400">
-                    <User size={14} className="text-slate-500" />
-                    <span className="font-medium">DNI:</span>
-                    <span className="text-slate-200">{displayDni}</span>
-                  </div>
-                </div>
-
-                <div className="p-2">
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      router.push(settingsPath);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 rounded-xl transition font-medium"
-                  >
-                    <Settings size={18} className="text-slate-500" />
-                    Ajustes de cuenta
-                  </button>
-
-                  {!isAdmin && (
+                  {/* Menu items */}
+                  <div className="p-2 flex flex-col gap-0.5">
                     <button
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        setSupportOpen(true);
-                      }}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-slate-300 hover:bg-slate-700/50 rounded-xl transition font-medium"
+                      onClick={() => { setIsMenuOpen(false); router.push(settingsPath); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-fg-secondary hover:text-fg-primary hover:bg-surface-overlay rounded-xl transition-all duration-[120ms] font-medium text-left"
                     >
-                      <Wrench size={18} className="text-slate-500" />
-                      Contactar soporte
+                      <Settings size={16} className="text-fg-muted shrink-0" />
+                      Ajustes de cuenta
                     </button>
-                  )}
 
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition font-medium"
-                  >
-                    <LogOut size={18} />
-                    Cerrar sesión
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                    {!isAdmin && (
+                      <button
+                        onClick={() => { setIsMenuOpen(false); setSupportOpen(true); }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-fg-secondary hover:text-fg-primary hover:bg-surface-overlay rounded-xl transition-all duration-[120ms] font-medium text-left"
+                      >
+                        <Wrench size={16} className="text-fg-muted shrink-0" />
+                        Contactar soporte
+                      </button>
+                    )}
+
+                    <button
+                      onClick={logout}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-error-light hover:bg-error/8 rounded-xl transition-all duration-[120ms] font-medium text-left"
+                    >
+                      <LogOut size={16} className="shrink-0" />
+                      Cerrar sesión
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-      </div>
-    </header>
-    <ContactSupportModal isOpen={supportOpen} onClose={() => setSupportOpen(false)} />
+      </header>
+
+      <ContactSupportModal isOpen={supportOpen} onClose={() => setSupportOpen(false)} />
     </>
   );
 };

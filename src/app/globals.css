@@ -1,23 +1,107 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════
+   COCKPIT NOIR — Automotive Instrument Dark Design System
+   Test Pilot · Premium Driving Test App
+═══════════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────────────────
+   Raw CSS Properties  (raw values, ref'd by @theme via var())
+   ─────────────────────────────────────────────────────────── */
 :root {
-  --background: #0F172A;
-  --foreground: #F8FAFC;
+  --background:      #09060F;
+  --foreground:      #F0EEFF;
+  --surface:         #100D1B;
+  --surface-raised:  #181427;
+  --surface-overlay: #211C34;
+
+  /* Easing curves */
+  --ease-out:    cubic-bezier(0.16, 1, 0.30, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Durations */
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+  --duration-slow: 380ms;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Design Tokens  →  Tailwind utilities via @theme inline
+   ─────────────────────────────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-brand: #3B1E54;
-  --color-brand-light: #5A2A82;
-  --color-accent: #2563EB;
-  --color-accent-light: #3B82F6;
-  --color-surface: #1E293B;
-  --color-highlight: #FBBF24;
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* ── Typography ─────────────────────────────────────────── */
+  --font-sans:    var(--font-dm);
+  --font-mono:    var(--font-code);
+  --font-display: var(--font-syne);
+
+  /* ── Colors · Backgrounds ───────────────────────────────── */
+  --color-background:      var(--background);
+  --color-foreground:      var(--foreground);
+  --color-surface:         var(--surface);
+  --color-surface-raised:  var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+
+  /* ── Colors · Text hierarchy ────────────────────────────── */
+  --color-fg-primary:   #F0EEFF;
+  --color-fg-secondary: #A09DC0;
+  --color-fg-muted:     #6A6788;
+  --color-fg-subtle:    #3C3A54;
+
+  /* ── Colors · Brand — Electric Violet ───────────────────── */
+  --color-brand:       #8B2FC9;
+  --color-brand-light: #A855F7;
+  --color-brand-dark:  #6D1FA5;
+
+  /* ── Colors · Accent — Instrument Cyan ──────────────────── */
+  --color-accent:       #06B6D4;
+  --color-accent-light: #22D3EE;
+  --color-accent-dark:  #0891B2;
+
+  /* ── Colors · Highlight — Amber Instrument Glow ─────────── */
+  --color-highlight:       #F97316;
+  --color-highlight-light: #FB923C;
+
+  /* ── Colors · Semantic ───────────────────────────────────── */
+  --color-success:       #22C55E;
+  --color-success-light: #4ADE80;
+  --color-warning:       #F59E0B;
+  --color-warning-light: #FCD34D;
+  --color-error:         #EF4444;
+  --color-error-light:   #F87171;
+  --color-info:          #06B6D4;
+  --color-info-light:    #22D3EE;
+
+  /* ── Colors · Borders (as color utilities) ───────────────── */
+  --color-border:        rgb(255 255 255 / 0.06);
+  --color-border-strong: rgb(255 255 255 / 0.11);
+  --color-border-brand:  rgb(139 47 201 / 0.38);
+  --color-border-accent: rgb(6 182 212 / 0.38);
+
+  /* ── Border Radius ───────────────────────────────────────── */
+  --radius-xs:   0.1875rem;  /*  3px  micro chips, dots       */
+  --radius-sm:   0.375rem;   /*  6px  tags, small elements    */
+  --radius-md:   0.625rem;   /* 10px  inputs, buttons         */
+  --radius-lg:   1rem;       /* 16px  cards                   */
+  --radius-xl:   1.375rem;   /* 22px  large cards             */
+  --radius-2xl:  1.875rem;   /* 30px  modals, sheets          */
+  --radius-3xl:  2.5rem;     /* 40px  hero / feature cards    */
+  --radius-full: 9999px;     /*       pills, avatars          */
+
+  /* ── Shadows — 5-Level Elevation + Glow System ──────────── */
+  --shadow-xs:     0 1px 3px 0 rgb(0 0 0 / 0.55);
+  --shadow-sm:     0 2px 10px 0 rgb(0 0 0 / 0.50), 0 0 0 1px rgb(255 255 255 / 0.03);
+  --shadow-md:     0 4px 20px 0 rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.04);
+  --shadow-lg:     0 8px 40px 0 rgb(0 0 0 / 0.65), 0 0 0 1px rgb(255 255 255 / 0.05);
+  --shadow-xl:     0 20px 80px 0 rgb(0 0 0 / 0.75), 0 0 0 1px rgb(255 255 255 / 0.06);
+  --shadow-brand:  0 0 0 1px rgb(139 47 201 / 0.35), 0 4px 32px 0 rgb(139 47 201 / 0.40), 0 0 80px 0 rgb(139 47 201 / 0.12);
+  --shadow-accent: 0 0 0 1px rgb(6 182 212 / 0.35), 0 4px 32px 0 rgb(6 182 212 / 0.40), 0 0 80px 0 rgb(6 182 212 / 0.12);
+  --shadow-inner:  inset 0 1px 3px 0 rgb(0 0 0 / 0.60), inset 0 1px 0 0 rgb(255 255 255 / 0.03);
 }
 
+/* ─────────────────────────────────────────────────────────────
+   Base
+   ─────────────────────────────────────────────────────────── */
 html,
 body {
   overflow-x: hidden;
@@ -27,33 +111,99 @@ body {
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-dm, 'DM Sans', system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
 }
 
-@layer base {
+/* Ambient violet crown glow — visible above content */
+body::after {
+  content: '';
+  position: fixed;
+  top: -30%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 75vw;
+  height: 55vh;
+  background: radial-gradient(ellipse at 50% 0%, rgb(139 47 201 / 0.09) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+}
 
+/* Grain texture overlay for depth */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='512' height='512' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  opacity: 0.028;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+::selection {
+  background: rgb(139 47 201 / 0.42);
+  color: #F0EEFF;
+}
+
+/* ── Base layer ─────────────────────────────────────────────── */
+@layer base {
   input::placeholder,
   textarea::placeholder {
-    @apply text-slate-500 opacity-100;
+    @apply text-fg-muted opacity-100;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-brand/50 ring-offset-2 ring-offset-background;
+  }
+
+  /* Syne auto-applied to all headings — displays with authority */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-syne, 'Syne', system-ui, sans-serif);
+    letter-spacing: -0.025em;
+    font-weight: 700;
+    line-height: 1.15;
   }
 }
 
-/* Custom Scrollbar for Dark Theme */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* ─────────────────────────────────────────────────────────────
+   Keyframe Animations
+   ─────────────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-::-webkit-scrollbar-track {
-  background: var(--background);
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--color-surface);
-  border-radius: 4px;
-  border: 1px solid var(--background);
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-brand-light);
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
 }
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Scrollbar
+   ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar         { width: 5px; height: 5px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   {
+  background: var(--surface-overlay);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgb(139 47 201 / 0.55); }
