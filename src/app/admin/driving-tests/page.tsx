@@ -11,7 +11,7 @@ import {
   Plus,
 } from "lucide-react";
 import Link from "next/link";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 
 export default function AdminDrivingTestsPage() {
@@ -58,13 +58,11 @@ export default function AdminDrivingTestsPage() {
   };
 
   const filteredTests = tests.filter((test: any) =>
-    test.topic.name.toLowerCase().includes(searchTerm.toLowerCase())
+    (test.topic?.name ?? "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">
-      <Toaster richColors />
-
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
           <h1 className="text-3xl font-black text-slate-50 tracking-tight">
@@ -149,7 +147,7 @@ export default function AdminDrivingTestsPage() {
                         </div>
                         <div className="flex flex-col">
                           <span className="font-bold text-slate-100">
-                            {test.topic.name}
+                            {test.topic?.name ?? <span className="text-slate-500 italic text-xs">Sin tema</span>}
                           </span>
                           <span className="text-[10px] text-slate-500 font-mono uppercase">
                             ID: {test.id.slice(-8)}

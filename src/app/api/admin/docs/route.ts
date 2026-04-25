@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { config } from "@/lib/config";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
@@ -32,6 +33,17 @@ export async function DELETE() {
     });
 
     if (!response.ok) throw new Error();
+
+    // Sync Prisma: remove all topics now that the vector DB is empty
+    const allTopics = await prisma.topic.findMany({ select: { id: true } });
+    if (allTopics.length > 0) {
+      const allIds = allTopics.map((t) => t.id);
+      await prisma.test.updateMany({
+        where: { topicId: { in: allIds } },
+        data: { topicId: null },
+      });
+      await prisma.topic.deleteMany();
+    }
 
     return NextResponse.json({ message: "Base de datos reseteada" });
   } catch (error) {

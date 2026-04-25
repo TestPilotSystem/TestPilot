@@ -9,7 +9,7 @@ import {
   Info,
   X,
 } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import Image from "next/image";
 
 export default function UploadDocsPage() {
@@ -79,8 +79,6 @@ export default function UploadDocsPage() {
 
   return (
     <div className="max-w-4xl mx-auto p-8 space-y-12">
-      <Toaster richColors />
-
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-black text-slate-50 tracking-tight">
           Admin: Añadir Manuales

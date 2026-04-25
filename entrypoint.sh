@@ -3,6 +3,8 @@ set -e
 
 MAX_RETRIES=30
 RETRY_COUNT=0
+npx prisma generate
+
 until npx prisma migrate deploy 2>/dev/null; do
   RETRY_COUNT=$((RETRY_COUNT + 1))
   if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then

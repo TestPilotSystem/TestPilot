@@ -55,7 +55,7 @@ export default function ResultPage() {
               Resultado del Test
             </h1>
             <p className="text-slate-500 font-bold mb-12 uppercase tracking-widest text-sm">
-              {data.test.topic.name}
+              {data.test.topic?.name ?? "Sin tema"}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">

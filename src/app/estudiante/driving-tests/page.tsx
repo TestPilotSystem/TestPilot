@@ -340,7 +340,7 @@ export default function StudentTestsPage() {
                   </div>
 
                   <h3 className="text-xl font-bold text-slate-100 mb-2 leading-tight">
-                    {test.topic.name}
+                    {test.topic?.name ?? "Sin tema"}
                   </h3>
                   <p className="text-sm text-slate-500 font-medium mb-6 line-clamp-2">
                     {test.type === "ERROR"

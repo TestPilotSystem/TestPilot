@@ -12,7 +12,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import QuestionCard from "@/components/driving-tests/QuestionCard";
 import NewQuestionModal from "@/components/driving-tests/NewQuestionModal";
@@ -85,7 +85,7 @@ export default function TestDetailsPage() {
 
     try {
       const aiRes = await fetch(
-        `/api/admin/questions/generate?topic=${encodeURIComponent(test.topic.name)}`
+        `/api/admin/questions/generate?topic=${encodeURIComponent(test.topic?.name ?? "")}`
       );
 
       if (!aiRes.ok) throw new Error("Fallo en la generación de la IA");
@@ -127,8 +127,6 @@ export default function TestDetailsPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-8 space-y-12 pb-32">
-      <Toaster richColors />
-
       <div className="flex justify-between items-center bg-surface p-8 rounded-[2.5rem] border border-slate-700/50">
         <div className="space-y-3">
           <Link
@@ -138,7 +136,7 @@ export default function TestDetailsPage() {
             <ChevronLeft size={14} /> Volver al panel
           </Link>
           <h1 className="text-3xl font-black text-slate-50">
-            {test.topic.name}
+            {test.topic?.name ?? "Sin tema"}
           </h1>
           <div className="flex gap-4 text-sm text-slate-500 font-bold">
             <span className="flex items-center gap-1.5">

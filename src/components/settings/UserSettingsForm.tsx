@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { User, Mail, CreditCard, Loader2, Check, Save, Lock } from "lucide-react";
 import Link from 'next/link';
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 
@@ -107,8 +107,6 @@ export default function UserSettingsForm({ isAdmin = false }: UserSettingsFormPr
 
   return (
     <div className="max-w-3xl mx-auto p-8 space-y-10">
-      <Toaster richColors />
-
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-black text-slate-50 tracking-tight">
           Ajustes de Cuenta

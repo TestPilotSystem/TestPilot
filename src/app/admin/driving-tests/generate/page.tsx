@@ -10,7 +10,7 @@ import {
   AlertCircle,
   ChevronDown,
 } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 interface Topic {
   id: string;
@@ -79,7 +79,6 @@ export default function GenerateTestPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] p-4">
-      <Toaster richColors position="top-right" />
       <div className="w-full max-w-md bg-surface rounded-3xl shadow-xl overflow-hidden border border-slate-700/50">
         <div className="h-2 bg-gradient-to-r from-brand via-brand-light to-brand" />
 

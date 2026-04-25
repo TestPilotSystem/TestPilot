@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import {
   Layers,
   Plus,
@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import CreateDeckModal from "@/components/flashcards/CreateDeckModal";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 interface Deck {
   id: string;
@@ -21,16 +21,20 @@ interface Deck {
   _count: { cards: number };
 }
 
+const POLL_INTERVAL = 30_000;
+
 export default function FlashcardsPage() {
   const [decks, setDecks] = useState<Deck[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const deckIdsRef = useRef<Set<string>>(new Set());
 
   const fetchDecks = useCallback(async () => {
     try {
       const res = await fetch("/api/student/flashcards");
       if (res.ok) {
-        setDecks(await res.json());
+        const data: Deck[] = await res.json();
+        setDecks(data);
       }
     } catch (error) {
       console.error(error);
@@ -42,6 +46,32 @@ export default function FlashcardsPage() {
   useEffect(() => {
     fetchDecks();
   }, [fetchDecks]);
+
+  // Keep ref in sync with current decks for polling comparison
+  useEffect(() => {
+    deckIdsRef.current = new Set(decks.map((d) => d.id));
+  }, [decks]);
+
+  // Silent polling: detects new decks without a full reload
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const res = await fetch("/api/student/flashcards");
+        if (!res.ok) return;
+        const fresh: Deck[] = await res.json();
+        const hasNew = fresh.some((d) => !deckIdsRef.current.has(d.id));
+        if (hasNew) {
+          setDecks(fresh);
+          toast.info("Nuevas baterías añadidas automáticamente");
+        }
+      } catch {
+        // silent — no toast on background poll failure
+      }
+    };
+
+    const interval = setInterval(poll, POLL_INTERVAL);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleDelete = async (deckId: string, deckName: string) => {
     if (!confirm(`¿Eliminar la batería "${deckName}"?`)) return;
@@ -75,8 +105,6 @@ export default function FlashcardsPage() {
 
   return (
     <div className="space-y-6">
-      <Toaster richColors position="top-center" />
-
       <header className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black text-slate-50 tracking-tight">

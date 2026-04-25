@@ -12,7 +12,7 @@ import {
   Check,
   X,
 } from "lucide-react";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 export default function AdminHomePage() {
   const [allTests, setAllTests] = useState([]);
@@ -73,7 +73,6 @@ export default function AdminHomePage() {
 
   return (
     <div className="p-8 space-y-10">
-      <Toaster richColors />
       <header className="flex justify-between items-end">
         <div>
           <h1 className="text-3xl font-bold text-slate-50">Admin Dashboard</h1>

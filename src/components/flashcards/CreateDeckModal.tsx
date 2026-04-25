@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { X, Loader2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
 
 interface CreateDeckModalProps {
   isOpen: boolean;
@@ -55,10 +56,10 @@ export default function CreateDeckModal({
         onClose();
       } else {
         const data = await res.json().catch(() => null);
-        alert(data?.message || "Error al generar flashcards");
+        toast.error(data?.message || "Error al generar flashcards");
       }
     } catch {
-      alert("Error de conexión");
+      toast.error("Error de conexión");
     } finally {
       setLoading(false);
     }

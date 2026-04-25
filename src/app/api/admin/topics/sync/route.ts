@@ -49,6 +49,22 @@ export async function POST() {
       }
     }
 
+    // Remove topics from Prisma that no longer exist in the vector DB
+    const localTopics = await prisma.topic.findMany();
+    const remoteTopicSet = new Set(remoteTopics);
+    const orphanedTopics = localTopics.filter((t) => !remoteTopicSet.has(t.name));
+
+    if (orphanedTopics.length > 0) {
+      const orphanedIds = orphanedTopics.map((t) => t.id);
+      await prisma.test.updateMany({
+        where: { topicId: { in: orphanedIds } },
+        data: { topicId: null },
+      });
+      await prisma.topic.deleteMany({
+        where: { id: { in: orphanedIds } },
+      });
+    }
+
     const allTopics = await prisma.topic.findMany({
       orderBy: { name: "asc" },
     });
