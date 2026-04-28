@@ -1,6 +1,10 @@
 import { GET, PATCH } from "../route";
 import { prisma } from "@/lib/prisma";
 
+jest.mock("@/lib/notifications", () => ({
+  createNotification: jest.fn().mockResolvedValue(null),
+}));
+
 jest.mock("@/lib/prisma", () => {
   const mockInternalPrisma = {
     request: {

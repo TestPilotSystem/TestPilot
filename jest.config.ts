@@ -48,6 +48,7 @@ const jestConfig: Config = {
         {
             displayName: 'server',
             testEnvironment: 'node',
+            setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
             testMatch: ['<rootDir>/src/app/api/**/*.test.ts'],
         },
     ],
