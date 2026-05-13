@@ -47,7 +47,7 @@ export function checkRateLimit(
 
 export function recordFailedAttempt(
   email: string
-): { locked: true; secondsRemaining: number; message: string } | { locked: false; attemptsRemaining: number } {
+): { locked: true; attemptsRemaining?: undefined; secondsRemaining: number; message: string } | { locked: false; attemptsRemaining: number } {
   const state = store.get(email) ?? { attempts: 0, lockUntil: null, lockCount: 0 };
   state.attempts++;
 

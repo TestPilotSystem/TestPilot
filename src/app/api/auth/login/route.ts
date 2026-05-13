@@ -58,7 +58,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           message: "Credenciales inválidas",
-          attemptsRemaining: failResult.locked ? undefined : failResult.attemptsRemaining,
+          attemptsRemaining: failResult.attemptsRemaining,
         },
         { status: 401 }
       );
