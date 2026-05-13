@@ -5,6 +5,7 @@ import {
   Search,
   Trash2,
   Eye,
+  EyeOff,
   FileText,
   Calendar,
   Layers,
@@ -21,6 +22,7 @@ export default function AdminDrivingTestsPage() {
 
   const [testToDelete, setTestToDelete] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [togglingId, setTogglingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTests();
@@ -35,6 +37,30 @@ export default function AdminDrivingTestsPage() {
       toast.error("Error al cargar los tests");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleVisibility = async (test: any) => {
+    setTogglingId(test.id);
+    try {
+      const res = await fetch(`/api/admin/driving-tests/${test.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isVisible: !test.isVisible }),
+      });
+      if (!res.ok) throw new Error("No se pudo actualizar la visibilidad");
+      setTests((prev: any[]) =>
+        prev.map((t: any) =>
+          t.id === test.id ? { ...t, isVisible: !test.isVisible } : t
+        )
+      );
+      toast.success(
+        !test.isVisible ? "Test publicado correctamente" : "Test ocultado correctamente"
+      );
+    } catch {
+      toast.error("Error al cambiar la visibilidad del test");
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -110,6 +136,9 @@ export default function AdminDrivingTestsPage() {
                 <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
                   Fecha
                 </th>
+                <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                  Estado
+                </th>
                 <th className="px-8 py-5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] text-right">
                   Acciones
                 </th>
@@ -119,7 +148,7 @@ export default function AdminDrivingTestsPage() {
               {loading ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="px-8 py-12 text-center text-slate-500 animate-pulse"
                   >
                     Cargando repositorio...
@@ -128,7 +157,7 @@ export default function AdminDrivingTestsPage() {
               ) : filteredTests.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={4}
+                    colSpan={5}
                     className="px-8 py-12 text-center text-slate-500 italic"
                   >
                     No hay tests que coincidan con la búsqueda.
@@ -166,6 +195,28 @@ export default function AdminDrivingTestsPage() {
                         <Calendar size={16} />
                         {new Date(test.createdAt).toLocaleDateString()}
                       </div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <button
+                        onClick={() => handleToggleVisibility(test)}
+                        disabled={togglingId === test.id}
+                        title={test.isVisible ? "Ocultar test" : "Publicar test"}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all disabled:opacity-50 ${
+                          test.isVisible
+                            ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20"
+                            : "bg-slate-700/50 text-slate-500 hover:bg-slate-700"
+                        }`}
+                      >
+                        {test.isVisible ? (
+                          <>
+                            <Eye size={14} /> Visible
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff size={14} /> Oculto
+                          </>
+                        )}
+                      </button>
                     </td>
                     <td className="px-8 py-5 text-right">
                       <div className="flex justify-end gap-2">

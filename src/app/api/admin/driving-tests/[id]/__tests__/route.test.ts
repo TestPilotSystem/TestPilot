@@ -1,4 +1,4 @@
-import { GET, DELETE } from "../route";
+import { GET, DELETE, PATCH } from "../route";
 import { prisma } from "@/lib/prisma";
 import { NextRequest } from "next/server";
 
@@ -6,6 +6,7 @@ jest.mock("@/lib/prisma", () => ({
   prisma: {
     test: {
       findUnique: jest.fn(),
+      update: jest.fn(),
       delete: jest.fn(),
     },
   },
@@ -70,6 +71,59 @@ describe("Driving Test Dynamic Route /api/admin/driving-tests/[id]", () => {
 
       expect(response.status).toBe(500);
       expect(body.error).toBe("Error al obtener el test");
+    });
+  });
+
+  describe("PATCH", () => {
+    it("should return 200 and updated test when making a test visible", async () => {
+      const updatedTest = { ...mockTest, isVisible: true };
+      (prisma.test.update as jest.Mock).mockResolvedValue(updatedTest);
+
+      const params = Promise.resolve({ id: TEST_ID });
+      const req = {
+        json: async () => ({ isVisible: true }),
+      } as unknown as NextRequest;
+
+      const response = await PATCH(req, { params });
+      const body = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(body.isVisible).toBe(true);
+      expect(prisma.test.update).toHaveBeenCalledWith({
+        where: { id: TEST_ID },
+        data: { isVisible: true },
+      });
+    });
+
+    it("should return 200 and updated test when hiding a test", async () => {
+      const updatedTest = { ...mockTest, isVisible: false };
+      (prisma.test.update as jest.Mock).mockResolvedValue(updatedTest);
+
+      const params = Promise.resolve({ id: TEST_ID });
+      const req = {
+        json: async () => ({ isVisible: false }),
+      } as unknown as NextRequest;
+
+      const response = await PATCH(req, { params });
+      const body = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(body.isVisible).toBe(false);
+    });
+
+    it("should return 500 if update fails", async () => {
+      (prisma.test.update as jest.Mock).mockRejectedValue(new Error("Update Error"));
+
+      const params = Promise.resolve({ id: TEST_ID });
+      const req = {
+        json: async () => ({ isVisible: true }),
+      } as unknown as NextRequest;
+
+      const response = await PATCH(req, { params });
+      const body = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(body.error).toBe("Error al actualizar la visibilidad del test");
     });
   });
 

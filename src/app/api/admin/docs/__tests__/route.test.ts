@@ -1,10 +1,26 @@
 import { POST, DELETE } from "../route";
+import { prisma } from "@/lib/prisma";
+
+jest.mock("@/lib/prisma", () => ({
+  prisma: {
+    topic: {
+      findMany: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    test: {
+      updateMany: jest.fn(),
+    },
+  },
+}));
 
 global.fetch = jest.fn();
 
 describe("AI Admin Route /api/admin/ai/config", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    (prisma.topic.findMany as jest.Mock).mockResolvedValue([]);
+    (prisma.test.updateMany as jest.Mock).mockResolvedValue({});
+    (prisma.topic.deleteMany as jest.Mock).mockResolvedValue({});
   });
 
   describe("POST", () => {
@@ -82,6 +98,24 @@ describe("AI Admin Route /api/admin/ai/config", () => {
         expect.stringContaining("/admin/ai/reset-db"),
         { method: "DELETE" }
       );
+    });
+
+    it("should clear topics from DB when they exist", async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({ ok: true });
+      (prisma.topic.findMany as jest.Mock).mockResolvedValue([
+        { id: "t1" },
+        { id: "t2" },
+      ]);
+
+      const response = await DELETE();
+      const body = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(prisma.test.updateMany).toHaveBeenCalledWith({
+        where: { topicId: { in: ["t1", "t2"] } },
+        data: { topicId: null },
+      });
+      expect(prisma.topic.deleteMany).toHaveBeenCalled();
     });
 
     it("should return 500 if reset fails", async () => {

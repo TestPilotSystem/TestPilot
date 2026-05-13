@@ -58,6 +58,7 @@ export async function POST(req: Request) {
     const newTest = await prisma.test.create({
       data: {
         topicId: topicId,
+        isVisible: false,
         questions: {
           create: data.test.map((q: any) => ({
             enunciado: q.pregunta,

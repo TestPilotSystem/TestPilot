@@ -72,7 +72,7 @@ describe("POST /api/student/error-tests/generate", () => {
     expect(prisma.test.create).toHaveBeenCalledTimes(1);
     expect(prisma.test.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ name: "Repaso de Errores" }),
+        data: expect.objectContaining({ name: "Repaso de Errores", isVisible: true }),
       })
     );
   });

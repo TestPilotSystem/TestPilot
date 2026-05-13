@@ -79,6 +79,7 @@ model Test {
   id        String   @id @default(cuid())
   type      TestType @default(BASIC)
   name      String?  // Optional name for ERROR/CUSTOM tests
+  isVisible Boolean  @default(false)
   createdAt DateTime @default(now())
 
   topicId   String?

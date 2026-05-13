@@ -108,6 +108,11 @@ describe("POST /api/student/custom-tests/generate", () => {
     expect(body.customTest.id).toBe("custom-1");
     expect(body.message).toContain("2 preguntas");
     expect(prisma.test.deleteMany).toHaveBeenCalled();
+    expect(prisma.test.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ isVisible: true }),
+      })
+    );
   });
 
   it("should return 500 on unexpected error", async () => {

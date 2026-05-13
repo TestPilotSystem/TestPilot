@@ -45,6 +45,7 @@ export async function GET() {
 
     for (const ut of userTests) {
       const topicId = ut.test.topicId;
+      if (!topicId || !ut.test.topic) continue;
       const topicName = ut.test.topic.name;
 
       if (!topicStats[topicId]) {

@@ -168,6 +168,7 @@ export async function POST(request: Request) {
         type: "CUSTOM",
         name: "Test Personalizado IA",
         userId,
+        isVisible: true,
         questions: {
           create: dbQuestions,
         },

@@ -87,6 +87,25 @@ describe("GET /api/estudiante/stats", () => {
     expect(body.testsByTopic).toHaveLength(2);
   });
 
+  it("should skip tests without a topic (ERROR/CUSTOM tests)", async () => {
+    const { cookies } = require("next/headers");
+    cookies.mockReturnValue({ get: jest.fn(() => ({ value: "valid-token" })) });
+
+    (prisma.userTest.findMany as jest.Mock)
+      .mockResolvedValueOnce([
+        makeUserTest(80, "topic-1", "Señales", 100),
+        { score: 70, timeSpentSeconds: 50, completedAt: new Date(), test: { topicId: null, topic: null } },
+      ])
+      .mockResolvedValueOnce([]);
+
+    const res = await GET();
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.totalTests).toBe(2);
+    expect(body.testsByTopic).toHaveLength(1);
+  });
+
   it("should return 500 on unexpected error", async () => {
     const { cookies } = require("next/headers");
     cookies.mockReturnValue({ get: jest.fn(() => ({ value: "valid-token" })) });

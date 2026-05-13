@@ -5,6 +5,11 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { loginSchema } from "@/lib/validations/auth";
 import { config } from "@/lib/config";
+import {
+  checkRateLimit,
+  recordFailedAttempt,
+  resetAttempts,
+} from "@/lib/loginRateLimiter";
 
 interface TokenPayload {
   id: string;
@@ -27,19 +32,34 @@ export async function POST(request: Request) {
 
     const { email, password } = result.data;
 
+    const rateCheck = checkRateLimit(email);
+    if (rateCheck.blocked) {
+      return NextResponse.json(
+        { message: rateCheck.message },
+        { status: 429 }
+      );
+    }
+
     const user = await prisma.user.findUnique({
       where: { email },
       include: {
         requests: {
           orderBy: { createdAt: "desc" },
-          take: 1, // Only need the latest request
+          take: 1,
         },
       },
     });
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
+      const failResult = recordFailedAttempt(email);
+      if (failResult.locked) {
+        return NextResponse.json({ message: failResult.message }, { status: 429 });
+      }
       return NextResponse.json(
-        { message: "Credenciales inválidas" },
+        {
+          message: "Credenciales inválidas",
+          attemptsRemaining: failResult.attemptsRemaining,
+        },
         { status: 401 }
       );
     }
@@ -69,6 +89,8 @@ export async function POST(request: Request) {
       }
     }
 
+    resetAttempts(email);
+
     const token = jwt.sign(
       {
         id: String(user.id),
@@ -80,7 +102,7 @@ export async function POST(request: Request) {
       { expiresIn: "1h" }
     );
 
-  const response = NextResponse.json({
+    const response = NextResponse.json({
       message: "Login exitoso",
       user: {
         id: user.id,

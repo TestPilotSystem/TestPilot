@@ -226,20 +226,23 @@ export default function AdminHomePage() {
           </Link>
         </div>
 
-        <div className="bg-surface p-8 rounded-[2.5rem] border border-slate-700/50 flex flex-col items-center justify-center text-slate-600 relative overflow-hidden">
+        <Link
+          href="/admin/ai/config"
+          className="bg-surface p-8 rounded-[2.5rem] border border-slate-700/50 flex flex-col items-center justify-center text-slate-600 relative overflow-hidden hover:border-slate-500 transition-colors group"
+        >
           <div className="absolute top-6 left-8 flex items-center gap-3">
-            <div className="p-2 bg-slate-800 text-slate-500 rounded-xl">
+            <div className="p-2 bg-slate-800 text-slate-500 rounded-xl group-hover:text-slate-300 transition-colors">
               <Settings size={20} />
             </div>
             <h2 className="text-xl font-bold text-slate-100">
               AI Assistant Settings
             </h2>
           </div>
-          <Settings size={48} className="mb-4 opacity-30" />
-          <p className="font-bold uppercase tracking-widest text-xs">
-            Próximamente: Configuración avanzada
+          <Settings size={48} className="mb-4 opacity-30 group-hover:opacity-50 transition-opacity" />
+          <p className="font-bold uppercase tracking-widest text-xs group-hover:text-slate-400 transition-colors">
+            Configurar IA
           </p>
-        </div>
+        </Link>
       </div>
     </div>
   );

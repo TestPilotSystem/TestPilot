@@ -34,6 +34,30 @@ export async function GET(
   }
 }
 
+// PATCH - toggle visibility
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const resolvedParams = await params;
+    const id = resolvedParams.id;
+    const { isVisible } = await req.json();
+
+    const test = await prisma.test.update({
+      where: { id },
+      data: { isVisible },
+    });
+
+    return NextResponse.json(test);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Error al actualizar la visibilidad del test" },
+      { status: 500 }
+    );
+  }
+}
+
 // DELETE
 export async function DELETE(
   req: NextRequest,

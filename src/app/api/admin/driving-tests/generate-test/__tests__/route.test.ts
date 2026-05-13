@@ -150,6 +150,7 @@ describe("POST /api/admin/driving-tests/generate-test", () => {
     expect(prisma.test.create).toHaveBeenCalledWith({
       data: {
         topicId: MOCK_TOPIC_ID,
+        isVisible: false,
         questions: {
           create: [
             {

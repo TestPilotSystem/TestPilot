@@ -76,6 +76,7 @@ export async function POST(request: Request) {
             type: "ERROR",
             name: testName,
             userId,
+            isVisible: true,
             questions: {
               create: chunk.map((q) => ({
                 enunciado: (q as any).enunciado,

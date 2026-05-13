@@ -154,6 +154,51 @@ describe("GET /api/student/driving-tests", () => {
     expect(body).toHaveLength(3);
   });
 
+  it("should filter BASIC tests by isVisible: true", async () => {
+    (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
+    (prisma.test.findMany as jest.Mock).mockResolvedValue(mockTests);
+
+    const request = new Request("http://localhost/api/student/driving-tests?types=BASIC");
+    await GET(request);
+
+    expect(prisma.test.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          AND: expect.arrayContaining([
+            expect.objectContaining({
+              OR: expect.arrayContaining([
+                expect.objectContaining({ type: "BASIC", userId: null, isVisible: true }),
+              ]),
+            }),
+          ]),
+        }),
+      })
+    );
+  });
+
+  it("should not include isVisible filter for ERROR and CUSTOM types", async () => {
+    (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
+    (prisma.test.findMany as jest.Mock).mockResolvedValue([]);
+
+    const request = new Request("http://localhost/api/student/driving-tests?types=ERROR,CUSTOM");
+    await GET(request);
+
+    expect(prisma.test.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          AND: expect.arrayContaining([
+            expect.objectContaining({
+              OR: expect.arrayContaining([
+                expect.objectContaining({ type: "ERROR" }),
+                expect.objectContaining({ type: "CUSTOM" }),
+              ]),
+            }),
+          ]),
+        }),
+      })
+    );
+  });
+
   it("should return 500 if prisma fails", async () => {
     (authGuard as jest.Mock).mockResolvedValue({ payload: { id: "1" } });
     (prisma.test.findMany as jest.Mock).mockRejectedValue(new Error("DB error"));

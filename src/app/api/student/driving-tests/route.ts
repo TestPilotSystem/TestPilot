@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     const typeConditions = [];
     
     if (typesFilter.length === 0 || typesFilter.includes("BASIC")) {
-      typeConditions.push({ type: "BASIC" as TestType, userId: null });
+      typeConditions.push({ type: "BASIC" as TestType, userId: null, isVisible: true });
     }
     
     if (typesFilter.length === 0 || typesFilter.includes("ERROR")) {
